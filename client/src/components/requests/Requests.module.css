@@ -1,0 +1,27 @@
+.requests {
+  display: flex;
+  flex-direction: column;
+}
+
+.requests__header {
+  display: flex;
+}
+
+.requests__list {
+  list-style-type: none;
+}
+
+.requests__item {
+  display: flex;
+  margin: 1em 0;
+}
+
+.requests__channel {
+  color: var(--clr-neutral-800);
+}
+
+.requests__select-btn {
+  margin-left: auto;
+  background-color: transparent;
+  border: 1px solid var(--clr-neutral-400);
+}
