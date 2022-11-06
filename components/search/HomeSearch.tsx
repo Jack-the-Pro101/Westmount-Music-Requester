@@ -1,18 +1,14 @@
+"use client";
+
 import { GetServerSideProps } from "next";
 import { FormEvent, useState } from "react";
 
 import SearchDropdown from "./SearchDropdown";
 
 import styles from "./HomeSearch.module.css";
+import { CoreSong } from "../../types/songtypes";
 
-interface CoreSong {
-  title: string;
-  artist: string;
-  url: string;
-  id: number;
-}
-
-export default function HomeSearch({ setSelectedSong }) {
+export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSong: (value: CoreSong) => void }) {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [songs, setSongs] = useState([]);
@@ -27,7 +23,7 @@ export default function HomeSearch({ setSelectedSong }) {
 
     setIsLoading(true);
 
-    const request = await fetch("/api/search?q=" + search + "&page=" + recur);
+    const request = await fetch("/api/music/search?q=" + search + "&page=" + recur);
 
     if (request.ok) {
       const data = await request.json();
@@ -48,10 +44,10 @@ export default function HomeSearch({ setSelectedSong }) {
     setIsLoading(false);
   }
 
-  function songSelected(data) {
+  function songSelected(data: CoreSong) {
     setSearch("");
     setSongs([]);
-    setSelectedSong(data);
+    setSelectedCoreSong(data);
   }
 
   return (

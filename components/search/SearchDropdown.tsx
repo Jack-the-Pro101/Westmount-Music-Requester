@@ -21,7 +21,7 @@ export default function SearchDropdown({ songs, onSelect, isLoading }: { songs: 
     <ul className={styles.search__dropdown}>
       {songs.length === 0 ? (
         isLoading ? (
-          <li className={styles["search__dropdown-loading"]}>Loading</li>
+          <li className={styles["search__dropdown-loading"]}>Finding music</li>
         ) : null
       ) : (
         songs

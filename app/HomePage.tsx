@@ -7,8 +7,10 @@ import Requests from "../components/requests/Requests";
 
 import styles from "./Index.module.css";
 
+import { CoreSong } from "../types/songtypes";
+
 export default function Home() {
-  const [selectedSong, setSelectedSong] = useState({});
+  const [selectedCoreSong, setSelectedCoreSong] = useState({});
 
   return (
     <div className="container">
@@ -17,8 +19,8 @@ export default function Home() {
       </header>
 
       <main className={styles.main}>
-        <HomeSearch setSelectedSong={setSelectedSong} />
-        <Requests selectedSong={selectedSong} />
+        <HomeSearch setSelectedCoreSong={setSelectedCoreSong} />
+        <Requests selectedCoreSong={selectedCoreSong} />
       </main>
     </div>
   );

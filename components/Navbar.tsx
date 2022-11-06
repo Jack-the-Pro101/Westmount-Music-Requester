@@ -1,8 +1,10 @@
+"use client";
+
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function Navbar({ spacer }: { spacer: boolean }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   return (
     <>
@@ -19,13 +21,19 @@ export default function Navbar({ spacer }: { spacer: boolean }) {
               </button>
             ) : (
               // <a href="/login">Sign In</a>
-              <Link href={"/login"}>Sign In</Link>
+              <Link href={"/authentication/login"} className={`${status === "loading" ? "loading" : ""}`}>
+                Sign In
+              </Link>
             )}
           </li>
         </ul>
       </nav>
 
-      {spacer ? <div className="navbar-spacer"> </div> : null}
+      {spacer ? (
+        <div className="navbar-spacer" aria-hidden="true">
+           
+        </div>
+      ) : null}
     </>
   );
 }

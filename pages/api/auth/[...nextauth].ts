@@ -16,6 +16,14 @@ export default NextAuth({
     }),
   ],
 
+  pages: {
+    signIn: "/authentication/login",
+    signOut: "/authentication/logout",
+    error: "/authentication/error", // Error code passed in query string as ?error=
+    // verifyRequest: '/auth/verify-request', // (used for check email message)
+    // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
+  },
+
   callbacks: {
     async signIn({ account, profile }) {
       if (profile?.email != null && !profile.email.endsWith("@hwdsb.on.ca")) {

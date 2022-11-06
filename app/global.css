@@ -6,9 +6,9 @@
   box-sizing: border-box;
 }
 
-* {
+/* * {
   font-family: "Inter", Arial, Helvetica, sans-serif;
-}
+} */
 
 :root {
   --clr-neutral-100: hsl(219, 30%, 5%);
@@ -22,6 +22,23 @@
   --clr-neutral-900: hsl(220, 16%, 90%);
 
   font-size: 8px;
+}
+
+::-webkit-scrollbar {
+  width: 0.5vw;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--clr-neutral-400);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--clr-neutral-500);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--clr-neutral-600);
 }
 
 body {
@@ -59,9 +76,29 @@ body {
 }
 
 .navbar__item {
-  padding: 0.75em 1em;
+  padding: 0 1em;
+  line-height: calc(2rem + 1.5em);
   font-size: 2rem;
+  max-height: calc(2rem + 1.5em);
   color: var(--clr-neutral-900);
+}
+
+.navbar__item a {
+  text-decoration: none;
+  color: inherit;
+  padding: 0.75em 1em;
+  margin: -0.75em -1em;
+}
+
+.navbar__item a.loading {
+  color: transparent;
+  animation: pulseLoad 1s ease-out infinite alternate;
+}
+
+@keyframes pulseLoad {
+  to {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .navbar__item:hover {
@@ -75,6 +112,7 @@ body {
 .navbar__profile {
   color: inherit;
   font-size: inherit;
+  line-height: inherit;
   background-color: transparent;
   border: none;
   display: flex;
@@ -84,9 +122,11 @@ body {
 .navbar__icon {
   max-width: 1.5em;
   margin-right: 0.5em;
+  height: 100%;
 }
 
 .navbar__icon-img {
+  height: 100%;
   width: 100%;
   display: block;
   margin: auto;
@@ -112,6 +152,6 @@ body {
 
 @media screen AND (max-width: 650px) {
   :root {
-    font-size: 4px;
+    font-size: 6px;
   }
 }
