@@ -3,6 +3,10 @@
   flex-direction: column;
 }
 
+.requests__heading {
+  margin-bottom: 1em;
+}
+
 .requests__header {
   display: flex;
 }
@@ -24,4 +28,14 @@
   margin-left: auto;
   background-color: transparent;
   border: 1px solid var(--clr-neutral-400);
+}
+
+.requests__btns {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.requests__btn {
+  font-size: 2rem;
+  padding: 0.5em 0.75em;
 }
