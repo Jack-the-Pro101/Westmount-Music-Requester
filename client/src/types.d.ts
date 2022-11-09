@@ -1,8 +1,8 @@
 export interface CoreSong {
-    title: string;
-    artist: string;
-    url: string;
-    id: number;
+  title: string;
+  artist: string;
+  url: string;
+  id: number;
 }
 
 export type Hits = Hit[];
