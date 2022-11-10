@@ -20,6 +20,15 @@
   margin: 1em 0;
 }
 
+.requests__thumbnail {
+  max-width: 8em;
+  margin-right: 1em;
+}
+
+.requests__thumbnail-image {
+  width: 100%;
+}
+
 .requests__channel {
   color: var(--clr-neutral-800);
 }

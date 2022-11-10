@@ -22,8 +22,10 @@ export interface Song {
 }
 
 export interface YoutubeSong {
+  id: track.id;
   title: string;
   thumbnail: string;
   channel: string;
+  url: string;
   duration: number;
 }

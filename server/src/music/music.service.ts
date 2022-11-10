@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Hits } from "src/types";
 
+import downloader from "../downloader/downloader";
+
 @Injectable()
 export class MusicService {
   async search(query: string) {
@@ -17,7 +19,7 @@ export class MusicService {
     }
   }
 
-  async getInfo(songId: string) {
-    throw new Error("Not implemented");
+  async getInfo(query: string) {
+    return await downloader.getInfo(query);
   }
 }
