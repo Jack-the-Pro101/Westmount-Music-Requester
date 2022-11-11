@@ -21,7 +21,7 @@ export interface Song {
   url: string;
 }
 
-export interface YoutubeSong {
+export interface YouTubeSong {
   id: track.id;
   title: string;
   thumbnail: string;
