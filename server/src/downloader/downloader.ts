@@ -3,15 +3,15 @@ import { exec } from "child_process";
 
 class Downloader {
   private yt: Innertube;
-  private constructor(yt: Innertube) {
-    this.yt = yt;
-  }
+  private ready: boolean;
+  constructor() {}
 
-  static async create(): Promise<Downloader> {
+  async initialize() {
     const yt = await Innertube.create();
-    const downloader = new Downloader(yt);
-    await downloader.verifyDependencies();
-    return downloader;
+    this.yt = yt;
+    await this.verifyDependencies();
+    this.ready = true;
+    return this;
   }
 
   verifyDependencies(): Promise<void> {
@@ -33,9 +33,10 @@ class Downloader {
   }
 
   async getInfo(query: string) {
+    if (!this.ready) throw new Error("Downloader not ready!");
     const songs = await this.yt.music.search(query, { type: "song" });
     return songs.results;
   }
 }
 
-export default await Downloader.create();
+export default new Downloader();
