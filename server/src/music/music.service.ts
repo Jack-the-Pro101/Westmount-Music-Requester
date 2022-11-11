@@ -21,7 +21,7 @@ export class MusicService {
 
   async getInfo(query: string): Promise<YouTubeSong[]> {
     const info = await downloader.getInfo(query);
-    return info.map(song => ({
+    return info.filter(x => x.artists && x.artists.length > 0).map(song => ({
       id: song.id,
       title: song.title,
       thumbnail: song.thumbnails[0].url,
