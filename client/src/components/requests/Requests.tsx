@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { CoreSong, YoutubeSong } from "../../types";
+import { CoreSong, YouTubeSong } from "../../types";
 import styles from "./Requests.module.css";
 
 export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [trackResults, setTrackResults] = useState<YoutubeSong[]>([]);
+  const [trackResults, setTrackResults] = useState<YouTubeSong[]>([]);
   const [selectedTrack, setSelectedTrack] = useState({});
 
   useEffect(() => {
