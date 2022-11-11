@@ -23,7 +23,8 @@
     "passport-google-oauth2": "^0.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "youtubei.js": "^2.3.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
