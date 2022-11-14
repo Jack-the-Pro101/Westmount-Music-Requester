@@ -1,8 +1,8 @@
 export interface CoreSong {
-    title: string;
-    artist: string;
-    url: string;
-    id: number;
+  title: string;
+  artist: string;
+  url: string;
+  id: number;
 }
 
 export type Hits = Hit[];
@@ -28,4 +28,23 @@ export interface YouTubeSong {
   channel: string;
   url: string;
   duration: number;
+}
+
+export interface GoogleUserInfo {
+  email: string;
+  firstName: string;
+  lastName: string;
+  picture: string;
+  accessToken: string;
+}
+
+export type GoogleUser = {
+  // iat: number;
+  user: GoogleUserInfo;
+};
+
+export interface TrackSourceInfo {
+  url: string;
+  mime_type: string;
+  format: string;
 }

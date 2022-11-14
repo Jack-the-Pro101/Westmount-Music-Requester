@@ -29,3 +29,22 @@ export interface YouTubeSong {
   url: string;
   duration: number;
 }
+
+export interface GoogleUserInfo {
+  email: string;
+  firstName: string;
+  lastName: string;
+  picture: string;
+  accessToken: string;
+}
+
+export type GoogleUser = {
+  iat: number;
+  user: GoogleUserInfo;
+};
+
+export interface TrackSourceInfo {
+  url: string;
+  mime_type: string;
+  format: string;
+}

@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { CoreSong, YouTubeSong } from "../../types";
+import { CoreSong, TrackSourceInfo, YouTubeSong } from "../../types";
 import styles from "./Requests.module.css";
+
+import { PlayRange } from "./PlayRange";
 
 export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) {
   const [isLoading, setIsLoading] = useState(false);
   const [trackResults, setTrackResults] = useState<YouTubeSong[]>([]);
-  const [selectedTrack, setSelectedTrack] = useState({});
+  const [selectedTrack, setSelectedTrack] = useState<YouTubeSong | {}>({});
+  const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
   useEffect(() => {
     setSelectedTrack({});
@@ -13,6 +16,17 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
 
     loadSongs();
   }, [selectedCoreSong?.id]);
+
+  useEffect(() => {
+    if (selectedTrack.id == null) return;
+    (async () => {
+      const request = await fetch("/api/music/source?id=" + selectedTrack.id);
+
+      if (request.ok) {
+        setSelectedTrackSource(await request.json());
+      }
+    })();
+  }, [selectedTrack.id]);
 
   async function loadSongs() {
     if (selectedCoreSong) {
@@ -24,7 +38,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
       const request = await fetch("/api/music/info?song=" + selectedCoreSong.artist + " " + selectedCoreSong.title);
 
       if (request.ok) {
-        const response = await request.json() as YouTubeSong[];
+        const response = (await request.json()) as YouTubeSong[];
         setTrackResults(response);
 
         setIsLoading(false);
@@ -65,8 +79,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
         </ul>
 
         <fieldset className={styles.requests__fieldset}>
-          <label htmlFor="start-at">Start playing from</label>
-          <input type="number" name="start-at" id="start-at" />
+          <PlayRange songDuration={selectedTrack?.duration || 0} songPreview={selectedTrackSource} />
         </fieldset>
 
         <div className={styles.requests__btns}>

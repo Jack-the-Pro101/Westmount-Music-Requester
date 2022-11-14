@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Hits, YouTubeSong } from "src/types";
+import { Hits, TrackSourceInfo, YouTubeSong } from "src/types";
 
 import downloader from "../downloader/downloader";
 
@@ -19,15 +19,21 @@ export class MusicService {
     }
   }
 
+  async getSource(id: string): Promise<TrackSourceInfo> {
+    return await downloader.getSource(id);
+  }
+
   async getInfo(query: string): Promise<YouTubeSong[]> {
     const info = await downloader.getInfo(query);
-    return info.filter(x => x.artists && x.artists.length > 0).map(song => ({
-      id: song.id,
-      title: song.title,
-      thumbnail: song.thumbnails[0].url,
-      channel: song.artists![0].name,
-      url: "https://www.youtube.com/watch?v=" + song.id,
-      duration: song.duration.seconds,
-    }));
+    return info
+      .filter((x) => x.artists && x.artists.length > 0)
+      .map((song) => ({
+        id: song.id,
+        title: song.title,
+        thumbnail: song.thumbnails[0].url,
+        channel: song.artists![0].name,
+        url: "https://www.youtube.com/watch?v=" + song.id,
+        duration: song.duration.seconds,
+      }));
   }
 }

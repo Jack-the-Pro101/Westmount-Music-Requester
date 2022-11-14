@@ -1,28 +1,26 @@
-// import { useSession } from "next-auth/react";
-// import Link from "next/link";
+import { GoogleUser } from "../types";
 
-export function Navbar({ spacer }: { spacer: boolean }) {
-//   const { data: session, status } = useSession();
-
+export function Navbar({ spacer, user }: { spacer: boolean; user: GoogleUser | false | undefined }) {
   return (
     <>
       <nav className="navbar">
         <ul className="navbar__list">
           <li className="navbar__item"></li>
           <li className="navbar__item">
-            {/* {session ? (
+            {user ? (
               <button className="navbar__profile">
                 <div className="navbar__icon">
-                  <img src={session.user?.image || ""} alt={session.user?.name + "'s avatar"} className="navbar__icon-img" />
+                  <img src={user.user.picture || ""} alt={user.user.firstName + "'s avatar"} className="navbar__icon-img" />
                 </div>
-                <p className="navbar__name">{session.user?.name}</p>
+                <p className="navbar__name">
+                  {user.user.firstName} {user.user.lastName}
+                </p>
               </button>
             ) : (
-              // <a href="/login">Sign In</a>
-              <Link href={"/authentication/login"} className={`${status === "loading" ? "loading" : ""}`}>
+              <a href={"/authentication/login"} className={`${user == null ? "loading" : ""}`}>
                 Sign In
-              </Link>
-            )} */}
+              </a>
+            )}
           </li>
         </ul>
       </nav>
