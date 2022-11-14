@@ -13,7 +13,6 @@ export class MusicController {
   @Get("/source")
   async getSource(@Query("id") id: string) {
     const source = await this.musicService.getSource(id);
-    console.log(source);
 
     return source;
   }

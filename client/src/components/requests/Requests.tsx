@@ -79,6 +79,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
         </ul>
 
         <fieldset className={styles.requests__fieldset}>
+          <h2 className={styles.requests__heading}>Select play range</h2>
           <PlayRange songDuration={selectedTrack?.duration || 0} songPreview={selectedTrackSource} />
         </fieldset>
 
