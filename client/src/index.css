@@ -88,6 +88,18 @@ body {
   color: var(--clr-neutral-900);
 }
 
+.navbar__item--logo {
+  padding: 0.1em 0em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar__item--logo img {
+  height: 100%;
+  max-width: 4em;
+}
+
 .navbar__item a {
   text-decoration: none;
   color: inherit;

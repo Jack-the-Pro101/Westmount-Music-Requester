@@ -5,7 +5,9 @@ export function Navbar({ spacer, user }: { spacer: boolean; user: GoogleUser | f
     <>
       <nav className="navbar">
         <ul className="navbar__list">
-          <li className="navbar__item"></li>
+          <li className="navbar__item navbar__item--logo">
+            <img src="/images/Westmount_Secondary_School_Logo.webp" alt="Westmount logo" />
+          </li>
           <li className="navbar__item">
             {user ? (
               <button className="navbar__profile">
