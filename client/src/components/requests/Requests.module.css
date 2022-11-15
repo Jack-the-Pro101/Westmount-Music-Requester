@@ -124,6 +124,13 @@
   gap: 4px;
 }
 
+.requests__play-volume label {
+  visibility: hidden;
+  z-index: -1;
+  position: absolute;
+  pointer-events: none;
+}
+
 .requests__play-time {
   display: flex;
   justify-content: space-between;

@@ -8,6 +8,7 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
 
   const [playbackPos, setPlaybackPos] = useState(0);
   const [selectionRange, setSelectionRange] = useState(0);
+  const [volume, setVolume] = useState(100);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const audioElemRef = useRef<HTMLAudioElement>(null);
@@ -39,7 +40,7 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
   return (
     <div className={styles["requests__play-range"]}>
       {songPreview && (
-        <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPlaying(false)} ref={audioElemRef}>
+        <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPlaying(false)} ref={audioElemRef} volume={volume}>
           <source src={songPreview.url} type={songPreview.mime_type} />
         </audio>
       )}
@@ -86,6 +87,11 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
             ]
           </button>
         </div>
+      </div>
+      <div className={styles["requests__play-volume"]}>
+        <label htmlFor="volume">Volume</label>
+        <i className="fa-regular fa-volume"></i>
+        <input type="range" name="volume" id="volume" min={0} max={100} onChange={(e) => setVolume(e.target!.valueAsNumber / 100)} />
       </div>
       <div className={styles["requests__play-time"]}>
         <p className={styles["requests__play-text"]}>

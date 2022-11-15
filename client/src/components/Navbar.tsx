@@ -19,7 +19,7 @@ export function Navbar({ spacer, user }: { spacer: boolean; user: GoogleUser | f
                 </p>
               </button>
             ) : (
-              <a href={"/authentication/login"} className={`${user == null ? "loading" : ""}`}>
+              <a href={"/api/auth"} className={`${user == null ? "loading" : ""}`}>
                 Sign In
               </a>
             )}
