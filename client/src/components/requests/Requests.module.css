@@ -103,10 +103,13 @@
   cursor: pointer;
 }
 
+.requests__play-controller {
+  margin: 0.5em 10px 0 10px;
+}
+
 .requests__play-btns {
   display: flex;
   justify-content: space-between;
-  margin: 0.5em 10px 0 10px;
 }
 
 .requests__play-btn {
@@ -124,11 +127,26 @@
   gap: 4px;
 }
 
+.requests__play-volume {
+  display: flex;
+  align-items: center;
+}
+
 .requests__play-volume label {
   visibility: hidden;
   z-index: -1;
   position: absolute;
   pointer-events: none;
+}
+
+.requests__play-volume i {
+  font-size: 2rem;
+}
+
+.requests__play-volume input {
+  margin-left: 0.5em;
+  width: 100%;
+  max-width: 12em;
 }
 
 .requests__play-time {

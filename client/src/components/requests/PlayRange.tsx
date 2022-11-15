@@ -37,6 +37,15 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
     if (audioElemRef.current) isPlaying ? audioElemRef.current.pause() : audioElemRef.current.play();
   }, [songPreview]);
 
+  function secondsToHumanReadableString(seconds: number) {
+    const sliceRange = seconds > 60 * 60 ? [11, 19] : [14, 19];
+
+    const time = new Date(seconds * 1000).toISOString().slice(...sliceRange);
+
+    if (seconds >= 60) return time.replace(/^[0:]+/, "");
+    return time;
+  }
+
   return (
     <div className={styles["requests__play-range"]}>
       {songPreview && (
@@ -73,7 +82,7 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
         style={`--thumb-width: ${(songMaxPlayDurationSeconds / songDuration) * 100}%`}
       />
 
-      <div className={styles["requests__play-btns"]}>
+      <div className={`${styles["requests__play-controller"]} ${styles["requests__play-btns"]}`}>
         <div className={styles["requests__play-btns-group"]}>
           <button className={styles["requests__play-btn"]} onClick={() => setIsPlaying((isPlaying) => !isPlaying)}>
             <i class={"fa-regular fa-" + (isPlaying ? "play" : "pause")}></i>
@@ -88,17 +97,17 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
           </button>
         </div>
       </div>
-      <div className={styles["requests__play-volume"]}>
+      <div className={`${styles["requests__play-controller"]} ${styles["requests__play-volume"]}`}>
         <label htmlFor="volume">Volume</label>
         <i className="fa-regular fa-volume"></i>
-        <input type="range" name="volume" id="volume" min={0} max={100} onChange={(e) => setVolume(e.target!.valueAsNumber / 100)} />
+        <input type="range" name="volume" id="volume" min={0} max={100} onChange={(e) => setVolume((e.target as HTMLInputElement).valueAsNumber / 100)} />
       </div>
-      <div className={styles["requests__play-time"]}>
+      <div className={`${styles["requests__play-controller"]} ${styles["requests__play-time"]}`}>
         <p className={styles["requests__play-text"]}>
-          {Math.round(playbackPos)} / {songDuration}
+          {secondsToHumanReadableString(playbackPos)} / {secondsToHumanReadableString(songDuration)}
         </p>
         <p className={styles["requests__play-text"]}>
-          Selection range: {Math.round(selectionRange)}-{Math.round(selectionRange + songMaxPlayDurationSeconds)}
+          Selection range: {secondsToHumanReadableString(selectionRange)}-{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}
         </p>
       </div>
     </div>
