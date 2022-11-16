@@ -34,7 +34,12 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
   }
 
   function updateSelctionRangePos(time: number) {
-    if (rangeRef) rangeRef.current!.value = (time + (time / songDuration) * songMaxPlayDurationSeconds).toString();
+    console.log(time);
+    console.log(time + (time / songDuration) * songMaxPlayDurationSeconds * 2);
+
+    if (rangeRef) rangeRef.current!.value = (time + (time / songDuration) * songMaxPlayDurationSeconds * (-0.0029 * songDuration + 2.3)).toString();
+    // C = AB - A
+    // currentSel * (songMaxPlayDurationSeconds / songDuration) - currentSel;
 
     setSelectionRange(time);
   }
