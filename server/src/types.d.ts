@@ -48,3 +48,9 @@ export interface TrackSourceInfo {
   mime_type: string;
   format: string;
 }
+
+export interface RequestData {
+  geniusId: string;
+  youtubeId: string;
+  playRange: number;
+}
