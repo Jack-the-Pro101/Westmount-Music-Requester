@@ -11,24 +11,6 @@
   display: flex;
 }
 
-.requests__list {
-  list-style-type: none;
-}
-
-.requests__item {
-  display: flex;
-  margin: 1em 0;
-}
-
-.requests__thumbnail {
-  max-width: 8em;
-  margin-right: 1em;
-}
-
-.requests__thumbnail img {
-  border-radius: 0.5em;
-}
-
 .requests__fieldset {
   border: none;
 }
@@ -167,6 +149,28 @@
   margin-left: auto;
   background-color: transparent;
   border: 1px solid var(--clr-neutral-400);
+  font-size: 3rem;
+  color: var(--clr-neutral-900);
+  padding: 0 1em;
+}
+
+.requests__list {
+  list-style-type: none;
+}
+
+.requests__item {
+  display: flex;
+  margin: 1em 0;
+}
+
+.requests__thumbnail {
+  max-width: 8em;
+  margin-right: 1em;
+}
+
+.requests__thumbnail img {
+  border-radius: 0.5em;
+  font-size: 1.75rem;
 }
 
 .requests__btns {

@@ -72,7 +72,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
               </div>
 
               <button className={styles["requests__select-btn"]} onClick={() => setSelectedTrack(track)}>
-                ✅
+                <i class="fa-regular fa-check"></i>
               </button>
             </li>
           ))}

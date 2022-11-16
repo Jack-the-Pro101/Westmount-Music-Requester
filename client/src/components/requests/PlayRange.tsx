@@ -4,7 +4,10 @@ import { TrackSourceInfo } from "../../types";
 import styles from "./Requests.module.css";
 
 export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSourceInfo; songDuration: number }) {
-  const songMaxPlayDurationSeconds = 60;
+  const accuracyConstant = 2;
+  const songMaxPlayDurationSeconds = 60 * accuracyConstant;
+
+  songDuration *= accuracyConstant;
 
   const [playbackPos, setPlaybackPos] = useState(0);
   const [selectionRange, setSelectionRange] = useState(0);
@@ -12,9 +15,10 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
   const [isPlaying, setIsPlaying] = useState(false);
 
   const audioElemRef = useRef<HTMLAudioElement>(null);
+  const rangeRef = useRef<HTMLInputElement>(null);
 
   function updatePlaybackPos(event: any) {
-    setPlaybackPos(event.target.currentTime);
+    setPlaybackPos(event.target.currentTime * accuracyConstant);
   }
 
   function updatePlaybackPosRange(event: TargetedEvent<HTMLInputElement, Event>): void;
@@ -23,10 +27,16 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
 
   function updatePlaybackPosRange(input: TargetedEvent<HTMLInputElement, Event> | number) {
     if (typeof input === "number") {
-      audioElemRef.current!.currentTime = input;
+      audioElemRef.current!.currentTime = input / accuracyConstant;
     } else {
-      audioElemRef.current!.currentTime = Number((input.target as HTMLInputElement).value);
+      audioElemRef.current!.currentTime = Number((input.target as HTMLInputElement).value) / accuracyConstant;
     }
+  }
+
+  function updateSelctionRangePos(time: number) {
+    if (rangeRef) rangeRef.current!.value = (time + (time / songDuration) * songMaxPlayDurationSeconds).toString();
+
+    setSelectionRange(time);
   }
 
   useEffect(() => {
@@ -38,6 +48,7 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
   }, [songPreview]);
 
   function secondsToHumanReadableString(seconds: number) {
+    seconds /= accuracyConstant;
     const sliceRange = seconds > 60 * 60 ? [11, 19] : [14, 19];
 
     const time = new Date(seconds * 1000).toISOString().slice(...sliceRange);
@@ -49,7 +60,7 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
   return (
     <div className={styles["requests__play-range"]}>
       {songPreview && (
-        <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPlaying(false)} ref={audioElemRef} volume={volume}>
+        <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPlaying(true)} ref={audioElemRef} volume={volume}>
           <source src={songPreview.url} type={songPreview.mime_type} />
         </audio>
       )}
@@ -74,6 +85,7 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
         className={`${styles["requests__play-range-input"]} ${styles["requests__play-range-input--duration"]}`}
         min={0}
         max={songDuration}
+        ref={rangeRef}
         onChange={(e) => {
           const currentSel = Number((e.target as HTMLInputElement).value);
 
@@ -84,16 +96,30 @@ export function PlayRange({ songPreview, songDuration }: { songPreview: TrackSou
 
       <div className={`${styles["requests__play-controller"]} ${styles["requests__play-btns"]}`}>
         <div className={styles["requests__play-btns-group"]}>
-          <button className={styles["requests__play-btn"]} onClick={() => setIsPlaying((isPlaying) => !isPlaying)}>
+          <button className={styles["requests__play-btn"]} onClick={() => setIsPlaying((isPlaying) => (isPlaying ? false : true))}>
             <i class={"fa-regular fa-" + (isPlaying ? "play" : "pause")}></i>
           </button>
         </div>
         <div className={styles["requests__play-btns-group"]}>
-          <button className={styles["requests__play-btn"]} onClick={() => updatePlaybackPosRange(selectionRange)}>
+          <button className={styles["requests__play-btn"]} onClick={() => updatePlaybackPosRange(selectionRange)} title="Jump to start of selected range">
             [
           </button>
-          <button className={styles["requests__play-btn"]} onClick={() => updatePlaybackPosRange(selectionRange + songMaxPlayDurationSeconds)}>
+          <button
+            className={styles["requests__play-btn"]}
+            onClick={() => updatePlaybackPosRange(selectionRange + songMaxPlayDurationSeconds)}
+            title="Jump to end of selected range"
+          >
             ]
+          </button>
+          <button className={styles["requests__play-btn"]} onClick={() => updateSelctionRangePos(playbackPos)} title="Set start of selected range to playhead">
+            {"{"}
+          </button>
+          <button
+            className={styles["requests__play-btn"]}
+            onClick={() => updateSelctionRangePos(playbackPos - songMaxPlayDurationSeconds)}
+            title="Set end of selected range to playhead"
+          >
+            {"}"}
           </button>
         </div>
       </div>
