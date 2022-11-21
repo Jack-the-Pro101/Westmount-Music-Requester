@@ -7,18 +7,17 @@ import { PlayRange } from "./PlayRange";
 export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) {
   const [isLoading, setIsLoading] = useState(false);
   const [trackResults, setTrackResults] = useState<YouTubeSong[]>([]);
-  const [selectedTrack, setSelectedTrack] = useState<YouTubeSong | {}>({});
+  const [selectedTrack, setSelectedTrack] = useState<YouTubeSong>();
   const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
   useEffect(() => {
-    setSelectedTrack({});
     setIsLoading(true);
 
     loadSongs();
-  }, [selectedCoreSong?.id]);
+  }, [selectedCoreSong]);
 
   useEffect(() => {
-    if (selectedTrack.id == null) return;
+    if (!selectedTrack) return;
     (async () => {
       const request = await fetch("/api/music/source?id=" + selectedTrack.id);
 
@@ -26,12 +25,10 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
         setSelectedTrackSource(await request.json());
       }
     })();
-  }, [selectedTrack.id]);
+  }, [selectedTrack]);
 
   async function loadSongs() {
     if (selectedCoreSong) {
-      if (Object.entries(selectedCoreSong).length === 0) return;
-
       const urlParams = new URLSearchParams();
       urlParams.append("songId", selectedCoreSong.id.toString());
 
@@ -48,6 +45,18 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
 
   async function submitRequest(e: Event) {
     e.preventDefault();
+
+    await fetch("/api/requests", {
+      method: "POST",
+      body: JSON.stringify({
+        geniusId: selectedCoreSong?.id,
+        youtubeId: selectedTrack?.id,
+        playRange: 0,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 
   return (
@@ -71,7 +80,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
                 <p className={styles.requests__channel}>{track.channel}</p>
               </div>
 
-              <button className={styles["requests__select-btn"]} onClick={() => setSelectedTrack(track)}>
+              <button className={styles["requests__select-btn"]} onClick={() => setSelectedTrack(track)} type="button">
                 <i class="fa-regular fa-check"></i>
               </button>
             </li>
@@ -80,14 +89,14 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
 
         <fieldset className={styles.requests__fieldset}>
           <h2 className={styles.requests__heading}>Select play range</h2>
-          <PlayRange songDuration={selectedTrack?.duration || 0} songPreview={selectedTrackSource} />
+          {selectedTrackSource && <PlayRange songDuration={selectedTrack?.duration || 0} songPreview={selectedTrackSource} />}
         </fieldset>
 
         <div className={styles.requests__btns}>
-          <button type="reset" disabled={Object.keys(selectedTrack).length === 0 ? false : true} className={styles.requests__btn}>
+          <button type="reset" disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? false : true} className={styles.requests__btn}>
             Cancel
           </button>
-          <button type="submit" disabled={Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
+          <button type="submit" disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
             Request
           </button>
         </div>

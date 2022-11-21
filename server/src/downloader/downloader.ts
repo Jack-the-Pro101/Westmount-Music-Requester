@@ -41,6 +41,18 @@ class Downloader {
     return songs.results;
   }
 
+  async getLyrics(id: string) {
+    if (!this.ready) throw new Error("Downloader not ready!");
+
+    try {
+      const lyrics = await this.yt.music.getLyrics(id);
+
+      return lyrics.description.text;
+    } catch {
+      return false;
+    }
+  }
+
   async getSource(id: string) {
     if (!this.ready) throw new Error("Downloader not ready!");
 

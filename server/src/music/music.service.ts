@@ -1,16 +1,56 @@
 import { Injectable } from "@nestjs/common";
-import { Hits, TrackSourceInfo, YouTubeSong } from "src/types";
+import { Hits, SpotifySearch, TrackSourceInfo, YouTubeSong } from "src/types";
 
 import downloader from "../downloader/downloader";
 
 @Injectable()
 export class MusicService {
+  private spotifyToken: string;
+
+  private async refreshSpotifyToken() {
+    const payload = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_SECRET}`, "utf-8").toString("base64");
+
+    const request = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      body: new URLSearchParams(
+        Object.entries({
+          grant_type: "client_credentials",
+        })
+      ).toString(),
+      headers: {
+        Authorization: "Basic " + payload,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    const data = await request.json();
+    this.spotifyToken = data.access_token;
+  }
   async search(query: string) {
     try {
-      const request = await fetch(`https://api.genius.com/search?q=${encodeURIComponent(query)}&access_token=${process.env.GENIUS_ACCESS_TOKEN}`);
-      const response = await request.json();
+      // const request = await fetch(`https://api.genius.com/search?q=${encodeURIComponent(query)}&access_token=${process.env.GENIUS_ACCESS_TOKEN}`);
 
-      const songs = (response.response?.hits || []) as Hits;
+      if (!this.spotifyToken) await this.refreshSpotifyToken();
+
+      const request = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track`, {
+        headers: {
+          Authorization: "Bearer " + this.spotifyToken,
+        },
+      });
+
+      if (!request.ok) {
+        const response = await request.json();
+
+        if (response.error.status === 401) {
+          await this.refreshSpotifyToken();
+          return await this.search(query);
+        }
+      }
+
+      const response = (await request.json()) as SpotifySearch;
+
+      // const songs = (response.response?.hits || []) as Hits;
+      const songs = response.tracks.items;
 
       return songs;
     } catch (e) {
