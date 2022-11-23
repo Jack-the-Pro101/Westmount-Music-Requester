@@ -1,21 +1,28 @@
 import { Injectable } from "@nestjs/common";
 
 import trackSchema from "../models/Track";
+import requestSchema from "src/models/Request";
+import userSchema from "src/models/User";
 
 import { google } from "googleapis";
 import downloader from "src/downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
+import { GoogleUser, GoogleUserInfo, RequestData } from "src/types";
+import mongoose from "mongoose";
 
 @Injectable()
 export class RequestService {
   constructor() {}
 
-  async scanLyrics(youtubeId: string) {
+  async scanLyrics(youtubeId: string, trackId: mongoose.Types.ObjectId): Promise<boolean> {
     try {
       const existingTrack = await trackSchema.findOne({ youtubeId });
 
-      if (existingTrack && existingTrack.explicit) return false;
+      if (existingTrack) {
+        if (existingTrack.explicit) return false;
+        return true;
+      }
 
       const lyrics = await downloader.getLyrics(youtubeId);
 
@@ -60,12 +67,22 @@ export class RequestService {
               return reject(err);
             }
 
-            console.log(response.data.attributeScores.TOXICITY.summaryScore.value);
-            console.log(response.data.attributeScores.PROFANITY.summaryScore.value);
-
             if (response.data.attributeScores.TOXICITY.summaryScore.value > 0.7 || response.data.attributeScores.PROFANITY.summaryScore.value > 0.7) {
-              return resolve(true);
+              resolve(true);
+
+              trackSchema
+                .create({
+                  _id: trackId,
+                  youtubeId,
+                  explicit: true,
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+
+              return;
             }
+
             resolve(false);
           });
         });
@@ -75,7 +92,38 @@ export class RequestService {
         }
       }
 
+      trackSchema
+        .create({
+          _id: trackId,
+          youtubeId,
+          explicit: false,
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+
       return true;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async createRequest(info: RequestData, user: GoogleUser, trackId: mongoose.Types.ObjectId) {
+    const userDoc =
+      (await userSchema.findOne({ email: user.user.email })) ||
+      (await userSchema.create({ email: user.user.email, name: `${user.user.firstName} ${user.user.lastName}` }));
+
+    await requestSchema.create({
+      spotifyId: info.spotifyId,
+      start: info.playRange,
+      track: trackId,
+      user: userDoc.id,
+    });
+  }
+
+  async updateRequest(trackId: mongoose.Types.ObjectId, data) {
+    try {
+      await requestSchema.findOneAndUpdate({ track: trackId }, data);
     } catch (err) {
       console.error(err);
     }

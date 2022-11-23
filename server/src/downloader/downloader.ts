@@ -28,12 +28,20 @@ class Downloader {
           }
         });
       }),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("FFMPEG installation check timed out!")), 5000)),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("FFMPEG installation check timed out!")), 10000)),
     ]) as Promise<void>;
+  }
+
+  async checkSession() {
+    if (this.yt.session.oauth.has_access_token_expired) {
+      await this.yt.session.oauth.refreshIfRequired();
+    }
   }
 
   async getInfo(query: string) {
     if (!this.ready) throw new Error("Downloader not ready!");
+    await this.checkSession();
+
     const songs = await this.yt.music.search(query, { type: "song" });
 
     songs.results.splice(5);
@@ -43,6 +51,7 @@ class Downloader {
 
   async getLyrics(id: string) {
     if (!this.ready) throw new Error("Downloader not ready!");
+    await this.checkSession();
 
     try {
       const lyrics = await this.yt.music.getLyrics(id);
@@ -55,6 +64,7 @@ class Downloader {
 
   async getSource(id: string) {
     if (!this.ready) throw new Error("Downloader not ready!");
+    await this.checkSession();
 
     const trackInfo = await this.yt.music.getInfo(id);
 

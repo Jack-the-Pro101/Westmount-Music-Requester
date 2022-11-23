@@ -49,7 +49,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
     await fetch("/api/requests", {
       method: "POST",
       body: JSON.stringify({
-        geniusId: selectedCoreSong?.id,
+        spotifyId: selectedCoreSong?.id,
         youtubeId: selectedTrack?.id,
         playRange: 0,
       }),

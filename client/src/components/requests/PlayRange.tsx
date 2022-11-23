@@ -150,7 +150,15 @@ export function PlayRange({ songPreview }: { songPreview: TrackSourceInfo; songD
       <div className={`${styles["requests__play-controller"]} ${styles["requests__play-volume"]}`}>
         <label htmlFor="volume">Volume</label>
         <i className="fa-regular fa-volume"></i>
-        <input type="range" name="volume" id="volume" min={0} max={100} onChange={(e) => setVolume((e.target as HTMLInputElement).valueAsNumber / 100)} />
+        <input
+          type="range"
+          name="volume"
+          id="volume"
+          min={0}
+          max={100}
+          value={volume * 100}
+          onChange={(e) => setVolume((e.target as HTMLInputElement).valueAsNumber / 100)}
+        />
       </div>
       <div className={`${styles["requests__play-controller"]} ${styles["requests__play-time"]}`}>
         <p className={styles["requests__play-text"]}>

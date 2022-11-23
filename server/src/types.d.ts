@@ -50,7 +50,7 @@ export interface TrackSourceInfo {
 }
 
 export interface RequestData {
-  geniusId: string;
+  spotifyId: string;
   youtubeId: string;
   playRange: number;
 }

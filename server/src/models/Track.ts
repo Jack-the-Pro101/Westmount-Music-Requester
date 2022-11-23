@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export default mongoose.model(
   "track",
   new mongoose.Schema({
-    geniusId: {
+    youtubeId: {
       type: String,
       required: true,
     },
