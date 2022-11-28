@@ -30,6 +30,11 @@ export interface YouTubeSong {
   duration: number;
 }
 
+export interface InternalUser {
+  username: string;
+  password: string;
+}
+
 export interface GoogleUserInfo {
   email: string;
   firstName: string;

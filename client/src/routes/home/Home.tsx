@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import HomeSearch from "../components/search/HomeSearch";
-import { Requests } from "../components/requests/Requests";
+import HomeSearch from "../../components/search/HomeSearch";
+import { Requests } from "../../components/requests/Requests";
 
 import styles from "./Home.module.css";
-import { CoreSong } from "../types";
+import { CoreSong } from "../../types";
 
 export function Home() {
   const [selectedCoreSong, setSelectedCoreSong] = useState<CoreSong>();

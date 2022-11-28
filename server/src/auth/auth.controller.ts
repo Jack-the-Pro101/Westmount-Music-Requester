@@ -47,10 +47,10 @@ export class AuthController {
           res.redirect("/");
         }
       } catch (err) {
-        res.redirect("/api/auth/error?code=JWT");
+        res.redirect("/error?code=jwt");
       }
     } else {
-      res.redirect("/api/auth/error?code=");
+      res.redirect("/error?code=auth");
     }
   }
 }

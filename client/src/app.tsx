@@ -1,8 +1,9 @@
 import { useEffect, useState } from "preact/hooks";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useSearchParams } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
-import { Home } from "./routes/Home";
+import { Home } from "./routes/home/Home";
+import { Error } from "./routes/error/Error";
 
 import { GoogleUser } from "./types";
 
@@ -27,12 +28,16 @@ export function App() {
     })();
   }, []);
 
+  // const [searchParams] = useSearchParams();
+  // const errorType = searchParams.get("code");
+
   return (
     <>
       <Navbar spacer={true} user={user} />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          {/* <Route path="/error" element={<Error errorType={errorType} CustomRender={null} />} /> */}
         </Routes>
       </BrowserRouter>
       <Footer />

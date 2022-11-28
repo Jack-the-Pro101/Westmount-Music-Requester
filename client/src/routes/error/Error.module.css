@@ -1,0 +1,17 @@
+.error {
+  padding: 2em;
+  min-height: 50vh;
+}
+
+.error__header {
+  text-align: center;
+}
+
+.error__title {
+  margin-bottom: 0.5em;
+}
+
+.error__msg {
+  max-width: 65ch;
+  margin: 0 auto;
+}

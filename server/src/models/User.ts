@@ -5,7 +5,23 @@ export default mongoose.model(
   new mongoose.Schema({
     email: {
       type: String,
-      required: true,
+      required: false,
+    },
+
+    username: {
+      type: String,
+      required: false,
+    },
+
+    type: {
+      type: String,
+      enum: ["GOOGLE", "INTERNAL"],
+      default: "GOOGLE",
+    },
+
+    permissions: {
+      type: Number,
+      default: 2,
     },
 
     name: {
