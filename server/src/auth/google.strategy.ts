@@ -1,10 +1,11 @@
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, VerifyCallback } from "passport-google-oauth2";
 import { Injectable } from "@nestjs/common";
+import { UsersService } from "./users.service";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
-  constructor() {
+  constructor(private readonly usersService: UsersService) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -14,7 +15,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
   }
   async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
     const { name, emails, photos } = profile;
-    const user = {
+
+    const userData = {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
@@ -23,7 +25,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       refreshToken,
     };
 
-    if (!user.email.endsWith("@hwdsb.on.ca")) return done(false, null, { message: "domainEmailInvalid" });
+    if (!userData.email.endsWith("@hwdsb.on.ca")) return done(false, null, { message: "domainEmailInvalid" });
+
+    const user = await this.usersService.getOrCreateOne(userData.email, false, {
+      email: userData.email,
+      name: `${userData.firstName} ${userData.lastName}`,
+    });
 
     done(null, user);
   }

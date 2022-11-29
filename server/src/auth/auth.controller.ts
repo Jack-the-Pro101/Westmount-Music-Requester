@@ -1,10 +1,10 @@
 import { GoogleOAuthGuard } from "./google-oauth.guard";
-import { Controller, Delete, Get, Request, Res, UseGuards } from "@nestjs/common";
+import { Controller, Delete, Get, Post, Request, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 
-import { sign, verify } from "jsonwebtoken";
-
 import { GoogleUser } from "src/types";
+import { LocalAuthGuard } from "./local-auth.guard";
+import { AuthenticatedGuard } from "./authenticated.guard";
 
 @Controller("/api/auth")
 export class AuthController {
@@ -15,21 +15,17 @@ export class AuthController {
   async googleAuth(@Request() req) {}
 
   @Delete()
-  @UseGuards(GoogleOAuthGuard)
+  @UseGuards(AuthenticatedGuard)
   logout(@Request() req) {}
 
   @Get("session")
   getSession(@Request() req) {
-    const jwtToken = req.cookies["auth_token"];
-
-    if (!jwtToken) return false;
-
-    try {
-      return verify(jwtToken, process.env.JWT_SECRET);
-    } catch (err) {
-      return false;
-    }
+    console.log(req.user);
   }
+
+  @UseGuards(LocalAuthGuard)
+  @Post("login")
+  login(@Request() req) {}
 
   @Get("google-redirect")
   @UseGuards(GoogleOAuthGuard)
@@ -37,17 +33,10 @@ export class AuthController {
     const user: GoogleUser | false = this.authService.googleLogin(req);
 
     if (user) {
-      try {
-        const jwt = sign(user, process.env.JWT_SECRET);
-
-        res.cookie("auth_token", jwt);
-        if (process.env.NODE_ENV !== "production") {
-          res.redirect("http://localhost:5173");
-        } else {
-          res.redirect("/");
-        }
-      } catch (err) {
-        res.redirect("/error?code=jwt");
+      if (process.env.NODE_ENV !== "production") {
+        res.redirect("http://localhost:5173");
+      } else {
+        res.redirect("/");
       }
     } else {
       res.redirect("/error?code=auth");

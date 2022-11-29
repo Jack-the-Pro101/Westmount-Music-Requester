@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, useSearchParams } from "react-router-dom"
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { Home } from "./routes/home/Home";
+import { Signin } from "./routes/signin/Signin";
 import { Error } from "./routes/error/Error";
 
 import { GoogleUser } from "./types";
@@ -37,6 +38,7 @@ export function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/signin" element={<Signin />} />
           {/* <Route path="/error" element={<Error errorType={errorType} CustomRender={null} />} /> */}
         </Routes>
       </BrowserRouter>

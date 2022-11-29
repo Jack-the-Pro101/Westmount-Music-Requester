@@ -13,6 +13,11 @@ export default mongoose.model(
       required: false,
     },
 
+    password: {
+      type: String,
+      required: false,
+    },
+
     type: {
       type: String,
       enum: ["GOOGLE", "INTERNAL"],

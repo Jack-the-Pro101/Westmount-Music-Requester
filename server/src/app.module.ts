@@ -10,10 +10,10 @@ import { APP_GUARD } from "@nestjs/core";
   imports: [ConfigModule.forRoot(), MusicModule, AuthModule, RequestModule],
   controllers: [],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
   ],
 })
 export class AppModule {}

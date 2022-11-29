@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ExecutionContext, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -8,5 +8,13 @@ export class GoogleOAuthGuard extends AuthGuard("google") {
     super({
       accessType: "offline",
     });
+  }
+
+  async canActivate(context: ExecutionContext) {
+    const result = (await super.canActivate(context)) as boolean;
+    const request = context.switchToHttp().getRequest();
+
+    await super.logIn(request);
+    return result;
   }
 }

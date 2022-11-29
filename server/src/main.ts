@@ -9,9 +9,14 @@ import Users from "./models/User";
 
 import * as bcrypt from "bcrypt";
 
-import passport from "passport";
-import session from "express-session";
-import { AuthSupplier } from "src/middleware/auth";
+import * as passport from "passport";
+import * as session from "express-session";
+import * as connectMongodbSession from "connect-mongodb-session";
+const MongoDBStore = connectMongodbSession(session);
+const store = new MongoDBStore({
+  uri: process.env.MONGODB_URI,
+  collection: "sessions",
+});
 
 import * as cookieParser from "cookie-parser";
 
@@ -55,9 +60,11 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(
     session({
+      store: store,
       secret: process.env.JWT_SECRET,
       resave: false,
       saveUninitialized: false,
+      name: "WMR_SID",
     })
   );
   app.use(passport.initialize());

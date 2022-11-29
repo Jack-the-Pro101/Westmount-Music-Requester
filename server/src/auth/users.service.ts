@@ -13,4 +13,14 @@ export class UsersService {
       console.error(err);
     }
   }
+
+  async getOrCreateOne(usernameOrEmail: string, internal = false, data: any): Promise<any> {
+    try {
+      const user = await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail });
+      if (user == null) return await Users.create(data);
+      return user;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }
