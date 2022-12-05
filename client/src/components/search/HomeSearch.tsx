@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 
-import { CoreSong, Hits, SpotifySearch, SpotifyTrack } from "../../types";
+import { CoreSong, SpotifySearch, SpotifyTrack } from "../../types";
 import { SearchDropdown } from "./SearchDropdown";
 
 import styles from "./HomeSearch.module.css";
@@ -48,7 +48,7 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
   return (
     <div className={styles.search}>
       <form action="#" className={styles.search__form} onSubmit={handleSubmit}>
-        <div className={styles.search__container}>
+        <div className={styles.search__container + (songs.length === 0 ? "" : `${" " + styles["search__container--active"]}`)}>
           <div className={styles.search__bar}>
             <input
               type="text"
@@ -65,11 +65,12 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
             </label>
           </div>
 
-          <button type="submit" className={styles.search__btn}>
-            Search
+          <button type="submit" className={styles.search__btn} title="Search">
+            <i class="fa-regular fa-magnifying-glass"></i>
           </button>
         </div>
         <SearchDropdown songs={songs} onSelect={songSelected} isLoading={isLoading} />
+        {/* <div className={styles["search__dropdown-filler"]}></div> */}
       </form>
     </div>
   );

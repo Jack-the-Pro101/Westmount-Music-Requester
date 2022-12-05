@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { TrackSourceInfo } from "../../types";
 import styles from "./Requests.module.css";
 
-export function PlayRange({ songPreview }: { songPreview: TrackSourceInfo; songDuration: number }) {
+export function PlayRange({ songPreview }: { songPreview: TrackSourceInfo | undefined; songDuration: number }) {
   const accuracyConstant = 2;
-  const songMaxPlayDurationSeconds = 60 * accuracyConstant;
+  const songMaxPlayDurationSeconds = 90 * accuracyConstant;
 
   const [playbackPos, setPlaybackPos] = useState(0);
   const [selectionRange, setSelectionRange] = useState(0);
@@ -41,15 +41,18 @@ export function PlayRange({ songPreview }: { songPreview: TrackSourceInfo; songD
   }
 
   useEffect(() => {
+    if (songPreview == null) return;
     if (audioElemRef.current) isPlaying ? audioElemRef.current.pause() : audioElemRef.current.play();
   }, [isPlaying]);
 
   useEffect(() => {
+    if (songPreview == null) return;
     if (audioElemRef.current) isPlaying ? audioElemRef.current.pause() : audioElemRef.current.play();
   }, [songPreview]);
 
   useEffect(() => {
     const handler = () => {
+      if (songPreview == null) return;
       setDuration(audioElemRef.current ? audioElemRef.current.duration * accuracyConstant : 0);
     };
     if (audioElemRef) {
@@ -57,7 +60,7 @@ export function PlayRange({ songPreview }: { songPreview: TrackSourceInfo; songD
     }
 
     return () => audioElemRef?.current?.removeEventListener("loadedmetadata", handler);
-  }, [audioElemRef]);
+  }, [songPreview, audioElemRef]);
 
   function secondsToHumanReadableString(seconds: number) {
     seconds /= accuracyConstant;

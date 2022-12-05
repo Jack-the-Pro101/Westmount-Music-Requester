@@ -2,27 +2,123 @@ a {
   text-decoration: none;
 }
 
+hr {
+  margin-bottom: 1em;
+  border: none;
+  height: 1px;
+  display: block;
+  background-color: hsl(var(--clr-neutral-500));
+}
+
 .signin {
   min-height: 100vh;
-  padding: 1em;
+  padding: 1em 1.5em;
   display: flex;
   align-items: center;
-  margin-left: 15%;
+  justify-content: center;
+  background-image: url("/images/HWDSB.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  position: relative;
+  isolation: isolate;
+}
+
+.signin::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+  animation: fadeIn 1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .signin__heading {
   text-align: center;
   font-size: 2.75rem;
-  color: var(--clr-neutral-800);
+  color: hsl(var(--clr-neutral-800));
   margin-bottom: 1em;
 }
 
+.signin__subheading {
+  margin-bottom: 1em;
+  text-align: center;
+  font-size: 2.5rem;
+  color: hsl(var(--clr-neutral-800));
+}
+
 .signin__form {
-  background-color: var(--clr-neutral-200);
+  background-color: hsl(var(--clr-neutral-200));
+  margin-left: 25%;
   padding: 1em;
   border-radius: 8px;
   width: 100%;
   max-width: 400px;
+  box-shadow: 0 4px 32px 2px rgba(0, 0, 0, 0.7);
+}
+
+.signin__form label {
+  padding-bottom: 0.25em;
+  color: hsl(var(--clr-neutral-700));
+}
+
+.signin__form input {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid hsl(var(--clr-neutral-500));
+  padding: 0.5em 0.75em;
+  font-size: 2rem;
+  color: hsl(var(--clr-neutral-900));
+  border-radius: 100vmax;
+  margin-bottom: 0.75em;
+}
+
+.signin__form input:focus {
+  outline: none;
+}
+
+.signin__form input[type="checkbox"] {
+  margin: 0;
+  margin-left: 1em;
+  width: 1.5em;
+  height: 1.5em;
+  accent-color: hsl(var(--clr-primary-500));
+  border: none;
+  border-radius: 2px;
+}
+
+.signin__form input[type="checkbox"]:focus {
+  outline-offset: 2px;
+  outline: 2px solid hsl(var(--clr-neutral-900));
+}
+
+.signin__form button[type="submit"] {
+  background-color: hsl(var(--clr-neutral-300));
+  color: hsl(var(--clr-neutral-900));
+  margin-top: 2em;
+  font-size: 2rem;
+  font-weight: 600;
+  border-radius: 4px;
+  border: none;
+  padding: 1em 0.5em;
+}
+
+.signin__fieldset-section {
+  display: flex;
+  align-items: center;
+  margin: 1em 0;
 }
 
 .signin__fieldset {
@@ -39,19 +135,19 @@ a {
 }
 
 .signin__option-btn {
-  background-color: transparent;
+  background-color: hsl(var(--clr-neutral-300));
   display: block;
   width: 100%;
-  border: 2px solid var(--clr-neutral-300);
+  border: 2px solid hsl(var(--clr-neutral-300));
   border-radius: 4px;
-  color: var(--clr-neutral-900);
-  padding: 0.5em 0.75em;
+  color: hsl(var(--clr-neutral-900));
+  padding: 1em 0.5em;
   font-size: 2.25rem;
   cursor: pointer;
 }
 
 @media screen AND (max-width: 650px) {
-  .signin {
+  .signin__form {
     margin-left: 0;
     justify-content: center;
   }

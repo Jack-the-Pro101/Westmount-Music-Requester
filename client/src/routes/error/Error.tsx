@@ -1,15 +1,24 @@
+import { useSearchParams } from "react-router-dom";
 import styles from "./Error.module.css";
 
-export function Error({ errorType, CustomRender }: { errorType: string | null; CustomRender: any }) {
+export function Error() {
   let errorTitle;
   let errorMsg;
+
+  const [searchParams] = useSearchParams();
+  const errorType = searchParams.get("code");
 
   switch (errorType) {
     case "":
       break;
     default:
-      errorTitle = "Unexpected Error";
-      errorMsg = "An unexpected error has occured. Apologies for any inconveiences.";
+      if (errorType == null) {
+        errorTitle = "404 Not Found";
+        errorMsg = "The page you are trying to access does not exist.";
+      } else {
+        errorTitle = "Unexpected Error";
+        errorMsg = "An unexpected error has occured. Apologies for any inconveiences.";
+      }
   }
 
   return (
@@ -18,7 +27,6 @@ export function Error({ errorType, CustomRender }: { errorType: string | null; C
         <h1 className={styles.error__title}>{errorTitle}</h1>
         <p className={styles.error__msg}>{errorMsg}</p>
       </header>
-      {CustomRender && <CustomRender />}
     </main>
   );
 }

@@ -31,7 +31,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "youtubei.js": "^2.3.3"
+    "youtubei.js": "^2.5.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Hits, SpotifySearch, TrackSourceInfo, YouTubeSong } from "src/types";
+import { SpotifySearch, TrackSourceInfo, YouTubeSong } from "src/types";
 
 import downloader from "../downloader/downloader";
 
@@ -28,8 +28,6 @@ export class MusicService {
   }
   async search(query: string) {
     try {
-      // const request = await fetch(`https://api.genius.com/search?q=${encodeURIComponent(query)}&access_token=${process.env.GENIUS_ACCESS_TOKEN}`);
-
       if (!this.spotifyToken) await this.refreshSpotifyToken();
 
       const request = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track`, {
@@ -49,7 +47,6 @@ export class MusicService {
 
       const response = (await request.json()) as SpotifySearch;
 
-      // const songs = (response.response?.hits || []) as Hits;
       const songs = response.tracks.items;
 
       return songs;
@@ -65,15 +62,14 @@ export class MusicService {
 
   async getInfo(query: string): Promise<YouTubeSong[]> {
     const info = await downloader.getInfo(query);
-    return info
-      .filter((x) => x.artists && x.artists.length > 0)
-      .map((song) => ({
-        id: song.id,
-        title: song.title,
-        thumbnail: song.thumbnails[0].url,
-        channel: song.artists![0].name,
-        url: "https://www.youtube.com/watch?v=" + song.id,
-        duration: song.duration.seconds,
-      }));
+
+    return info.map((song) => ({
+      id: song.id,
+      title: song.title,
+      thumbnail: song.thumbnails[0].url,
+      channel: song.artists[0]?.name || "[YT MUSIC - UNKNOWN]",
+      url: "https://www.youtube.com/watch?v=" + song.id,
+      duration: song.duration.seconds,
+    }));
   }
 }

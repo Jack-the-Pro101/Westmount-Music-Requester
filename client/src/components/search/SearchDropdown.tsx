@@ -1,4 +1,4 @@
-import { Hit, Hits, Song, SpotifyTrack } from "../../types";
+import { SpotifyTrack } from "../../types";
 import styles from "./HomeSearch.module.css";
 
 export function SearchDropdown({ songs, onSelect, isLoading }: { songs: SpotifyTrack[]; onSelect: any; isLoading: boolean }) {
@@ -26,7 +26,9 @@ export function SearchDropdown({ songs, onSelect, isLoading }: { songs: SpotifyT
               </div>
               <button
                 className={styles["search__dropdown-select-btn"]}
-                onClick={(e) => onSelect({ title: song.name, artist: song.artists[0].name, id: song.id, url: song.external_urls.spotify })}
+                onClick={(e) =>
+                  onSelect({ title: song.name, artist: song.artists[0].name, id: song.id, url: song.external_urls.spotify, coverUrl: song.album.images[0].url })
+                }
               >
                 Select
               </button>

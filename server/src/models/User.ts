@@ -18,6 +18,11 @@ export default mongoose.model(
       required: false,
     },
 
+    avatar: {
+      type: String,
+      required: false,
+    },
+
     type: {
       type: String,
       enum: ["GOOGLE", "INTERNAL"],

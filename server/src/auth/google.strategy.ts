@@ -13,6 +13,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       scope: ["email", "profile"],
     });
   }
+
   async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
     const { name, emails, photos } = profile;
 
@@ -25,13 +26,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       refreshToken,
     };
 
-    if (!userData.email.endsWith("@hwdsb.on.ca")) return done(false, null, { message: "domainEmailInvalid" });
+    if (!userData.email.endsWith("@hwdsb.on.ca")) return done(true, null, { message: "domainEmailInvalid" });
 
     const user = await this.usersService.getOrCreateOne(userData.email, false, {
       email: userData.email,
+      avatar: userData.picture,
       name: `${userData.firstName} ${userData.lastName}`,
     });
 
-    done(null, user);
+    return done(null, user);
   }
 }

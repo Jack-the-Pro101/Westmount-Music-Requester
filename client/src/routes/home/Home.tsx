@@ -11,13 +11,19 @@ export function Home() {
 
   return (
     <>
-      <header className={styles.header}>
-        <h1 className={styles.header__title}>Westmount Music Requester</h1>
-      </header>
-
-      <main className={styles.main}>
-        <HomeSearch setSelectedCoreSong={setSelectedCoreSong} />
-        <Requests selectedCoreSong={selectedCoreSong} />
+      <main className={styles.main} style={`--cover-img: ${selectedCoreSong != null ? `url("${selectedCoreSong.coverUrl}")` : ""}`}>
+        <div className={styles.main__searcher}>
+          <header className={styles.header}>
+            <h1 className={styles.header__title}>
+              <span className={styles.header__gradient}>Westmount</span>
+              <wbr /> Music Requester
+            </h1>
+          </header>
+          <HomeSearch setSelectedCoreSong={setSelectedCoreSong} />
+        </div>
+        <div className={styles.main__requester}>
+          <Requests selectedCoreSong={selectedCoreSong} />
+        </div>
       </main>
     </>
   );

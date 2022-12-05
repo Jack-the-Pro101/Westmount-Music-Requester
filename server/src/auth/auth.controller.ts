@@ -14,13 +14,32 @@ export class AuthController {
   @UseGuards(GoogleOAuthGuard)
   async googleAuth(@Request() req) {}
 
-  @Delete()
+  @Delete("logout")
   @UseGuards(AuthenticatedGuard)
-  logout(@Request() req) {}
+  logout(@Request() req) {
+    req.logout(function (err) {
+      if (err) {
+        console.log(err);
+
+        return false;
+      }
+      return true;
+    });
+  }
 
   @Get("session")
+  @UseGuards(AuthenticatedGuard)
   getSession(@Request() req) {
-    console.log(req.user);
+    const isGoogleUser = req.user.type === "GOOGLE";
+
+    return {
+      id: req.user.id,
+      email: isGoogleUser ? req.user.email : null,
+      name: req.user.name,
+      avatar: isGoogleUser ? req.user.avatar : null,
+      type: req.user.type,
+      permissions: req.user.permissions,
+    };
   }
 
   @UseGuards(LocalAuthGuard)
@@ -30,7 +49,7 @@ export class AuthController {
   @Get("google-redirect")
   @UseGuards(GoogleOAuthGuard)
   googleAuthRedirect(@Request() req, @Res() res) {
-    const user: GoogleUser | false = this.authService.googleLogin(req);
+    const user: any | false = this.authService.googleLogin(req);
 
     if (user) {
       if (process.env.NODE_ENV !== "production") {
@@ -39,7 +58,11 @@ export class AuthController {
         res.redirect("/");
       }
     } else {
-      res.redirect("/error?code=auth");
+      if (process.env.NODE_ENV !== "production") {
+        res.redirect("http://localhost:5173/error?code=auth");
+      } else {
+        res.redirect("/error?code=auth");
+      }
     }
   }
 }

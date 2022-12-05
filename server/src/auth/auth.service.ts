@@ -12,9 +12,7 @@ export class AuthService {
       return false;
     }
 
-    return {
-      user: req.user,
-    };
+    return req.user;
   }
 
   async validateUser(username: string, password: string): Promise<InternalUser | null | false> {

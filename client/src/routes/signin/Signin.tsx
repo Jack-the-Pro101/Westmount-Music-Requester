@@ -7,6 +7,7 @@ export function Signin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  let errorMsg = "";
   async function handleSignin(e: Event) {
     e.preventDefault();
 
@@ -20,6 +21,18 @@ export function Signin() {
         password,
       }),
     });
+
+    if (request.ok) {
+      window.location.replace("/");
+    } else {
+      switch (request.status) {
+        case 401:
+          errorMsg = "Username or password invalid.";
+          break;
+        default:
+          errorMsg = `Unexpected error ${request.status} (${request.statusText})!`;
+      }
+    }
   }
 
   return (
@@ -28,29 +41,36 @@ export function Signin() {
         <h1 className={styles.signin__heading}>Sign In</h1>
 
         <fieldset className={styles.signin__fieldset}>
-          <a href="/api/auth">
+          <a href="/api/auth" tabIndex={-1}>
             <button className={styles["signin__option-btn"]} type="button">
               Sign in with Google
             </button>
           </a>
         </fieldset>
-        <p className={styles.signin__description}>Use your HWDSB account and sign in with Google.</p>
+        <p className={styles.signin__description}>Use your HWDSB account to sign in with Google.</p>
 
-        <fieldset className={styles.signin__fieldset}>
-          <label htmlFor="is-admin">Admin login?</label>
-          <input type="checkbox" name="is-admin" id="is-admin" onChange={() => setAdminSigninShown(!adminSigninShown)} checked={adminSigninShown} />
-        </fieldset>
+        <div style="display: flex; flex-direction: column">
+          <fieldset className={styles.signin__fieldset} style="order: 2">
+            <div className={styles["signin__fieldset-section"]}>
+              <label htmlFor="is-admin">Admin login?</label>
+              <input type="checkbox" name="is-admin" id="is-admin" onChange={() => setAdminSigninShown(!adminSigninShown)} checked={adminSigninShown} />
+            </div>
+          </fieldset>
+          <fieldset className={styles.signin__fieldset + ` ${adminSigninShown ? "" : styles.hidden}`} style="order: 1">
+            <hr />
 
-        <fieldset className={styles.signin__fieldset + ` ${adminSigninShown ? "" : styles.hidden}`}>
-          <h2 className={styles.signin__subheading}>Admin Sign In</h2>
+            <h2 className={styles.signin__subheading}>Admin Sign In</h2>
 
-          <label htmlFor="username">Username</label>
-          <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
-          <label htmlFor="password">Password</label>
-          <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <label htmlFor="username">Username</label>
+            <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername(e.target.value)} maxLength={100} required />
+            <label htmlFor="password">Password</label>
+            <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={200} required />
 
-          <button type="submit">Sign In</button>
-        </fieldset>
+            <p className={styles.signin__error}>{errorMsg}</p>
+
+            <button type="submit">Sign In</button>
+          </fieldset>
+        </div>
       </form>
     </main>
   );

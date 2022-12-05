@@ -11,22 +11,47 @@ import * as profaneWords from "./profanity_words.json";
 import { GoogleUser, GoogleUserInfo, RequestData } from "src/types";
 import mongoose from "mongoose";
 
-@Injectable()
-export class RequestService {
+class ScanBuffer {
+  private static texts: any[] = [];
+  private static ticker;
+
   constructor() {}
 
-  async scanLyrics(youtubeId: string, trackId: mongoose.Types.ObjectId): Promise<boolean> {
+  static init() {
+    ScanBuffer.ticker = setInterval(() => {
+      if (ScanBuffer.texts.length === 0) return;
+
+      const resolver = ScanBuffer.texts.shift();
+
+      resolver();
+    }, 1000);
+  }
+
+  static async wait() {
+    await new Promise((resolver) => {
+      this.texts.push(resolver);
+    });
+  }
+}
+
+@Injectable()
+export class RequestService {
+  constructor() {
+    ScanBuffer.init();
+  }
+
+  async scanLyrics(youtubeId: string, trackId: mongoose.Types.ObjectId): Promise<boolean | null> {
     try {
       const existingTrack = await trackSchema.findOne({ youtubeId });
 
       if (existingTrack) {
-        if (existingTrack.explicit) return false;
-        return true;
+        if (existingTrack.explicit == null) return null;
+        return !existingTrack.explicit;
       }
 
       const lyrics = await downloader.getLyrics(youtubeId);
 
-      if (!lyrics) return true;
+      if (!lyrics) return null;
 
       const possibleProfaneLines = [];
 
@@ -58,6 +83,8 @@ export class RequestService {
             PROFANITY: {},
           },
         };
+
+        await ScanBuffer.wait();
 
         const isProfane = await new Promise((resolve, reject) => {
           // @ts-expect-error
@@ -108,17 +135,28 @@ export class RequestService {
     }
   }
 
-  async createRequest(info: RequestData, user: GoogleUser, trackId: mongoose.Types.ObjectId) {
-    const userDoc =
-      (await userSchema.findOne({ email: user.user.email })) ||
-      (await userSchema.create({ email: user.user.email, name: `${user.user.firstName} ${user.user.lastName}` }));
+  async getRequests() {
+    return await requestSchema.find({});
+  }
 
-    await requestSchema.create({
-      spotifyId: info.spotifyId,
-      start: info.playRange,
-      track: trackId,
-      user: userDoc.id,
-    });
+  async createRequest(info: RequestData, user: any, trackId: mongoose.Types.ObjectId): Promise<boolean> {
+    try {
+      const userDoc = await userSchema.findOne(user.type === "GOOGLE" ? { email: user.email } : { username: user.username });
+
+      if (userDoc == null) return false;
+
+      await requestSchema.create({
+        spotifyId: info.spotifyId,
+        start: info.playRange,
+        track: trackId,
+        user: userDoc.id,
+      });
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
   }
 
   async updateRequest(trackId: mongoose.Types.ObjectId, data) {

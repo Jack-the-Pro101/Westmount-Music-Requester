@@ -6,14 +6,17 @@ import { PlayRange } from "./PlayRange";
 
 export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [modalShown, setModalShown] = useState(false);
   const [trackResults, setTrackResults] = useState<YouTubeSong[]>([]);
   const [selectedTrack, setSelectedTrack] = useState<YouTubeSong>();
   const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
   useEffect(() => {
-    setIsLoading(true);
+    if (selectedCoreSong) {
+      setIsLoading(true);
 
-    loadSongs();
+      loadSongs();
+    }
   }, [selectedCoreSong]);
 
   useEffect(() => {
@@ -28,18 +31,17 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
   }, [selectedTrack]);
 
   async function loadSongs() {
-    if (selectedCoreSong) {
-      const urlParams = new URLSearchParams();
-      urlParams.append("songId", selectedCoreSong.id.toString());
+    const urlParams = new URLSearchParams();
+    urlParams.append("songId", selectedCoreSong!.id.toString());
 
-      const request = await fetch("/api/music/info?song=" + selectedCoreSong.artist + " " + selectedCoreSong.title);
+    const request = await fetch("/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title);
 
-      if (request.ok) {
-        const response = (await request.json()) as YouTubeSong[];
-        setTrackResults(response);
+    if (request.ok) {
+      const response = (await request.json()) as YouTubeSong[];
+      if (response.length > 0) setSelectedTrack(response[0]);
+      setTrackResults(response);
 
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   }
 
@@ -64,36 +66,96 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
       <form action="#" method="post" className={styles.requests__form} onSubmit={(e) => submitRequest(e)}>
         <h2 className={styles.requests__heading}>Submit request</h2>
 
-        <p>{selectedCoreSong?.title}</p>
-        <p>{selectedCoreSong?.artist}</p>
+        {selectedCoreSong != null && (
+          <p className={styles.requests__subtitle}>
+            {isLoading ? (
+              "Loading..."
+            ) : (
+              <>
+                Found {trackResults.length} matching results for "{selectedCoreSong?.artist} - {selectedCoreSong?.title}" from{" "}
+                <a href="https://music.youtube.com/" target="_blank" rel="noopener noreferrer">
+                  YouTube music
+                </a>
+              </>
+            )}
+          </p>
+        )}
 
-        <ul className={styles.requests__list}>
-          {trackResults.map((track) => (
-            <li className={styles.requests__item} key={track.id}>
+        <button
+          className={styles["requests__dropdown-btn"]}
+          disabled={selectedTrack == null}
+          onClick={() => setModalShown(true)}
+          type="button"
+          title="Show music sources modal"
+        >
+          {(!selectedCoreSong || isLoading) && (
+            <div className={styles.requests__load}>
+              {!isLoading ? <p>No track selected from search</p> : <img src="/images/loading.svg" alt="Loading" className={styles["requests__load-img"]} />}
+            </div>
+          )}
+          {selectedTrack && !isLoading && (
+            <>
               <div className={styles.requests__thumbnail}>
-                <a href={track.url} target="_blank" rel="noopener noreferrer">
-                  <img src={track.thumbnail} alt={track.title + "'s thumbnail"} className={styles["requests__thumbnail-image"]} />
+                <a href={selectedTrack.url} target="_blank" rel="noopener noreferrer">
+                  <img src={selectedTrack.thumbnail} alt={selectedTrack.title + "'s thumbnail"} className={styles["requests__thumbnail-image"]} />
                 </a>
               </div>
-              <div className={styles.requests__info}>
-                <h4 className={styles.requests__title}>{track.title}</h4>
-                <p className={styles.requests__channel}>{track.channel}</p>
+              <div className={styles["requests__dropdown-info"]}>
+                <h4 className={styles.requests__title}>{selectedTrack.title}</h4>
+                <p className={styles.requests__channel}>{selectedTrack.channel}</p>
               </div>
+              <div className={styles["requests__dropdown-icon"]}>
+                <i class="fa-solid fa-caret-down"></i>
+              </div>
+            </>
+          )}
+        </button>
 
-              <button className={styles["requests__select-btn"]} onClick={() => setSelectedTrack(track)} type="button">
-                <i class="fa-regular fa-check"></i>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className={styles.requests__modal + (modalShown ? " " + styles["requests__modal--shown"] : "")}>
+          <div className={styles["requests__modal-popup"]}>
+            <h3 className={styles["requests__modal-title"]}>Select source</h3>
+            <button className={styles["requests__modal-close"]} title="Close modal" type="button" onClick={() => setModalShown(false)}>
+              <i class="fa-regular fa-xmark"></i>
+            </button>
+            <ul className={styles.requests__list}>
+              {trackResults.map((track) => {
+                if (selectedTrack != null && track.id === selectedTrack.id) return null;
+                return (
+                  <li className={styles.requests__item} key={track.id}>
+                    <div className={styles.requests__thumbnail}>
+                      <a href={track.url} target="_blank" rel="noopener noreferrer">
+                        <img src={track.thumbnail} alt={track.title + "'s thumbnail"} className={styles["requests__thumbnail-image"]} />
+                      </a>
+                    </div>
+                    <div className={styles.requests__info}>
+                      <h4 className={styles.requests__title}>{track.title}</h4>
+                      <p className={styles.requests__channel}>{track.channel}</p>
+                    </div>
 
-        <fieldset className={styles.requests__fieldset}>
+                    <button
+                      className={styles["requests__select-btn"]}
+                      onClick={() => {
+                        setSelectedTrack(track);
+                        setModalShown(false);
+                      }}
+                      type="button"
+                    >
+                      <i class="fa-regular fa-check"></i>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+
+        <fieldset className={styles.requests__fieldset} disabled={selectedTrackSource == null}>
           <h2 className={styles.requests__heading}>Select play range</h2>
-          {selectedTrackSource && <PlayRange songDuration={selectedTrack?.duration || 0} songPreview={selectedTrackSource} />}
+          <PlayRange songDuration={selectedTrack?.duration || 0} songPreview={selectedTrackSource} />
         </fieldset>
 
         <div className={styles.requests__btns}>
-          <button type="reset" disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? false : true} className={styles.requests__btn}>
+          <button type="reset" disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
             Cancel
           </button>
           <button type="submit" disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
@@ -101,8 +163,6 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
           </button>
         </div>
       </form>
-
-      <h2 className={styles.requests__heading}>Your requests</h2>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export class RolesGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
 
-    if (!user.permissions) return true; // TODO: CHANGE THIS
+    if (!user.permissions) return false;
 
     return check(requiredRoles, user.permissions);
   }

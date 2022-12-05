@@ -29,7 +29,7 @@ export default mongoose.model(
 
       status: {
         type: String,
-        enum: ["PRE_PENDING", "PENDING", "AUTO_REJECTED", "REJECTED", "ACCEPTED"],
+        enum: ["PRE_PENDING", "PENDING", "PENDING_MANUAL", "AUTO_REJECTED", "REJECTED", "ACCEPTED"],
         default: "PRE_PENDING",
       },
     },
