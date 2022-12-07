@@ -6,12 +6,12 @@ export interface CoreSong {
   id: number;
 }
 
-export type Hits = Hit[];
-
-export interface Hit {
-  index: string;
-  type: string;
-  result: Song;
+export interface Request {
+  spotifyId: string;
+  track: string; //TODO: Change;
+  start: number;
+  user: string;
+  status: "PRE_PENDING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
 }
 
 export interface Song {

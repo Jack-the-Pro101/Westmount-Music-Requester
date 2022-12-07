@@ -16,17 +16,15 @@ export class RequestController {
   constructor(private readonly requestService: RequestService) {}
 
   @Get()
-  @UseGuards(AuthenticatedGuard)
   @Roles("ACCEPT_REQUESTS")
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthenticatedGuard, RolesGuard)
   async getRequests() {
     return await this.requestService.getRequests();
   }
 
   @Post()
-  @UseGuards(AuthenticatedGuard)
   @Roles("USE_REQUESTER")
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthenticatedGuard, RolesGuard)
   async createReq(@Body() info: RequestData, @Req() req, @Res() res: Response) {
     const { spotifyId, youtubeId, playRange } = info;
 
