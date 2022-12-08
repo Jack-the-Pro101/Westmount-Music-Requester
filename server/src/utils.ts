@@ -1,3 +1,3 @@
-export function validateAllParams(params: any[]) {
-  return !params.some((param) => param == null);
+export function validateAllParams(params: unknown[]) {
+  return params.every((param) => param != null);
 }

@@ -1,9 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import mongoose from "mongoose";
 
-import Users from "src/models/User";
-
-type User = typeof Users extends mongoose.Model<infer T> ? T : unknown;
+import Users, { User } from "src/models/User";
 
 @Injectable()
 export class UsersService {

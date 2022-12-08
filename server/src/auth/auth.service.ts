@@ -7,10 +7,8 @@ import * as bcrypt from "bcrypt";
 export class AuthService {
   constructor(private usersService: UsersService) {}
 
-  googleLogin(req): GoogleUser | false {
-    if (!req.user) {
-      return false;
-    }
+  googleLogin(req): GoogleUser | undefined {
+    if (!req.user) return;
 
     return req.user;
   }
