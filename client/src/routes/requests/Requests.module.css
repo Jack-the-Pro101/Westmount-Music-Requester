@@ -1,3 +1,25 @@
 .requests {
   padding: 1em;
+  margin-top: 2em;
+}
+
+.requests__fieldset {
+  border: none;
+}
+
+.requests__list {
+  list-style-type: none;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  gap: 0.5em;
+}
+
+.requests__item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  padding: 1em;
+  border-radius: 4px;
+  background-color: hsl(var(--clr-neutral-200));
 }

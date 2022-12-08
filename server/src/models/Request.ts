@@ -35,6 +35,7 @@ export default mongoose.model(
     },
     {
       timestamps: true,
+      versionKey: false,
     }
   )
 );

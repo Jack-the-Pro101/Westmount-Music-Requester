@@ -44,7 +44,16 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post("login")
-  login(@Request() req) {}
+  login(@Request() req) {
+    return {
+      id: req.user.id,
+      email: null,
+      name: req.user.name,
+      avatar: null,
+      type: req.user.type,
+      permissions: req.user.permissions,
+    };
+  }
 
   @Get("google-redirect")
   @UseGuards(GoogleOAuthGuard)

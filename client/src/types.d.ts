@@ -6,11 +6,30 @@ export interface CoreSong {
   id: number;
 }
 
+export interface StoredUser {
+  email: string;
+  username: string;
+  password: string;
+  avatar: string;
+  type: "GOOGLE" | "INTERNAL";
+  permissions: number;
+  name: string;
+}
+
+export interface StoredTrack {
+  _id: string;
+  title: string;
+  artist: string;
+  explicit: boolean;
+  youtubeId: string;
+}
+
 export interface Request {
+  _id: string;
   spotifyId: string;
-  track: string; //TODO: Change;
+  track: StoredTrack;
   start: number;
-  user: string;
+  user: StoredUser;
   status: "PRE_PENDING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
 }
 

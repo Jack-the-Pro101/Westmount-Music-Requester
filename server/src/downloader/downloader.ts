@@ -55,8 +55,13 @@ class Downloader {
 
     try {
       const lyrics = await this.yt.music.getLyrics(id);
+      const info = await this.yt.music.getInfo(id);
 
-      return lyrics.description.text;
+      return {
+        lyrics: lyrics.description.text,
+        title: info.basic_info.title,
+        artist: info.basic_info.author,
+      };
     } catch {
       return false;
     }

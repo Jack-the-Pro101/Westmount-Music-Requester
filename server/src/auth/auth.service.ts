@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { GoogleUser, InternalUser } from "src/types";
+import { GoogleUser, StoredUser } from "src/types";
 import { UsersService } from "./users.service";
 import * as bcrypt from "bcrypt";
 
@@ -15,7 +15,7 @@ export class AuthService {
     return req.user;
   }
 
-  async validateUser(username: string, password: string): Promise<InternalUser | null | false> {
+  async validateUser(username: string, password: string): Promise<StoredUser | null | false> {
     const user = await this.usersService.findOne(username, true);
 
     if (!user) return null;

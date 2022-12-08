@@ -1,7 +1,10 @@
-import { useState } from "preact/hooks";
+import { useContext, useState } from "preact/hooks";
+import { AuthContext } from "../../app";
 import styles from "./Signin.module.css";
 
 export function Signin() {
+  const { login } = useContext(AuthContext);
+
   const [adminSigninShown, setAdminSigninShown] = useState(false);
 
   const [username, setUsername] = useState("");
@@ -11,27 +14,12 @@ export function Signin() {
   async function handleSignin(e: Event) {
     e.preventDefault();
 
-    const request = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
+    const user = await login(username, password);
 
-    if (request.ok) {
+    if (user) {
       window.location.replace("/");
     } else {
-      switch (request.status) {
-        case 401:
-          errorMsg = "Username or password invalid.";
-          break;
-        default:
-          errorMsg = `Unexpected error ${request.status} (${request.statusText})!`;
-      }
+      errorMsg = "Username or password invalid.";
     }
   }
 
@@ -62,9 +50,9 @@ export function Signin() {
             <h2 className={styles.signin__subheading}>Admin Sign In</h2>
 
             <label htmlFor="username">Username</label>
-            <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername(e.target.value)} maxLength={100} required />
+            <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername(e.target!.value)} maxLength={100} required />
             <label htmlFor="password">Password</label>
-            <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={200} required />
+            <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target!.value)} maxLength={200} required />
 
             <p className={styles.signin__error}>{errorMsg}</p>
 

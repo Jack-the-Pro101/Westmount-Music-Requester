@@ -1,8 +1,11 @@
-import { useState } from "preact/hooks";
+import { useContext, useState } from "preact/hooks";
+import { AuthContext } from "../app";
 import { GoogleUser } from "../types";
 
-export function Navbar({ spacer, user, logout }: { spacer: boolean; user: any; logout: any }) {
+export function Navbar({ spacer }: { spacer: boolean }) {
   const [dropdownDropped, setDropdownDropped] = useState(false);
+
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <>
@@ -17,7 +20,12 @@ export function Navbar({ spacer, user, logout }: { spacer: boolean; user: any; l
             {user ? (
               <button className="navbar__profile" onClick={() => setDropdownDropped(!dropdownDropped)}>
                 <div className="navbar__icon">
-                  <img src={user.type === "GOOGLE" ? user.avatar : "/images/userprofile.svg"} alt={user.name + "'s avatar"} className="navbar__icon-img" />
+                  <img
+                    src={user.type === "GOOGLE" ? user.avatar : "/images/userprofile.svg"}
+                    referrerpolicy="no-referrer"
+                    alt={user.name + "'s avatar"}
+                    className="navbar__icon-img"
+                  />
                 </div>
                 <p className="navbar__name">{user.name}</p>
                 <i class="fa-solid fa-caret-down" style={"margin-left: 1.5rem;" + (dropdownDropped ? "transform: rotate(180deg)" : "")}></i>

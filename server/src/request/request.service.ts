@@ -57,7 +57,7 @@ export class RequestService {
 
       for (let i = 0, n = profaneWords.length; i < n; ++i) {
         const word = profaneWords[i].toLowerCase();
-        const matches = lyrics.matchAll(new RegExp(`^.*${word}.*$`, "gim"));
+        const matches = lyrics.lyrics.matchAll(new RegExp(`^.*${word}.*$`, "gim"));
 
         for (const match of matches) {
           const line = match[0];
@@ -100,6 +100,8 @@ export class RequestService {
               trackSchema
                 .create({
                   _id: trackId,
+                  title: lyrics.title,
+                  artist: lyrics.artist,
                   youtubeId,
                   explicit: true,
                 })
@@ -122,6 +124,8 @@ export class RequestService {
       trackSchema
         .create({
           _id: trackId,
+          title: lyrics.title,
+          artist: lyrics.artist,
           youtubeId,
           explicit: false,
         })
@@ -136,7 +140,13 @@ export class RequestService {
   }
 
   async getRequests() {
-    return await requestSchema.find({});
+    return await requestSchema
+      .find({})
+      .populate({
+        path: "user",
+        select: "-password -username",
+      })
+      .populate("track");
   }
 
   async createRequest(info: RequestData, user: any, trackId: mongoose.Types.ObjectId): Promise<boolean> {

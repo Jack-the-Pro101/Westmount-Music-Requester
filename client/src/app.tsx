@@ -7,11 +7,52 @@ import { Signin } from "./routes/signin/Signin";
 import { Error } from "./routes/error/Error";
 import { Credits } from "./routes/credits/Credits";
 
-import { GoogleUser } from "./types";
+import { StoredUser } from "./types";
 import { Requests } from "./routes/requests/Requests";
+import React from "preact/compat";
+
+interface AuthContextProps {
+  user: StoredUser | false | null;
+  login: (username: string, password: string) => Promise<StoredUser | false>;
+  logout: () => Promise<void>;
+}
+
+async function logout() {
+  const logoutRequest = await fetch("/api/auth/logout", {
+    method: "DELETE",
+  });
+
+  if (logoutRequest.ok) {
+    window.location.replace("/signin");
+  } else {
+    alert(`Failed to logout\nError ${logoutRequest.status}: ${logoutRequest.statusText}`);
+  }
+}
+
+async function login(username: string, password: string) {
+  const request = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username,
+      password,
+    }),
+  });
+
+  if (request.ok) return (await request.json()) as StoredUser;
+  return false;
+}
+
+export const AuthContext = React.createContext<AuthContextProps>({
+  user: null,
+  login: login,
+  logout: logout,
+});
 
 export function App() {
-  const [user, setUser] = useState<GoogleUser | false | undefined>();
+  const [user, setUser] = useState<StoredUser | false | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -31,32 +72,22 @@ export function App() {
     })();
   }, []);
 
-  async function logout() {
-    const logoutRequest = await fetch("/api/auth/logout", {
-      method: "DELETE",
-    });
-
-    if (logoutRequest.ok) {
-      window.location.replace("/signin");
-    } else {
-      alert(`Failed to logout\nError ${logoutRequest.status}: ${logoutRequest.statusText}`);
-    }
-  }
-
   return (
     <>
-      <Navbar spacer={false} logout={logout} user={user} />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/requests" element={<Requests />} />
-          <Route path="/error" element={<Error />} />
-          <Route path="/credits" element={<Credits />} />
-          <Route path="/*" element={<Error />} />
-        </Routes>
-      </BrowserRouter>
-      <Footer />
+      <AuthContext.Provider value={{ user, login, logout }}>
+        <Navbar spacer={false} />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/requests" element={<Requests />} />
+            <Route path="/credits" element={<Credits />} />
+            <Route path="/error" element={<Error />} />
+            <Route path="/*" element={<Error />} />
+          </Routes>
+        </BrowserRouter>
+        <Footer />
+      </AuthContext.Provider>
     </>
   );
 }

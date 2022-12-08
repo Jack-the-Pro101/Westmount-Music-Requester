@@ -15,13 +15,15 @@ export interface YouTubeSong {
   duration: number;
 }
 
-export interface SavedUser {}
-
-export interface InternalUser {
+export interface StoredUser {
+  email: string;
   username: string;
   password: string;
+  avatar: string;
+  type: "GOOGLE" | "INTERNAL";
+  permissions: number;
+  name: string;
 }
-
 export interface GoogleUserInfo {
   email: string;
   firstName: string;

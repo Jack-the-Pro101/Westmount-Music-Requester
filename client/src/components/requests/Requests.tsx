@@ -13,28 +13,44 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
 
   useEffect(() => {
     if (selectedCoreSong) {
+      const aborter = new AbortController();
+
       setIsLoading(true);
 
-      loadSongs();
+      loadSongs(aborter);
+
+      return () => {
+        aborter.abort();
+        setIsLoading(false);
+      };
     }
   }, [selectedCoreSong]);
 
   useEffect(() => {
     if (!selectedTrack) return;
+
+    const aborter = new AbortController();
+
     (async () => {
-      const request = await fetch("/api/music/source?id=" + selectedTrack.id);
+      const request = await fetch("/api/music/source?id=" + selectedTrack.id, {
+        signal: aborter.signal,
+      });
 
       if (request.ok) {
         setSelectedTrackSource(await request.json());
       }
     })();
+
+    return () => aborter.abort();
   }, [selectedTrack]);
 
-  async function loadSongs() {
+  async function loadSongs(aborter: AbortController) {
     const urlParams = new URLSearchParams();
     urlParams.append("songId", selectedCoreSong!.id.toString());
 
-    const request = await fetch("/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title);
+    const request = await fetch("/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
+      signal: aborter.signal,
+    });
 
     if (request.ok) {
       const response = (await request.json()) as YouTubeSong[];
@@ -73,7 +89,11 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
             ) : (
               <>
                 Found {trackResults.length} matching results for "{selectedCoreSong?.artist} - {selectedCoreSong?.title}" from{" "}
-                <a href="https://music.youtube.com/" target="_blank" rel="noopener noreferrer">
+                <a
+                  href={"https://music.youtube.com/search?q=" + `${selectedCoreSong?.artist} ${selectedCoreSong?.title}`.replace(/ /g, "+")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   YouTube music
                 </a>
               </>
@@ -97,7 +117,12 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
             <>
               <div className={styles.requests__thumbnail}>
                 <a href={selectedTrack.url} target="_blank" rel="noopener noreferrer">
-                  <img src={selectedTrack.thumbnail} alt={selectedTrack.title + "'s thumbnail"} className={styles["requests__thumbnail-image"]} />
+                  <img
+                    src={selectedTrack.thumbnail}
+                    alt={selectedTrack.title + "'s thumbnail"}
+                    referrerpolicy="no-referrer"
+                    className={styles["requests__thumbnail-image"]}
+                  />
                 </a>
               </div>
               <div className={styles["requests__dropdown-info"]}>
@@ -124,7 +149,12 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
                   <li className={styles.requests__item} key={track.id}>
                     <div className={styles.requests__thumbnail}>
                       <a href={track.url} target="_blank" rel="noopener noreferrer">
-                        <img src={track.thumbnail} alt={track.title + "'s thumbnail"} className={styles["requests__thumbnail-image"]} />
+                        <img
+                          src={track.thumbnail}
+                          alt={track.title + "'s thumbnail"}
+                          referrerpolicy="no-referrer"
+                          className={styles["requests__thumbnail-image"]}
+                        />
                       </a>
                     </div>
                     <div className={styles.requests__info}>

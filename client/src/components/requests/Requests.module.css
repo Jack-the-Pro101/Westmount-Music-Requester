@@ -324,6 +324,7 @@
 
 .requests__thumbnail {
   max-width: 8em;
+  min-width: 8em;
   margin-right: 1em;
 }
 
@@ -331,6 +332,7 @@
   border-radius: 0.5em;
   font-size: 1.75rem;
   height: 100%;
+  margin: 0 auto;
 }
 
 .requests__btns {
