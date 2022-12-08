@@ -3,12 +3,20 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { TrackSourceInfo } from "../../types";
 import styles from "./Requests.module.css";
 
-export function PlayRange({ songPreview }: { songPreview: TrackSourceInfo | undefined; songDuration: number }) {
+export function PlayRange({
+  songPreview,
+  selectionRange,
+  setSelectionRange,
+}: {
+  songPreview: TrackSourceInfo | undefined;
+  songDuration: number;
+  selectionRange: any;
+  setSelectionRange: any;
+}) {
   const accuracyConstant = 2;
   const songMaxPlayDurationSeconds = 90 * accuracyConstant;
 
   const [playbackPos, setPlaybackPos] = useState(0);
-  const [selectionRange, setSelectionRange] = useState(0);
   const [volume, setVolume] = useState(100);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);

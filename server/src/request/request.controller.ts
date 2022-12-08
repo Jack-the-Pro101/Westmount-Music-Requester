@@ -33,7 +33,7 @@ export class RequestController {
     res.sendStatus(202);
 
     try {
-      const trackId = new mongoose.Types.ObjectId();
+      const trackId = await this.requestService.getTrackId(youtubeId);
       if (!(await this.requestService.createRequest(info, req.user, trackId))) return;
 
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);

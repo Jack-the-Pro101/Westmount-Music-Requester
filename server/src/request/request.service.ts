@@ -149,6 +149,10 @@ export class RequestService {
       .populate("track");
   }
 
+  async getTrackId(youtubeId: string) {
+    return (await trackSchema.findOne({ youtubeId: youtubeId })).id || new mongoose.Types.ObjectId();
+  }
+
   async createRequest(info: RequestData, user: any, trackId: mongoose.Types.ObjectId): Promise<boolean> {
     try {
       const userDoc = await userSchema.findOne(user.type === "GOOGLE" ? { email: user.email } : { username: user.username });

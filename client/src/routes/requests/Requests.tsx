@@ -14,7 +14,7 @@ export function Requests() {
 
   const [filterQuery, setFilterQuery] = useState("");
 
-  const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null);
+  // const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null);
 
   // useEffect(() => {
   //   const socketIo = io.connect("/api/requests");
@@ -66,7 +66,7 @@ export function Requests() {
       <form action="#" className={styles.requests__filter}>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="filter">Search</label>
-          <input type="text" name="filter" id="filter" onChange={(e: Event) => setFilterQuery(e.target!.value)} />
+          <input type="text" name="filter" id="filter" value={filterQuery} onChange={(e: Event) => setFilterQuery(e.target!.value)} />
         </fieldset>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="sort">Sort By</label>

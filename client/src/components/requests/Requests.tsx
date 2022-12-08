@@ -11,6 +11,8 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
   const [selectedTrack, setSelectedTrack] = useState<YouTubeSong>();
   const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
+  const [selectionRange, setSelectionRange] = useState(0);
+
   useEffect(() => {
     if (selectedCoreSong) {
       const aborter = new AbortController();
@@ -69,7 +71,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
       body: JSON.stringify({
         spotifyId: selectedCoreSong?.id,
         youtubeId: selectedTrack?.id,
-        playRange: 0,
+        playRange: selectionRange,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -181,7 +183,12 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
 
         <fieldset className={styles.requests__fieldset} disabled={selectedTrackSource == null}>
           <h2 className={styles.requests__heading}>Select play range</h2>
-          <PlayRange songDuration={selectedTrack?.duration || 0} songPreview={selectedTrackSource} />
+          <PlayRange
+            songDuration={selectedTrack?.duration || 0}
+            songPreview={selectedTrackSource}
+            selectionRange={selectionRange}
+            setSelectionRange={setSelectionRange}
+          />
         </fieldset>
 
         <div className={styles.requests__btns}>
