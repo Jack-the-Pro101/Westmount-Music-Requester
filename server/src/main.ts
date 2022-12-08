@@ -43,7 +43,7 @@ async function initTasks() {
       username: process.env.SYS_ADMIN_USERNAME,
       password: await bcrypt.hash(process.env.SYS_ADMIN_PASSWORD, 10),
       type: "INTERNAL",
-      permissions: generateBitfield("everything"),
+      permissions: generateBitfield("EVERYTHING"),
       name: "Administrator",
     });
   }

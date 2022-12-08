@@ -1,21 +1,32 @@
-import * as permissionsJson from "./permissions.json";
-
-const FLAGS = {};
+const PERMISSIONS = [
+  "USE_REQUESTER", 
+  "ACCEPT_REQUESTS", 
+  "REJECT_REQUESTS", 
+  "BLANK_ONE", 
+  "BLANK_TWO", 
+  "BLANK_THREE", 
+  "ADMINISTRATOR"
+] as const;
+type Permission = typeof PERMISSIONS[number];
 
 let bitOffset = 2;
-permissionsJson.forEach((permission, i) => {
+const FLAGS: {
+  [key in typeof PERMISSIONS[number]]: number;
+} = PERMISSIONS.reduce((acc, cur, i) => {
   if (i === 0) {
-    FLAGS[permission] = bitOffset;
+    acc[cur] = bitOffset;
   } else {
-    FLAGS[permission] = bitOffset += bitOffset;
+    acc[cur] = bitOffset += bitOffset;
   }
+  return acc;
+}, {} as {
+  [key in typeof PERMISSIONS[number]]: number;
 });
 
-export function generateBitfield(permissions: any, inherit = false) {
-  const type = typeof permissions;
-  if (type === "string" && !inherit) {
-    switch (permissions.toLowerCase()) {
-      case "everything": {
+export function generateBitfield(permissions: Permission | "EVERYTHING" | Permission[], inherit = false) {
+  if (typeof permissions === "string" && !inherit) {
+    switch (permissions) {
+      case "EVERYTHING": {
         return Object.keys(FLAGS).reduce((prev, key) => prev + FLAGS[key], 0);
       }
 
@@ -24,23 +35,21 @@ export function generateBitfield(permissions: any, inherit = false) {
         return 0;
       }
     }
-  } else if (type === "string" && inherit) {
+  } else if (typeof permissions === "string" && inherit) {
     let accumulator = 0;
 
     for (const key in FLAGS) {
-      if (Object.hasOwnProperty.call(FLAGS, key)) {
-        const bitfield = FLAGS[key];
-        accumulator += bitfield;
+      const bitfield = FLAGS[key];
+      accumulator += bitfield;
 
-        const flagBits = FLAGS[permissions];
+      const flagBits = FLAGS[permissions];
 
-        if (flagBits == null) console.warn(`WARNING: Permission ${permissions} does not exist! Typo?`);
+      if (flagBits == null) console.warn(`WARNING: Permission ${permissions} does not exist! Typo?`);
 
-        if (bitfield === flagBits) break;
-      }
+      if (bitfield === flagBits) break;
     }
 
-    return accumulator;
+    return FLAGS;
   } else if (Array.isArray(permissions)) {
     return permissions.reduce((prev, current) => prev + FLAGS[current], 0);
   }

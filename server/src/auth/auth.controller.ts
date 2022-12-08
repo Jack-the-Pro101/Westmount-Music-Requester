@@ -2,7 +2,6 @@ import { GoogleOAuthGuard } from "./google-oauth.guard";
 import { Controller, Delete, Get, Post, Request, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 
-import { GoogleUser } from "src/types";
 import { LocalAuthGuard } from "./local-auth.guard";
 import { AuthenticatedGuard } from "./authenticated.guard";
 
@@ -58,7 +57,7 @@ export class AuthController {
   @Get("google-redirect")
   @UseGuards(GoogleOAuthGuard)
   googleAuthRedirect(@Request() req, @Res() res) {
-    const user: any | false = this.authService.googleLogin(req);
+    const user = this.authService.googleLogin(req);
 
     if (user) {
       if (process.env.NODE_ENV !== "production") {
