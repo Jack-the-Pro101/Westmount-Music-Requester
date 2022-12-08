@@ -150,7 +150,7 @@ export class RequestService {
   }
 
   async getTrackId(youtubeId: string) {
-    return (await trackSchema.findOne({ youtubeId: youtubeId })).id || new mongoose.Types.ObjectId();
+    return (await trackSchema.findOne({ youtubeId: youtubeId }))?.id || new mongoose.Types.ObjectId();
   }
 
   async createRequest(info: RequestData, user: any, trackId: mongoose.Types.ObjectId): Promise<boolean> {

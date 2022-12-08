@@ -17,9 +17,55 @@
 }
 
 .requests__item {
+  border-radius: 4px;
+}
+
+.requests__btn {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   padding: 1em;
-  border-radius: 4px;
   background-color: hsl(var(--clr-neutral-200));
+  border: none;
+  text-align: left;
+  width: 100%;
+  font-size: inherit;
+  color: inherit;
+}
+
+.requests__popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.requests__popup--active {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.requests__popup-box {
+  transform: scale(0.9);
+  opacity: 0;
+  padding: 1em;
+  background-color: hsl(var(--clr-neutral-200));
+  border-radius: 8px;
+  box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.8);
+  transition: transform 0.2s cubic-bezier(0.67, 0.42, 0.5, 1.49), opacity 0.2s ease, visibility 0s 0.3s linear;
+}
+
+.requests__popup--active .requests__popup-box {
+  transform: scale(1);
+  opacity: 1;
+  transition: transform 0.2s cubic-bezier(0.67, 0.42, 0.5, 1.49), opacity 0.2s ease, visibility 0s 0s linear;
 }

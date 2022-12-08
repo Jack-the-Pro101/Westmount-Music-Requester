@@ -80,7 +80,7 @@ export function Requests() {
       </form>
       <ol className={styles.requests__list}>
         {requests
-          .filter((request) => anyStringIncludes([request.track.title, request.track.artist, request.user.name], filterQuery))
+          .filter((request) => request.track && anyStringIncludes([request.track.title, request.track.artist, request.user.name], filterQuery))
           .map((request) => (
             <RequestElement request={request} key={request._id} />
           ))}
