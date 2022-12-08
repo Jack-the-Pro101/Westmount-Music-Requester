@@ -4,30 +4,29 @@ import trackSchema from "../models/Track";
 import requestSchema from "src/models/Request";
 import userSchema from "src/models/User";
 
-import { google } from "googleapis";
 import downloader from "src/downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
-import { GoogleUser, GoogleUserInfo, RequestData } from "src/types";
-import mongoose from "mongoose";
+import { RequestData } from "src/types";
+import mongoose, { Model } from "mongoose";
+import Perspective from "./perspective";
+
+type Request = typeof requestSchema extends Model<infer T> ? T : unknown;
 
 class ScanBuffer {
-  private static texts: any[] = [];
-  private static ticker;
+  private texts: ((value?: unknown) => void)[] = [];
 
-  constructor() {}
+  constructor() {
+    setInterval(() => {
+      if (this.texts.length === 0) return;
 
-  static init() {
-    ScanBuffer.ticker = setInterval(() => {
-      if (ScanBuffer.texts.length === 0) return;
-
-      const resolver = ScanBuffer.texts.shift();
+      const resolver = this.texts.shift();
 
       resolver();
     }, 1000);
   }
 
-  static async wait() {
+  async wait() {
     await new Promise((resolver) => {
       this.texts.push(resolver);
     });
@@ -36,11 +35,12 @@ class ScanBuffer {
 
 @Injectable()
 export class RequestService {
+  scanBuffer: ScanBuffer;
   constructor() {
-    ScanBuffer.init();
+    this.scanBuffer = new ScanBuffer();
   }
 
-  async scanLyrics(youtubeId: string, trackId: mongoose.Types.ObjectId): Promise<boolean | null> {
+  async scanLyrics(youtubeId: string, trackId: mongoose.Types.ObjectId): Promise<boolean | undefined> {
     try {
       const existingTrack = await trackSchema.findOne({ youtubeId });
 
@@ -68,8 +68,8 @@ export class RequestService {
         }
       }
 
-      const DISCOVERY_URL = "https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1";
-      const client = await google.discoverAPI(DISCOVERY_URL);
+      const client = new Perspective({ apiKey: process.env.PERSPECTIVE_API_KEY });
+      let isProfane = false;
 
       for (let i = 0, n = possibleProfaneLines.length; i < n; ++i) {
         const line = possibleProfaneLines[i];
@@ -84,40 +84,13 @@ export class RequestService {
           },
         };
 
-        await ScanBuffer.wait();
+        await this.scanBuffer.wait();
 
-        const isProfane = await new Promise((resolve, reject) => {
-          // @ts-expect-error
-          client.comments.analyze({ key: process.env.PERSPECTIVE_API_KEY, resource: analysisData }, (err, response) => {
-            if (err) {
-              console.error(err);
-              return reject(err);
-            }
+        const response = await client.analyze(analysisData);
 
-            if (response.data.attributeScores.TOXICITY.summaryScore.value > 0.7 || response.data.attributeScores.PROFANITY.summaryScore.value > 0.7) {
-              resolve(true);
-
-              trackSchema
-                .create({
-                  _id: trackId,
-                  title: lyrics.title,
-                  artist: lyrics.artist,
-                  youtubeId,
-                  explicit: true,
-                })
-                .catch((err) => {
-                  console.error(err);
-                });
-
-              return;
-            }
-
-            resolve(false);
-          });
-        });
-
-        if (isProfane) {
-          return false;
+        if (response.attributeScores.TOXICITY.summaryScore.value > 0.7 || response.attributeScores.PROFANITY.summaryScore.value > 0.7) {
+          isProfane = true;
+          break;
         }
       }
 
@@ -127,13 +100,13 @@ export class RequestService {
           title: lyrics.title,
           artist: lyrics.artist,
           youtubeId,
-          explicit: false,
+          explicit: isProfane,
         })
         .catch((err) => {
           console.error(err);
         });
 
-      return true;
+      return !isProfane;
     } catch (err) {
       console.error(err);
     }
@@ -150,7 +123,7 @@ export class RequestService {
   }
 
   async getTrackId(youtubeId: string) {
-    return (await trackSchema.findOne({ youtubeId: youtubeId }))?.id || new mongoose.Types.ObjectId();
+    return (await trackSchema.findOne({ youtubeId: youtubeId })).id || new mongoose.Types.ObjectId();
   }
 
   async createRequest(info: RequestData, user: any, trackId: mongoose.Types.ObjectId): Promise<boolean> {
@@ -173,7 +146,7 @@ export class RequestService {
     }
   }
 
-  async updateRequest(trackId: mongoose.Types.ObjectId, data) {
+  async updateRequest(trackId: mongoose.Types.ObjectId, data: mongoose.UpdateQuery<Request>) {
     try {
       await requestSchema.findOneAndUpdate({ track: trackId }, data);
     } catch (err) {
