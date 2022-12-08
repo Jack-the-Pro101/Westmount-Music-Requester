@@ -15,11 +15,11 @@ export class AuthService {
     return req.user;
   }
 
-  async validateUser(username: string, password: string): Promise<StoredUser | null | false> {
+  async validateUser(username: string, password: string): Promise<StoredUser | undefined> {
     const user = await this.usersService.findOne(username, true);
 
-    if (!user) return null;
-    if (!(await bcrypt.compare(password, user.password))) return false;
-    return user;
+    if (!user || user.type !== "INTERNAL") return;
+    if (!(await bcrypt.compare(password, user.password))) return;
+    return user as StoredUser;
   }
 }
