@@ -19,6 +19,8 @@ class Downloader {
   }
 
   verifyDependencies(): Promise<void> {
+    if (!process.env.DOWNLOADS) throw new Error("Downloads directory not defined in env vars. Application cannot continue.");
+
     return Promise.race([
       new Promise<void>((resolve, reject) => {
         // Verify installation of FFMPEG

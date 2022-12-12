@@ -30,6 +30,8 @@
 .myrequests__item-img {
   width: 100%;
   border-radius: 8px;
+  margin: auto 0;
+  display: block;
 }
 
 .myrequests__item-content {
