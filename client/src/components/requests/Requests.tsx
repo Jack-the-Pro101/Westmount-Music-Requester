@@ -90,7 +90,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
               "Loading..."
             ) : (
               <>
-                Found {trackResults.length} matching results for "{selectedCoreSong?.artist} - {selectedCoreSong?.title}" from{" "}
+                Found {trackResults.length} results for "{selectedCoreSong?.artist} - {selectedCoreSong?.title}" from{" "}
                 <a
                   href={"https://music.youtube.com/search?q=" + `${selectedCoreSong?.artist} ${selectedCoreSong?.title}`.replace(/ /g, "+")}
                   target="_blank"
@@ -188,6 +188,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
             songPreview={selectedTrackSource}
             selectionRange={selectionRange}
             setSelectionRange={setSelectionRange}
+            editable={true}
           />
         </fieldset>
 

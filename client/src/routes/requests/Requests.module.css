@@ -22,6 +22,8 @@
 
 .requests__btn {
   display: grid;
+  align-items: center;
+  border-radius: 4px;
   grid-template-columns: 2fr 1fr 1fr;
   padding: 1em;
   background-color: hsl(var(--clr-neutral-200));
@@ -30,6 +32,11 @@
   width: 100%;
   font-size: inherit;
   color: inherit;
+}
+
+.requests__btn:hover {
+  cursor: pointer;
+  background-color: hsl(var(--clr-neutral-300));
 }
 
 .requests__popup {
@@ -46,6 +53,7 @@
   transform: scale(0.9);
   opacity: 0;
   transition: opacity 0.3s ease;
+  padding: 1em;
 }
 
 .requests__popup--active {
@@ -61,7 +69,78 @@
   background-color: hsl(var(--clr-neutral-200));
   border-radius: 8px;
   box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.8);
-  transition: transform 0.2s cubic-bezier(0.67, 0.42, 0.5, 1.49), opacity 0.2s ease, visibility 0s 0.3s linear;
+  transition: transform 0s linear, opacity 0.2s ease, visibility 0s 0.2s linear;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-height: 60rem;
+  max-width: 100rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.requests__popup-content {
+  flex-grow: 1;
+  overflow: auto;
+  margin: 1em 0;
+  padding: 1em 0;
+  box-shadow: 0 6px 12px -8px rgba(0, 0, 0, 0.8) inset;
+}
+
+.requests__popup-spotify {
+  display: flex;
+  margin: 1em 0;
+}
+
+.requests__popup-spotify-image {
+  max-width: 16rem;
+}
+
+.requests__popup-spotify-img {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.requests__popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5em;
+}
+
+.requests__popup-footer-btn {
+  font-size: inherit;
+  color: inherit;
+  background-color: transparent;
+  padding: 0.5em 0.75em;
+  border: none;
+  border-radius: 4px;
+}
+
+.requests__popup-footer-btn:hover {
+  cursor: pointer;
+}
+
+.requests__popup-reject-btn {
+  background-color: hsl(var(--clr-neutral-300));
+}
+.requests__popup-reject-btn:hover {
+  background-color: hsl(var(--clr-neutral-400));
+}
+.requests__popup-accent-btn {
+  background-color: hsl(var(--clr-primary-400));
+}
+.requests__popup-accent-btn:hover {
+  background-color: hsl(var(--clr-primary-500));
+}
+.requests__popup-close-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5em;
+  font-size: 3rem;
+  background-color: transparent;
+  border: none;
+  color: hsl(var(--clr-neutral-900));
 }
 
 .requests__popup--active .requests__popup-box {

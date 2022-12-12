@@ -1,0 +1,21 @@
+.help__how {
+  counter-reset: section;
+  list-style-type: none;
+}
+
+.help__how-item {
+  min-height: 30vh;
+}
+
+.help__how-item::before {
+  counter-increment: section;
+  content: counters(section, ".") " ";
+  font-size: 32rem;
+  font-weight: 600;
+  position: absolute;
+  opacity: 0.25;
+}
+
+.help__statuses-list {
+  list-style-type: none;
+}

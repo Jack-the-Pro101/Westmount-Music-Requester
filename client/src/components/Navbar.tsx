@@ -7,6 +7,10 @@ export function Navbar({ spacer }: { spacer: boolean }) {
 
   const { user, logout } = useContext(AuthContext);
 
+  function toggleTheme() {
+    document.querySelector("html")?.classList.toggle("light");
+  }
+
   return (
     <>
       <nav className="navbar">
@@ -38,9 +42,14 @@ export function Navbar({ spacer }: { spacer: boolean }) {
 
             <ul className={"navbar__dropdown" + (dropdownDropped ? " navbar__dropdown--active" : "")}>
               <li className="navbar__dropdown-item">
-                <a href="/requests">
+                <a href="/myrequests">
                   <i class="fa-regular fa-ballot"></i> Your Requests
                 </a>
+              </li>
+              <li className="navbar__dropdown-item">
+                <button className="navbar__dropdown-btn" onClick={() => toggleTheme()}>
+                  <i class="fa-regular fa-circle-half-stroke"></i> Toggle Theme
+                </button>
               </li>
               <li className="navbar__dropdown-item">
                 <button className="navbar__dropdown-btn" onClick={() => logout()}>

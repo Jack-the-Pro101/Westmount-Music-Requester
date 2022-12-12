@@ -11,7 +11,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "resolveJsonModule": true,
-    // "incremental": true,
+    "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,

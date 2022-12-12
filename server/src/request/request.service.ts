@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 import trackSchema from "../models/Track";
 import requestSchema from "src/models/Request";
+import downloadedTracksSchema from "src/models/DownloadedTracks";
 import userSchema from "src/models/User";
 
 import downloader from "src/downloader/downloader";
@@ -10,6 +11,10 @@ import * as profaneWords from "./profanity_words.json";
 import { RequestData } from "src/types";
 import mongoose, { Model } from "mongoose";
 import Perspective from "./perspective";
+import { MusicService } from "src/music/music.service";
+
+import * as config from "../shared/config.json";
+import { sanitizeFilename } from "src/utils";
 
 type Request = typeof requestSchema extends Model<infer T> ? T : unknown;
 
@@ -36,7 +41,7 @@ class ScanBuffer {
 @Injectable()
 export class RequestService {
   scanBuffer: ScanBuffer;
-  constructor() {
+  constructor(private readonly musicService: MusicService) {
     this.scanBuffer = new ScanBuffer();
   }
 
@@ -45,13 +50,29 @@ export class RequestService {
       const existingTrack = await trackSchema.findOne({ youtubeId });
 
       if (existingTrack) {
-        if (existingTrack.explicit == null) return null;
+        if (existingTrack.uncertain) return null;
         return !existingTrack.explicit;
       }
 
       const lyrics = await downloader.getLyrics(youtubeId);
 
-      if (!lyrics) return null;
+      if (!lyrics.lyrics) {
+        trackSchema
+          .create({
+            _id: trackId,
+            title: lyrics.title,
+            artist: lyrics.artist,
+            youtubeId,
+            cover: lyrics.cover,
+            explicit: false,
+            uncertain: true,
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+
+        return null;
+      }
 
       const possibleProfaneLines = [];
 
@@ -99,6 +120,7 @@ export class RequestService {
           _id: trackId,
           title: lyrics.title,
           artist: lyrics.artist,
+          cover: lyrics.cover,
           youtubeId,
           explicit: isProfane,
         })
@@ -112,6 +134,40 @@ export class RequestService {
     }
   }
 
+  async validateRequest(data: RequestData) {
+    const { playRange, spotifyId, youtubeId } = data;
+
+    if (playRange < 0) return false;
+
+    const tests = await Promise.all([
+      // Test YouTube source
+      new Promise((resolve, reject) => {
+        downloader
+          .getSource(youtubeId)
+          .then((song) => {
+            if (!song) return reject();
+            if (song.duration - config.songMaxPlayDurationSeconds < playRange) reject();
+            if (song.duration < config.songMaxPlayDurationSeconds) reject();
+            resolve(true);
+          })
+          .catch(() => reject());
+      }),
+
+      // Test Spotify track
+      new Promise((resolve, reject) => {
+        this.musicService
+          .getSpotifyTrack(spotifyId)
+          .then((spotifyTrack) => {
+            if (spotifyTrack.explicit) reject();
+            resolve(true);
+          })
+          .catch(() => reject());
+      }),
+    ]).catch(() => false);
+
+    return tests;
+  }
+
   async getRequests() {
     return await requestSchema
       .find({})
@@ -122,8 +178,12 @@ export class RequestService {
       .populate("track");
   }
 
+  async getPersonalRequests(userId: string) {
+    return await requestSchema.find({ user: userId }).populate("track");
+  }
+
   async getTrackId(youtubeId: string) {
-    return (await trackSchema.findOne({ youtubeId: youtubeId })).id || new mongoose.Types.ObjectId();
+    return (await trackSchema.findOne({ youtubeId: youtubeId }))?.id || new mongoose.Types.ObjectId();
   }
 
   async createRequest(info: RequestData, user: any, trackId: mongoose.Types.ObjectId): Promise<boolean> {
@@ -146,11 +206,33 @@ export class RequestService {
     }
   }
 
-  async updateRequest(trackId: mongoose.Types.ObjectId, data: mongoose.UpdateQuery<Request>) {
+  async updateRequest(query: mongoose.FilterQuery<Request>, data: mongoose.UpdateQuery<Request>) {
     try {
-      await requestSchema.findOneAndUpdate({ track: trackId }, data);
+      await requestSchema.findOneAndUpdate(query, data);
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  async finalizeRequest(id: string) {
+    const request = await requestSchema.findOneAndUpdate({ _id: id }, { status: "ACCEPTED" }).populate("track");
+
+    // @ts-expect-error
+    const filename = sanitizeFilename(`${request.track.title} - ${request.track.artist}`, "_");
+
+    // @ts-expect-error
+    const downloadResult = await downloader.download(request.track.youtubeId, filename, {
+      format: "mp3",
+      codec: "libmp3lame",
+      start: request.start,
+      end: config.songMaxPlayDurationSeconds,
+    });
+
+    if (downloadResult) {
+      await downloadedTracksSchema.create({
+        track: request.track,
+        filename: downloadResult,
+      });
     }
   }
 }

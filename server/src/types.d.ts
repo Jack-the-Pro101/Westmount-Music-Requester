@@ -33,12 +33,12 @@ export interface GoogleUserInfo {
 }
 
 export type GoogleUser = {
-  // iat: number;
   user: GoogleUserInfo;
 };
 
 export interface TrackSourceInfo {
   url: string;
+  duration: number;
   mime_type: string;
   format: string;
 }
@@ -112,4 +112,11 @@ export interface SpotifySearch {
     previous: string | null;
     total: number;
   };
+}
+
+export interface FfmpegPostProcessOptions {
+  format: string;
+  codec: string;
+  start: number;
+  end: number;
 }

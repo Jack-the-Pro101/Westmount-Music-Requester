@@ -1,7 +1,7 @@
-import striptags from "striptags";
+import * as striptags from "striptags";
 
 const COMMENT_ANALYZER_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
-const MAX_LENGTH = 20480;
+const MAX_LENGTH = 20000;
 
 export class PerspectiveAPIClientError extends Error {
   constructor(message: string) {
@@ -61,7 +61,7 @@ type RequestedAttributes = {
     scoreType?: "PROBABILITY" | "PERCENTAGE";
     scoreThreshold?: number;
   };
-}
+};
 
 interface ErrorResponse {
   error: {
@@ -109,22 +109,27 @@ class Perspective {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(resource),
-      }).then(response => {
-        response.json().then(json => {
-          if (response.ok) {
-            resolve(json as PerspectiveResponse);
-          } else {
-            reject(new ResponseError((json as ErrorResponse).error.message, response));
-          }
-        }).catch(error => {
+      })
+        .then((response) => {
+          response
+            .json()
+            .then((json) => {
+              if (response.ok) {
+                resolve(json as PerspectiveResponse);
+              } else {
+                reject(new ResponseError((json as ErrorResponse).error.message, response));
+              }
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        })
+        .catch((error) => {
           reject(error);
         });
-      }).catch(error => {
-        reject(error);
-      });
     }) as Promise<PerspectiveResponse>;
   }
 

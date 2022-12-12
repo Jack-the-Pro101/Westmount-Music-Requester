@@ -1,0 +1,71 @@
+.myrequests {
+  padding: 1em;
+  min-height: 70vh;
+  max-width: 100rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.myrequests__header {
+  padding: 2em 0;
+  text-align: center;
+}
+
+.myrequests__list {
+  list-style-type: none;
+}
+
+.myrequests__item {
+  background-color: hsl(var(--clr-neutral-200));
+  padding: 0.5em;
+  margin-top: 0.5em;
+  border-radius: 4px;
+  display: flex;
+}
+
+.myrequests__item-image {
+  max-width: 14rem;
+}
+
+.myrequests__item-img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.myrequests__item-content {
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1;
+  margin-left: 1em;
+  margin-right: 0.5em;
+  padding: 0.5em 0;
+}
+
+.myrequests__item-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.myrequests__item-info p:first-child {
+  font-weight: 600;
+}
+
+.myrequests__item-info p:nth-child(2) {
+  color: hsl(var(--clr-neutral-700));
+}
+
+.myrequests__item-info p:last-child {
+  margin-top: auto;
+  font-size: 1.75rem;
+  color: hsl(var(--clr-neutral-800));
+}
+
+.myrequests__item-status {
+  text-transform: capitalize;
+  margin: auto 0;
+  text-align: right;
+}
+
+.myrequests__item-status a {
+  color: inherit;
+}

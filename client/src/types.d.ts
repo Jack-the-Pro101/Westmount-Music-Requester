@@ -20,6 +20,7 @@ export interface StoredTrack {
   _id: string;
   title: string;
   artist: string;
+  cover: string;
   explicit: boolean;
   youtubeId: string;
 }
@@ -30,15 +31,9 @@ export interface Request {
   track: StoredTrack;
   start: number;
   user: StoredUser;
+  createdAt: string;
+  updatedAt: string;
   status: "PRE_PENDING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
-}
-
-export interface Song {
-  title: string;
-  artist_names: string;
-  song_art_image_thumbnail_url: string;
-  id: number;
-  url: string;
 }
 
 export interface YouTubeSong {
@@ -64,7 +59,7 @@ export type GoogleUser = {
 };
 
 export interface TrackSourceInfo {
-  id: string;
+  duration: number;
   url: string;
   mime_type: string;
   format: string;

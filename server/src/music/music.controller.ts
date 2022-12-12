@@ -7,12 +7,12 @@ export class MusicController {
 
   @Post("/search")
   async search(@Body("query") query: string) {
-    return await this.musicService.search(query);
+    return await this.musicService.searchSpotify(query);
   }
 
   @Get("/source")
   async getSource(@Query("id") id: string) {
-    const source = await this.musicService.getSource(id);
+    const source = await this.musicService.getYtSource(id);
 
     return source;
   }
@@ -20,6 +20,6 @@ export class MusicController {
   @Get("/info")
   @Header("Content-Type", "application/json")
   async getInfo(@Query("song") query: string) {
-    return await this.musicService.getInfo(query);
+    return await this.musicService.searchYt(query);
   }
 }

@@ -14,6 +14,11 @@ export default mongoose.model(
         required: true,
       },
 
+      cover: {
+        type: String,
+        required: false,
+      },
+
       youtubeId: {
         type: String,
         required: true,
@@ -22,6 +27,11 @@ export default mongoose.model(
       explicit: {
         type: Boolean,
         required: true,
+      },
+
+      uncertain: {
+        type: Boolean,
+        required: false,
       },
     },
     {

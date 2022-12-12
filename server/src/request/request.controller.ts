@@ -1,15 +1,15 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
-import { Response } from "express";
+import { Body, Controller, Get, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Request, Response } from "express";
 import { RequestData } from "src/types";
 
 import { validateAllParams } from "src/utils";
 
 import { RequestService } from "./request.service";
 
-import mongoose from "mongoose";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
+import mongoose from "mongoose";
 
 @Controller("/api/requests")
 export class RequestController {
@@ -29,22 +29,49 @@ export class RequestController {
     const { spotifyId, youtubeId, playRange } = info;
 
     if (!validateAllParams([spotifyId, youtubeId, playRange])) return res.sendStatus(400);
-    // TODO: Verify authenticity of requested video, spotify track, and playrange
-    res.sendStatus(202);
 
     try {
-      const trackId = await this.requestService.getTrackId(youtubeId);
-      if (!(await this.requestService.createRequest(info, req.user, trackId))) return;
+      if (!(await this.requestService.validateRequest(info))) return res.sendStatus(400);
+      res.sendStatus(202);
 
+      const trackId = await this.requestService.getTrackId(youtubeId);
+
+      if (!(await this.requestService.createRequest(info, req.user, trackId))) return;
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
 
-      if (scanResult == false) {
-        await this.requestService.updateRequest(trackId, { status: "AUTO_REJECTED" });
+      if (scanResult === false) {
+        await this.requestService.updateRequest({ track: trackId }, { status: "AUTO_REJECTED" });
       } else {
-        await this.requestService.updateRequest(trackId, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
+        await this.requestService.updateRequest({ track: trackId }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
       }
     } catch (err) {
       console.error(err);
     }
+  }
+
+  @Patch(":requestId")
+  @Roles("ACCEPT_REQUESTS")
+  @UseGuards(AuthenticatedGuard, RolesGuard)
+  async acceptRequest(@Param("requestId") requestId: string, @Body() info, @Req() req: Request, @Res() res: Response) {
+    if (!mongoose.Types.ObjectId.isValid(requestId) || new mongoose.Types.ObjectId(requestId).toString() !== requestId) return res.sendStatus(400);
+
+    const { evaluation } = info;
+    if (!validateAllParams([evaluation])) return res.sendStatus(400);
+
+    if (!evaluation) {
+      await this.requestService.updateRequest({ _id: requestId }, { status: "REJECTED" });
+      return res.sendStatus(200);
+    }
+
+    this.requestService.finalizeRequest(requestId);
+
+    res.sendStatus(200);
+  }
+
+  @Get("/me")
+  @Roles("USE_REQUESTER")
+  @UseGuards(AuthenticatedGuard, RolesGuard)
+  async getPersonalRequests(@Req() req) {
+    return await this.requestService.getPersonalRequests(req.user._id.toString());
   }
 }

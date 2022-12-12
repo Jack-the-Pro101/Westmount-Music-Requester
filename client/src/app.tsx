@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { Home } from "./routes/home/Home";
+import { MyRequests } from "./routes/myrequests/MyRequests";
 import { Signin } from "./routes/signin/Signin";
 import { Error } from "./routes/error/Error";
 import { Credits } from "./routes/credits/Credits";
@@ -10,6 +11,7 @@ import { Credits } from "./routes/credits/Credits";
 import { StoredUser } from "./types";
 import { Requests } from "./routes/requests/Requests";
 import React from "preact/compat";
+import { Help } from "./routes/help/Help";
 
 interface AuthContextProps {
   user: StoredUser | false | null;
@@ -79,6 +81,8 @@ export function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/myrequests" element={<MyRequests />} />
+            <Route path="/help" element={<Help />} />
             <Route path="/signin" element={<Signin />} />
             <Route path="/requests" element={<Requests />} />
             <Route path="/credits" element={<Credits />} />
