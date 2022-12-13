@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export default mongoose.model(
+const tracks = mongoose.model(
   "track",
   new mongoose.Schema(
     {
@@ -39,3 +39,7 @@ export default mongoose.model(
     }
   )
 );
+
+export type Track = typeof tracks extends mongoose.Model<infer T> ? T : unknown;
+
+export default tracks;

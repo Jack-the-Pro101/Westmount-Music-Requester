@@ -45,7 +45,7 @@ class Downloader {
   }
 
   async searchYt(query: string) {
-    if (!this.yt || this.ready) throw new Error("Downloader not ready!");
+    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
     await this.checkSession();
 
     const songs = await this.yt.music.search(query, { type: "song" });

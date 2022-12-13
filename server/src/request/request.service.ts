@@ -17,6 +17,7 @@ import * as config from "../shared/config.json";
 import { sanitizeFilename } from "src/utils";
 
 import { Request } from "src/models/Request";
+import { Track } from "../models/Track";
 
 class ScanBuffer {
   private texts: ((value?: unknown) => void)[] = [];
@@ -217,25 +218,22 @@ export class RequestService {
     const requestRequest = await requestSchema.findOneAndUpdate({ _id: id }, { status: "ACCEPTED" }).populate("track");
     if (!requestRequest) return;
 
-    const request = requestRequest as Request;
-
-    throw new Error("Not implemented");
-    // TODO: ??? What are you trying to do here ???
+    const request = requestRequest as unknown as Request & { track: Track };
     
-    // const filename = sanitizeFilename(`${request.track.title} - ${request.track.artist}`, "_");
+    const filename = sanitizeFilename(`${request.track.title} - ${request.track.artist}`, "_");
 
-    // const downloadResult = await downloader.download(request.track.youtubeId, filename, {
-    //   format: "mp3",
-    //   codec: "libmp3lame",
-    //   start: request.start,
-    //   end: config.songMaxPlayDurationSeconds,
-    // });
+    const downloadResult = await downloader.download(request.track.youtubeId, filename, {
+      format: "mp3",
+      codec: "libmp3lame",
+      start: request.start,
+      end: config.songMaxPlayDurationSeconds,
+    });
 
-    // if (downloadResult) {
-    //   await downloadedTracksSchema.create({
-    //     track: request.track,
-    //     filename: downloadResult,
-    //   });
-    // }
+    if (downloadResult) {
+      await downloadedTracksSchema.create({
+        track: request.track,
+        filename: downloadResult,
+      });
+    }
   }
 }
