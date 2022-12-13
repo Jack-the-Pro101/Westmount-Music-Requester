@@ -1,5 +1,5 @@
 import { TargetedEvent } from "preact/compat";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { StateUpdater, useEffect, useRef, useState } from "preact/hooks";
 import { TrackSourceInfo } from "../../types";
 import styles from "./Requests.module.css";
 
@@ -14,10 +14,10 @@ export function PlayRange({
   editable,
 }: {
   songPreview: TrackSourceInfo | undefined;
-  selectionRange: any;
-  setSelectionRange: any;
-  min: number | undefined;
-  max: number | undefined;
+  selectionRange: number;
+  setSelectionRange?: StateUpdater<number>;
+  min?: number;
+  max?: number;
   editable: boolean;
 }) {
   const accuracyConstant = 2;
@@ -37,7 +37,7 @@ export function PlayRange({
   const audioElemRef = useRef<HTMLAudioElement>(null);
   const rangeRef = useRef<HTMLInputElement>(null);
 
-  function updatePlaybackPos(event: any) {
+  function updatePlaybackPos(event: Event) {
     if (min != null && playbackPos < min) {
       updatePlaybackPosRange(min + 1);
       return setPlaybackPos(min);
@@ -47,7 +47,7 @@ export function PlayRange({
       updatePlaybackPosRange(max + 1);
       return setPlaybackPos(max);
     }
-    setPlaybackPos(event.target.currentTime * accuracyConstant);
+    setPlaybackPos((event.target as HTMLAudioElement).currentTime * accuracyConstant);
   }
 
   function updatePlaybackPosRange(event: TargetedEvent<HTMLInputElement, Event>): void;
@@ -66,7 +66,7 @@ export function PlayRange({
     // if (rangeRef) rangeRef.current!.value = (time + (time / duration) * songMaxPlayDurationSeconds * (-0.0029 * duration + 2.3)).toString();
     // C = AB - A
 
-    setSelectionRange(selectionRange * (songMaxPlayDurationSeconds / duration) - selectionRange);
+    setSelectionRange?.(selectionRange * (songMaxPlayDurationSeconds / duration) - selectionRange);
   }
 
   useEffect(() => {
@@ -159,7 +159,7 @@ export function PlayRange({
           if (!editable) return e.preventDefault();
           const currentSel = Number((e.target as HTMLInputElement).value);
 
-          setSelectionRange(currentSel - (currentSel / duration) * songMaxPlayDurationSeconds);
+          setSelectionRange?.(currentSel - (currentSel / duration) * songMaxPlayDurationSeconds);
         }}
         style={`--thumb-width: ${(songMaxPlayDurationSeconds / duration) * 100}%; --buffer-percentage: ${buffered}`}
       />
