@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export default mongoose.model(
+const requests =  mongoose.model(
   "request",
   new mongoose.Schema(
     {
@@ -39,3 +39,7 @@ export default mongoose.model(
     }
   )
 );
+
+export type Request = typeof requests extends mongoose.Model<infer T> ? T : unknown;
+
+export default requests;

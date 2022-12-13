@@ -10,6 +10,7 @@ import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
 import mongoose from "mongoose";
+import { StoredAuthenticatedRequest } from "src/server";
 
 @Controller("/api/requests")
 export class RequestController {
@@ -25,7 +26,7 @@ export class RequestController {
   @Post()
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async createReq(@Body() info: RequestData, @Req() req, @Res() res: Response) {
+  async createReq(@Body() info: RequestData, @Req() req: Request, @Res() res: Response) {
     const { spotifyId, youtubeId, playRange } = info;
 
     if (!validateAllParams([spotifyId, youtubeId, playRange])) return res.sendStatus(400);
@@ -52,7 +53,7 @@ export class RequestController {
   @Patch(":requestId")
   @Roles("ACCEPT_REQUESTS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async acceptRequest(@Param("requestId") requestId: string, @Body() info, @Req() req: Request, @Res() res: Response) {
+  async acceptRequest(@Param("requestId") requestId: string, @Body() info: { evaluation: boolean; }, @Res() res: Response) {
     if (!mongoose.Types.ObjectId.isValid(requestId) || new mongoose.Types.ObjectId(requestId).toString() !== requestId) return res.sendStatus(400);
 
     const { evaluation } = info;
@@ -71,7 +72,7 @@ export class RequestController {
   @Get("/me")
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async getPersonalRequests(@Req() req) {
+  async getPersonalRequests(@Req() req: StoredAuthenticatedRequest) {
     return await this.requestService.getPersonalRequests(req.user._id.toString());
   }
 }

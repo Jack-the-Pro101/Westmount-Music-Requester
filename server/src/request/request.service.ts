@@ -9,25 +9,23 @@ import downloader from "src/downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
 import { RequestData } from "src/types";
-import mongoose, { Model } from "mongoose";
+import mongoose from "mongoose";
 import Perspective from "./perspective";
 import { MusicService } from "src/music/music.service";
 
 import * as config from "../shared/config.json";
 import { sanitizeFilename } from "src/utils";
 
-type Request = typeof requestSchema extends Model<infer T> ? T : unknown;
+import { Request } from "src/models/Request";
 
 class ScanBuffer {
   private texts: ((value?: unknown) => void)[] = [];
 
   constructor() {
     setInterval(() => {
-      if (this.texts.length === 0) return;
-
       const resolver = this.texts.shift();
 
-      resolver();
+      if (resolver) resolver();
     }, 1000);
   }
 
@@ -50,11 +48,12 @@ export class RequestService {
       const existingTrack = await trackSchema.findOne({ youtubeId });
 
       if (existingTrack) {
-        if (existingTrack.uncertain) return null;
+        if (existingTrack.uncertain) return;
         return !existingTrack.explicit;
       }
 
       const lyrics = await downloader.getLyrics(youtubeId);
+      if (!lyrics) return;
 
       if (!lyrics.lyrics) {
         trackSchema
@@ -71,10 +70,10 @@ export class RequestService {
             console.error(err);
           });
 
-        return null;
+        return;
       }
 
-      const possibleProfaneLines = [];
+      const possibleProfaneLines: string[] = [];
 
       for (let i = 0, n = profaneWords.length; i < n; ++i) {
         const word = profaneWords[i].toLowerCase();
@@ -109,7 +108,7 @@ export class RequestService {
 
         const response = await client.analyze(analysisData);
 
-        if (response.attributeScores.TOXICITY.summaryScore.value > 0.7 || response.attributeScores.PROFANITY.summaryScore.value > 0.7) {
+        if (response.attributeScores.TOXICITY!.summaryScore.value > 0.7 || response.attributeScores.PROFANITY!.summaryScore.value > 0.7) {
           isProfane = true;
           break;
         }
@@ -215,24 +214,28 @@ export class RequestService {
   }
 
   async finalizeRequest(id: string) {
-    const request = await requestSchema.findOneAndUpdate({ _id: id }, { status: "ACCEPTED" }).populate("track");
+    const requestRequest = await requestSchema.findOneAndUpdate({ _id: id }, { status: "ACCEPTED" }).populate("track");
+    if (!requestRequest) return;
 
-    // @ts-expect-error
-    const filename = sanitizeFilename(`${request.track.title} - ${request.track.artist}`, "_");
+    const request = requestRequest as Request;
 
-    // @ts-expect-error
-    const downloadResult = await downloader.download(request.track.youtubeId, filename, {
-      format: "mp3",
-      codec: "libmp3lame",
-      start: request.start,
-      end: config.songMaxPlayDurationSeconds,
-    });
+    throw new Error("Not implemented");
+    // TODO: ??? What are you trying to do here ???
+    
+    // const filename = sanitizeFilename(`${request.track.title} - ${request.track.artist}`, "_");
 
-    if (downloadResult) {
-      await downloadedTracksSchema.create({
-        track: request.track,
-        filename: downloadResult,
-      });
-    }
+    // const downloadResult = await downloader.download(request.track.youtubeId, filename, {
+    //   format: "mp3",
+    //   codec: "libmp3lame",
+    //   start: request.start,
+    //   end: config.songMaxPlayDurationSeconds,
+    // });
+
+    // if (downloadResult) {
+    //   await downloadedTracksSchema.create({
+    //     track: request.track,
+    //     filename: downloadResult,
+    //   });
+    // }
   }
 }

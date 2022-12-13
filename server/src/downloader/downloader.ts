@@ -2,12 +2,11 @@ import { Innertube } from "youtubei.js";
 import { exec } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
-import { Stream } from "stream";
 import { FfmpegPostProcessOptions } from "src/types";
 
 class Downloader {
-  private yt: Innertube;
-  private ready: boolean;
+  private yt?: Innertube;
+  private ready = false;
   constructor() {}
 
   async initialize() {
@@ -39,68 +38,65 @@ class Downloader {
   }
 
   async checkSession() {
+    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
     if (this.yt.session.oauth.has_access_token_expired) {
       await this.yt.session.oauth.refreshIfRequired();
     }
   }
 
   async searchYt(query: string) {
-    if (!this.ready) throw new Error("Downloader not ready!");
+    if (!this.yt || this.ready) throw new Error("Downloader not ready!");
     await this.checkSession();
 
     const songs = await this.yt.music.search(query, { type: "song" });
 
-    songs.results.splice(5);
+    songs.results?.splice(5);
 
     return songs.results;
   }
 
   async getBasicInfo(id: string) {
-    if (!this.ready) throw new Error("Downloader not ready!");
+    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
     await this.checkSession();
 
     return await this.yt.getBasicInfo(id);
   }
 
   async getLyrics(id: string) {
-    if (!this.ready) throw new Error("Downloader not ready!");
+    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
     await this.checkSession();
 
-    const getLyricsAndInfo = async () => {
-      const info = await this.yt.music.getInfo(id);
-
-      try {
-        const lyrics = await this.yt.music.getLyrics(id);
-
-        return {
-          lyrics: lyrics.description.text,
-          title: info.basic_info.title,
-          cover: info.basic_info.thumbnail[0].url,
-          artist: info.basic_info.author,
-        };
-      } catch {
-        return {
-          lyrics: "",
-          title: info.basic_info.title,
-          cover: info.basic_info.thumbnail[0].url,
-          artist: info.basic_info.author,
-        };
-      }
-    };
+    const info = await this.yt.music.getInfo(id);
 
     try {
-      return await getLyricsAndInfo();
+      const lyrics = await this.yt.music.getLyrics(id);
+      if (!lyrics) return;
+
+      return {
+        lyrics: lyrics.description.text,
+        title: info.basic_info.title,
+        cover: info.basic_info.thumbnail?.[0].url,
+        artist: info.basic_info.author,
+      };
     } catch (err) {
       console.error(err);
+      return {
+        lyrics: "",
+        title: info.basic_info.title,
+        cover: info.basic_info.thumbnail?.[0].url,
+        artist: info.basic_info.author,
+      };
     }
   }
 
   async getSource(id: string) {
-    if (!this.ready) throw new Error("Downloader not ready!");
+    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
     await this.checkSession();
 
     try {
       const trackInfo = await this.yt.music.getInfo(id);
+
+      if (!trackInfo.streaming_data) throw new Error("No streaming data found!");
 
       const adaptiveAudioFormats = trackInfo.streaming_data.adaptive_formats.filter((format) => format.has_audio && !format.has_video);
       const audioFormats = trackInfo.streaming_data.formats.filter((format) => format.has_audio && !format.has_video);
@@ -119,7 +115,7 @@ class Downloader {
   }
 
   async download(id: string, filename: string, ffmpegArgs: FfmpegPostProcessOptions) {
-    if (!this.ready) throw new Error("Downloader not ready!");
+    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
     await this.checkSession();
 
     const format = await this.yt.getStreamingData(id, {
@@ -132,23 +128,23 @@ class Downloader {
       type: "audio",
     });
 
-    const filepath = path.join(process.env.DOWNLOADS, filename + "." + format.mime_type.split(";")[0].split("/")[1]);
+    const filepath = path.join(process.env.DOWNLOADS!, filename + "." + format.mime_type.split(";")[0].split("/")[1]);
 
-    await new Promise(async (resolve, reject) => {
+    await new Promise(async (resolve) => {
       const writer = fs.createWriteStream(filepath, {
         encoding: "binary",
       });
 
       const reader = video.getReader();
 
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve) => {
         reader.read().then(function parseChunks({ done, value }) {
           if (done) {
             return resolve(true);
           }
           writer.write(value);
 
-          return reader.read().then(parseChunks);
+          reader.read().then(parseChunks);
         });
       });
 

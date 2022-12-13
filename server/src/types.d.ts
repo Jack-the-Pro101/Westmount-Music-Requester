@@ -7,7 +7,7 @@ export interface CoreSong {
 }
 
 export interface YouTubeSong {
-  id: track.id;
+  id: string;
   title: string;
   thumbnail: string;
   channel: string;
@@ -16,6 +16,8 @@ export interface YouTubeSong {
 }
 
 export interface StoredUser {
+  _id: string;
+  id: string;
   email: string;
   username: string;
   password: string;
@@ -24,6 +26,7 @@ export interface StoredUser {
   permissions: number;
   name: string;
 }
+
 export interface GoogleUserInfo {
   email: string;
   firstName: string;

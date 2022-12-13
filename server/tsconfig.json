@@ -12,11 +12,7 @@
     "baseUrl": "./",
     "resolveJsonModule": true,
     "incremental": true,
+    "strict": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
   }
 }

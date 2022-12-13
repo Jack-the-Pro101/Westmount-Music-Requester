@@ -14,7 +14,7 @@ import * as session from "express-session";
 import * as connectMongodbSession from "connect-mongodb-session";
 const MongoDBStore = connectMongodbSession(session);
 const store = new MongoDBStore({
-  uri: process.env.MONGODB_URI,
+  uri: process.env.MONGODB_URI!,
   collection: "sessions",
 });
 
@@ -32,7 +32,7 @@ async function connectDatabase() {
     connection.on("open", () => console.log("Reconnected to MongoDB database"));
   });
   connection.on("connection", () => console.log("Connection established"));
-  await mongoose.connect(process.env.MONGODB_URI, {});
+  await mongoose.connect(process.env.MONGODB_URI!, {});
 }
 
 async function initTasks() {
@@ -41,7 +41,7 @@ async function initTasks() {
   if (user == null) {
     await Users.create({
       username: process.env.SYS_ADMIN_USERNAME,
-      password: await bcrypt.hash(process.env.SYS_ADMIN_PASSWORD, 10),
+      password: await bcrypt.hash(process.env.SYS_ADMIN_PASSWORD!, 10),
       type: "INTERNAL",
       permissions: generateBitfield("EVERYTHING"),
       name: "Administrator",
@@ -61,7 +61,7 @@ async function bootstrap() {
   app.use(
     session({
       store: store,
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET!,
       resave: false,
       saveUninitialized: false,
       name: "WMR_SID",

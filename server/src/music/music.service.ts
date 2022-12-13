@@ -5,7 +5,7 @@ import downloader from "../downloader/downloader";
 
 @Injectable()
 export class MusicService {
-  private spotifyToken: string;
+  private spotifyToken?: string;
   private spotifyTokenRefreshing = false;
 
   private async refreshSpotifyToken() {
@@ -27,7 +27,7 @@ export class MusicService {
     const data = await request.json();
     this.spotifyToken = data.access_token;
   }
-  async searchSpotify(query: string) {
+  async searchSpotify(query: string): Promise<SpotifyTrack[]> {
     try {
       if (!this.spotifyToken && !this.spotifyTokenRefreshing) await this.refreshSpotifyToken();
 
@@ -82,16 +82,16 @@ export class MusicService {
     return await downloader.getSource(id);
   }
 
-  async searchYt(query: string): Promise<YouTubeSong[]> {
+  async searchYt(query: string): Promise<YouTubeSong[] | undefined> {
     const info = await downloader.searchYt(query);
 
-    return info.map((song) => ({
-      id: song.id,
-      title: song.title,
+    return info?.filter(song => song.id).map((song) => ({
+      id: song.id!,
+      title: song.title ?? "[Unknown]",
       thumbnail: song.thumbnails[0].url,
-      channel: song.artists[0]?.name || "[YT MUSIC - UNKNOWN]",
+      channel: song.artists?.[0]?.name || "[Unknown]",
       url: "https://www.youtube.com/watch?v=" + song.id,
-      duration: song.duration.seconds,
+      duration: song.duration?.seconds || 0,
     }));
   }
 }
