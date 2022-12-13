@@ -1,9 +1,11 @@
 import { GoogleOAuthGuard } from "./google-oauth.guard";
-import { Controller, Delete, Get, Post, Request, Res, UseGuards } from "@nestjs/common";
+import { Controller, Delete, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 
 import { LocalAuthGuard } from "./local-auth.guard";
 import { AuthenticatedGuard } from "./authenticated.guard";
+import { Request, Response } from "express";
+import { GoogleAuthenticatedRequest, StoredAuthenticatedRequest } from "src/server";
 
 @Controller("/api/auth")
 export class AuthController {
@@ -11,11 +13,11 @@ export class AuthController {
 
   @Get()
   @UseGuards(GoogleOAuthGuard)
-  async googleAuth(@Request() req) {}
+  async googleAuth() {}
 
   @Delete("logout")
   @UseGuards(AuthenticatedGuard)
-  logout(@Request() req) {
+  logout(@Req() req: Request) {
     req.logout(function (err) {
       if (err) {
         console.log(err);
@@ -28,7 +30,7 @@ export class AuthController {
 
   @Get("session")
   @UseGuards(AuthenticatedGuard)
-  getSession(@Request() req) {
+  getSession(@Req() req: StoredAuthenticatedRequest) {
     const isGoogleUser = req.user.type === "GOOGLE";
 
     return {
@@ -43,7 +45,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post("login")
-  login(@Request() req) {
+  login(@Req() req: StoredAuthenticatedRequest) {
     return {
       id: req.user.id,
       email: null,
@@ -56,7 +58,7 @@ export class AuthController {
 
   @Get("google-redirect")
   @UseGuards(GoogleOAuthGuard)
-  googleAuthRedirect(@Request() req, @Res() res) {
+  googleAuthRedirect(@Req() req: GoogleAuthenticatedRequest, @Res() res: Response) {
     const user = this.authService.googleLogin(req);
 
     if (user) {
