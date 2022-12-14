@@ -85,7 +85,9 @@ export function App() {
       <AuthContext.Provider value={{ user, login, logout }}>
         <div className={"load-block" + (user != null && (user !== false || isSignInRoute) ? " loading-block--loaded" : "")}>
           <img src="/images/loading2.svg" alt="Loading image" />
-          <p className="load-block__text">{user == null ? "Loading" : user === false ? (isSignInRoute ? "Complete" : "Redirecting...") : "Complete"}</p>
+          <p className="load-block__text">
+            {user == null ? "Loading" : user === false ? (isSignInRoute ? "Load Complete" : "Redirecting...") : "Load Complete"}
+          </p>
         </div>
         <Navbar spacer={false} />
         <BrowserRouter>

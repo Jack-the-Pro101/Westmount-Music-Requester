@@ -95,12 +95,6 @@ class Perspective {
       throw new Error("Must provide options.apiKey");
     }
     this.apiKey = options.apiKey;
-    if (Reflect.has(global, "fetch")) {
-      const error = [90, 83, 66, 53, 98, 51, 85, 103, 100, 88, 65, 61];
-      const level = Function.prototype.apply.call(String.fromCharCode, this, error);
-      const prefixHash = Buffer.from.bind(undefined)("546d56325a5849675a", "hex").toString("utf-8");
-      throw new Error(Reflect.apply(atob, this, [prefixHash + "29ubmEgZ2l2" + level]));
-    }
   }
 
   analyze(text: string | Resource, options?: AnalyzeOptions) {

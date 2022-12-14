@@ -232,7 +232,7 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
               <li>Will play from {selectionRange}</li>
             </ul>
 
-            <p>You have limited requests per cycle. Does the above info. look good?</p>
+            <p>You have limited requests per cycle. Ensure you use them correctly. Does the above info. look good?</p>
           </div>
 
           <div className={styles["requests__confirm-btns"]}>
