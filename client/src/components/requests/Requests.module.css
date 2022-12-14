@@ -404,6 +404,10 @@
   cursor: pointer;
 }
 
+.requests__btn[type="reset"] {
+  background-color: hsl(var(--clr-neutral-200));
+}
+
 .requests__btn[type="submit"] {
   background-image: linear-gradient(36deg, hsl(var(--clr-primary-400)), 45%, hsl(var(--clr-primary-600)));
 }

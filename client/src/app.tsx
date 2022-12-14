@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { Home } from "./routes/home/Home";
@@ -57,6 +57,8 @@ export const AuthContext = React.createContext<AuthContextProps>({
 export function App() {
   const [user, setUser] = useState<StoredUser | false | null>(null);
 
+  const isSignInRoute = window.location.pathname.includes("signin");
+
   useEffect(() => {
     (async () => {
       const request = await fetch("/api/auth/session");
@@ -71,6 +73,9 @@ export function App() {
         }
       } else {
         setUser(false);
+        if (!isSignInRoute) {
+          window.location.replace("/signin");
+        }
       }
     })();
   }, []);
@@ -78,6 +83,10 @@ export function App() {
   return (
     <>
       <AuthContext.Provider value={{ user, login, logout }}>
+        <div className={"load-block" + (user != null && (user !== false || isSignInRoute) ? " loading-block--loaded" : "")}>
+          <img src="/images/loading2.svg" alt="Loading image" />
+          <p className="load-block__text">{user == null ? "Loading" : user === false ? (isSignInRoute ? "Complete" : "Redirecting...") : "Complete"}</p>
+        </div>
         <Navbar spacer={false} />
         <BrowserRouter>
           <Routes>
