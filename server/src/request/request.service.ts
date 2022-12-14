@@ -147,6 +147,7 @@ export class RequestService {
           .then((song) => {
             if (!song) return reject();
             if (song.duration - config.songMaxPlayDurationSeconds < playRange) reject();
+            if (playRange + config.songMaxPlayDurationSeconds > song.duration) reject();
             if (song.duration < config.songMaxPlayDurationSeconds) reject();
             resolve(true);
           })
@@ -219,7 +220,7 @@ export class RequestService {
     if (!requestRequest) return;
 
     const request = requestRequest as unknown as Request & { track: Track };
-    
+
     const filename = sanitizeFilename(`${request.track.title} - ${request.track.artist}`, "_");
 
     const downloadResult = await downloader.download(request.track.youtubeId, filename, {

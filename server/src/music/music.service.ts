@@ -85,13 +85,15 @@ export class MusicService {
   async searchYt(query: string): Promise<YouTubeSong[] | undefined> {
     const info = await downloader.searchYt(query);
 
-    return info?.filter(song => song.id).map((song) => ({
-      id: song.id!,
-      title: song.title ?? "[Unknown]",
-      thumbnail: song.thumbnails[0].url,
-      channel: song.artists?.[0]?.name || "[Unknown]",
-      url: "https://www.youtube.com/watch?v=" + song.id,
-      duration: song.duration?.seconds || 0,
-    }));
+    return info
+      ?.filter((song) => song.id)
+      .map((song) => ({
+        id: song.id!,
+        title: song.title ?? "[Unknown]",
+        thumbnail: song.thumbnails[0].url,
+        channel: song.artists?.[0]?.name || "[Unknown]",
+        url: "https://music.youtube.com/watch?v=" + song.id,
+        duration: song.duration?.seconds || 0,
+      }));
   }
 }

@@ -12,6 +12,7 @@ import { StoredUser } from "./types";
 import { Requests } from "./routes/requests/Requests";
 import React from "preact/compat";
 import { Help } from "./routes/help/Help";
+import { Admin } from "./routes/admin/Admin";
 
 interface AuthContextProps {
   user: StoredUser | false | null;
@@ -84,6 +85,7 @@ export function App() {
             <Route path="/myrequests" element={<MyRequests />} />
             <Route path="/help" element={<Help />} />
             <Route path="/signin" element={<Signin />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/requests" element={<Requests />} />
             <Route path="/credits" element={<Credits />} />
             <Route path="/error" element={<Error />} />

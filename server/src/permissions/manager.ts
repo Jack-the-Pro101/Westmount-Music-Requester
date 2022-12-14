@@ -3,8 +3,8 @@ const PERMISSIONS = [
   "ACCEPT_REQUESTS", 
   "REJECT_REQUESTS", 
   "BLANK_ONE", 
-  "BLANK_TWO", 
-  "BLANK_THREE", 
+  "VIEW_LOGS", 
+  "MANAGE_USERS", 
   "ADMINISTRATOR"
 ] as const;
 type Permission = typeof PERMISSIONS[number];
