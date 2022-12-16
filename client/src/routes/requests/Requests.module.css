@@ -3,15 +3,56 @@
   margin-top: 2em;
 }
 
+.requests__heading {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
 .requests__fieldset {
   border: none;
+}
+
+.requests__filter {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1em;
+  max-width: 1200px;
+  width: 100%;
+  margin: 1em auto;
+}
+
+.requests__filter label {
+  margin-right: 0.5em;
+}
+
+.requests__filter input {
+  padding: 0.5em 0.75em;
+  font-size: 2rem;
+  background-color: hsl(var(--clr-neutral-400), 0.2);
+  border: none;
+  color: hsl(var(--clr-neutral-900));
+  border-radius: 100vmax;
+}
+
+.requests__filter input:focus {
+  outline: none;
+}
+
+.requests__filter select {
+  font-size: 2rem;
+  background-color: hsl(var(--clr-neutral-200));
+  color: hsl(var(--clr-neutral-900));
+  padding: 0.25em;
+  border: 1px solid hsl(var(--clr-neutral-300));
+  border-radius: 4px;
 }
 
 .requests__list {
   list-style-type: none;
   max-width: 1200px;
   width: 100%;
-  margin: 0 auto;
+  margin: 1em auto;
   display: grid;
   gap: 0.5em;
 }
@@ -23,6 +64,7 @@
 .requests__btn {
   display: grid;
   align-items: center;
+  gap: 4px;
   border-radius: 4px;
   grid-template-columns: 2fr 1fr 1fr;
   padding: 1em;
@@ -89,7 +131,9 @@
 
 .requests__popup-spotify {
   display: flex;
+  justify-content: space-between;
   margin: 1em 0;
+  padding: 0 1em;
 }
 
 .requests__popup-spotify-image {
@@ -99,6 +143,25 @@
 .requests__popup-spotify-img {
   width: 100%;
   border-radius: 4px;
+}
+
+.requests__popup-spotify a {
+  display: block;
+  margin: auto 0;
+}
+
+.requests__popup-spotify button {
+  background-color: transparent;
+  border: 1px solid hsl(var(--clr-neutral-400));
+  border-radius: 4px;
+  font-size: 2rem;
+  padding: 0.5em 0.75em;
+  color: hsl(var(--clr-neutral-900));
+}
+
+.requests__popup-spotify button:hover {
+  cursor: pointer;
+  background-color: hsl(var(--clr-neutral-900), 0.1);
 }
 
 .requests__popup-footer {
@@ -141,10 +204,17 @@
   background-color: transparent;
   border: none;
   color: hsl(var(--clr-neutral-900));
+  cursor: pointer;
 }
 
 .requests__popup--active .requests__popup-box {
   transform: scale(1);
   opacity: 1;
   transition: transform 0.2s cubic-bezier(0.67, 0.42, 0.5, 1.49), opacity 0.2s ease, visibility 0s 0s linear;
+}
+
+@media screen AND (max-width: 500px) {
+  .requests__btn {
+    grid-template-columns: 2fr 1fr;
+  }
 }

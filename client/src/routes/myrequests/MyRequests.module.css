@@ -21,6 +21,7 @@
   margin-top: 0.5em;
   border-radius: 4px;
   display: flex;
+  min-height: 14rem;
 }
 
 .myrequests__item-image {

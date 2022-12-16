@@ -34,6 +34,12 @@ export interface Request {
   createdAt: string;
   updatedAt: string;
   status: "PRE_PENDING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
+
+  popularity: number;
+}
+
+export interface RequestPage {
+  id: string[];
 }
 
 export interface YouTubeSong {

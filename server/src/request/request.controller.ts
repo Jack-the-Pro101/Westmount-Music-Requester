@@ -41,30 +41,30 @@ export class RequestController {
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
 
       if (scanResult === false) {
-        await this.requestService.updateRequest({ track: trackId }, { status: "AUTO_REJECTED" });
+        await this.requestService.updateRequest({ track: trackId, status: "PRE_PENDING" }, { status: "AUTO_REJECTED" });
       } else {
-        await this.requestService.updateRequest({ track: trackId }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
+        await this.requestService.updateRequest({ track: trackId, status: "PRE_PENDING" }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
       }
     } catch (err) {
       console.error(err);
     }
   }
 
-  @Patch(":requestId")
+  @Patch(":trackId")
   @Roles("ACCEPT_REQUESTS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async acceptRequest(@Param("requestId") requestId: string, @Body() info: { evaluation: boolean; }, @Res() res: Response) {
-    if (!mongoose.Types.ObjectId.isValid(requestId) || new mongoose.Types.ObjectId(requestId).toString() !== requestId) return res.sendStatus(400);
-
+  async acceptRequest(@Param("trackId") trackId: string, @Body() info: { evaluation: boolean }, @Res() res: Response) {
     const { evaluation } = info;
     if (!validateAllParams([evaluation])) return res.sendStatus(400);
 
+    if (!mongoose.Types.ObjectId.isValid(trackId) || new mongoose.Types.ObjectId(trackId).toString() !== trackId) return res.sendStatus(400);
+
     if (!evaluation) {
-      await this.requestService.updateRequest({ _id: requestId }, { status: "REJECTED" });
+      await this.requestService.updateManyRequests({ track: trackId }, { status: "REJECTED" });
       return res.sendStatus(200);
     }
 
-    this.requestService.finalizeRequest(requestId);
+    this.requestService.finalizeRequest(trackId);
 
     res.sendStatus(200);
   }

@@ -23,8 +23,6 @@ export function PlayRange({
   const accuracyConstant = 2;
   const songMaxPlayDurationSeconds = config.songMaxPlayDurationSeconds * accuracyConstant;
 
-  // if (!setSelectionRange) selectionRange *= accuracyConstant;
-
   if (min) min *= accuracyConstant;
   if (max) max *= accuracyConstant;
 
@@ -34,6 +32,8 @@ export function PlayRange({
   const [duration, setDuration] = useState<number>(0);
   const [buffered, setBuffered] = useState(0);
   const [selectionDisplayRange, setDisplaySelectionRange] = useState(0);
+
+  if (!setSelectionRange) setDisplaySelectionRange(selectionRange * accuracyConstant);
 
   const audioElemRef = useRef<HTMLAudioElement>(null);
   const rangeRef = useRef<HTMLInputElement>(null);
@@ -134,8 +134,12 @@ export function PlayRange({
         </audio>
       )}
 
-      <label htmlFor="range" className={styles["requests__play-range-label"]}></label>
-      <label htmlFor="track-scrubber" className={styles["requests__play-range-scrubber-label"]}></label>
+      <label htmlFor="range" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
+        Scrub playback
+      </label>
+      <label htmlFor="track-scrubber" style="position: absolute; opacity: 0; pointer-events: none;width: 1px; height: 1px;">
+        Change play range
+      </label>
 
       <input
         type="range"
@@ -160,7 +164,7 @@ export function PlayRange({
           if (!editable) return e.preventDefault();
           const currentSel = Number((e.target as HTMLInputElement).value);
 
-          const displayRange = currentSel - (currentSel / duration) * songMaxPlayDurationSeconds;
+          const displayRange = Math.round((currentSel - (currentSel / duration) * songMaxPlayDurationSeconds) * 100) / 100;
           setDisplaySelectionRange(displayRange);
           setSelectionRange(displayRange / accuracyConstant);
         }}
