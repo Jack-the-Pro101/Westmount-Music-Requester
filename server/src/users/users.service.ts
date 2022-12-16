@@ -9,12 +9,9 @@ export class UsersService {
     return await Users.findOneAndUpdate(filter, data);
   }
 
-  // @ts-expect-error
-  async findOne(usernameOrEmail: string, internal = false): Promise<User> {
+  async findOne(usernameOrEmail: string, internal = false): Promise<User | undefined> {
     try {
-      // @ts-expect-error
-
-      return await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail });
+      return await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail }) ?? undefined;
     } catch (err) {
       console.error(err);
     }
@@ -28,8 +25,7 @@ export class UsersService {
     }
   }
 
-  // @ts-expect-error
-  async getOrCreateOne(usernameOrEmail: string, internal = false, data: Partial<User>): Promise<User> {
+  async getOrCreateOne(usernameOrEmail: string, internal = false, data: Partial<User>): Promise<User | undefined> {
     try {
       const user = await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail });
       if (user == null) return await Users.create(data);

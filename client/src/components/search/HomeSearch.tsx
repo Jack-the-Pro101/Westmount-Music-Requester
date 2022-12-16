@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 
-import { CoreSong, SpotifySearch, SpotifyTrack } from "../../types";
+import { CoreSong, SpotifyTrack } from "../../types";
 import { SearchDropdown } from "./SearchDropdown";
 
 import styles from "./HomeSearch.module.css";

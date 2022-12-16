@@ -26,7 +26,7 @@ export class RequestController {
   @Post()
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async createReq(@Body() info: RequestData, @Req() req: Request, @Res() res: Response) {
+  async createReq(@Body() info: RequestData, @Req() req: StoredAuthenticatedRequest, @Res() res: Response) {
     const { spotifyId, youtubeId, playRange } = info;
 
     if (!validateAllParams([spotifyId, youtubeId, playRange])) return res.sendStatus(400);

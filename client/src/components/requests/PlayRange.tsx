@@ -166,7 +166,7 @@ export function PlayRange({
 
           const displayRange = Math.round((currentSel - (currentSel / duration) * songMaxPlayDurationSeconds) * 100) / 100;
           setDisplaySelectionRange(displayRange);
-          setSelectionRange(displayRange / accuracyConstant);
+          setSelectionRange?.(displayRange / accuracyConstant);
         }}
         style={`--thumb-width: ${(songMaxPlayDurationSeconds / duration) * 100}%; --buffer-percentage: ${buffered}`}
       />

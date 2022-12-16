@@ -6,5 +6,5 @@ export interface StoredAuthenticatedRequest extends Request {
 }
 
 export interface GoogleAuthenticatedRequest extends Request {
-    user: GoogleUser;
+  user: GoogleUser;
 }

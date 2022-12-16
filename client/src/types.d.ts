@@ -38,10 +38,6 @@ export interface Request {
   popularity: number;
 }
 
-export interface RequestPage {
-  id: string[];
-}
-
 export interface YouTubeSong {
   id: string;
   title: string;
@@ -122,16 +118,4 @@ export interface SpotifyTrack {
   track_number: number;
   type: string;
   uri: string;
-}
-
-export interface SpotifySearch {
-  tracks: {
-    href: string;
-    items: SpotifyTrack[];
-    limit: number;
-    next: string;
-    offset: number;
-    previous: string | null;
-    total: number;
-  };
 }
