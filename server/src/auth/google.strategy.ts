@@ -3,6 +3,19 @@ import { Strategy, VerifyCallback } from "passport-google-oauth2";
 import { Injectable } from "@nestjs/common";
 import { UsersService } from "./users.service";
 
+interface RawGoogleProfile {
+  name: {
+    familyName: string;
+    givenName: string;
+  };
+  emails: {
+    value: string;
+  }[];
+  photos: {
+    value: string;
+  }[];
+}
+
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
   constructor(private readonly usersService: UsersService) {
@@ -14,7 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<void> {
+  async validate(accessToken: string, refreshToken: string, profile: RawGoogleProfile, done: VerifyCallback): Promise<void> {
     const { name, emails, photos } = profile;
 
     const userData = {

@@ -8,7 +8,7 @@ import userSchema from "src/models/User";
 import downloader from "src/downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
-import { RequestData } from "src/types";
+import { RequestData, StoredUser } from "src/types";
 import mongoose from "mongoose";
 import Perspective from "./perspective";
 import { MusicService } from "src/music/music.service";
@@ -186,7 +186,7 @@ export class RequestService {
     return (await trackSchema.findOne({ youtubeId: youtubeId }))?.id || new mongoose.Types.ObjectId();
   }
 
-  async createRequest(info: RequestData, user: any, trackId: mongoose.Types.ObjectId): Promise<boolean> {
+  async createRequest(info: RequestData, user: StoredUser, trackId: mongoose.Types.ObjectId): Promise<boolean> {
     try {
       const userDoc = await userSchema.findOne(user.type === "GOOGLE" ? { email: user.email } : { username: user.username });
 
