@@ -13,7 +13,7 @@ export function Credits() {
             <hr />
           </header>
           <ul className={styles.credits__list}>
-            <li className={styles.credits__item}>Primary developer - Jack Huang</li>
+            <li className={styles.credits__item}>Primary Junior Developer - Jack Huang</li>
             <li className={styles.credits__item}>
               Developer -{" "}
               <a href="https://github.com/infiniwave" target="_blank" rel="noopener noreferrer">
@@ -30,7 +30,7 @@ export function Credits() {
           <ul className={styles.credits__list}>
             <li className={styles.credits__item}>UI Design - Tanushri Sendhil Kumar</li>
             <li className={styles.credits__item}>UI Ideas - Riley Jervis</li>
-            <li className={styles.credits__item}>Problem Solving - [Junior Developer] Dawson Katerberg</li>
+            <li className={styles.credits__item}>Problem Solving - [Developer] Dawson Katerberg</li>
             <li className={styles.credits__item}>Math - Nathan Martin</li>
           </ul>
         </section>
