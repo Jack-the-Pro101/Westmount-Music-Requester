@@ -8,7 +8,7 @@ import userSchema from "src/models/User";
 import downloader from "src/downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
-import { RequestData, Request as RequestType } from "src/types";
+import { RequestData, Request as RequestType, StoredUser } from "src/types";
 import mongoose from "mongoose";
 import Perspective from "./perspective";
 import { MusicService } from "src/music/music.service";
@@ -17,7 +17,6 @@ import * as config from "../shared/config.json";
 import { sanitizeFilename } from "src/utils";
 
 import { Request } from "src/models/Request";
-import { Track } from "../models/Track";
 
 class ScanBuffer {
   private texts: ((value?: unknown) => void)[] = [];
@@ -208,7 +207,7 @@ export class RequestService {
     return (await trackSchema.findOne({ youtubeId: youtubeId }))?.id || new mongoose.Types.ObjectId();
   }
 
-  async createRequest(info: RequestData, user: any, trackId: mongoose.Types.ObjectId): Promise<boolean> {
+  async createRequest(info: RequestData, user: StoredUser, trackId: mongoose.Types.ObjectId): Promise<boolean> {
     try {
       const userDoc = await userSchema.findOne(user.type === "GOOGLE" ? { email: user.email } : { username: user.username });
 

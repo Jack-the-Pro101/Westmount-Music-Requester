@@ -3,7 +3,7 @@ export interface CoreSong {
   artist: string;
   url: string;
   coverUrl: string;
-  id: number;
+  id: string;
 }
 
 export interface StoredUser {
@@ -36,10 +36,6 @@ export interface Request {
   status: "PRE_PENDING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
 
   popularity: number;
-}
-
-export interface RequestPage {
-  id: string[];
 }
 
 export interface YouTubeSong {
@@ -122,16 +118,4 @@ export interface SpotifyTrack {
   track_number: number;
   type: string;
   uri: string;
-}
-
-export interface SpotifySearch {
-  tracks: {
-    href: string;
-    items: SpotifyTrack[];
-    limit: number;
-    next: string;
-    offset: number;
-    previous: string | null;
-    total: number;
-  };
 }

@@ -189,8 +189,6 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
         <fieldset className={styles.requests__fieldset} disabled={selectedTrackSource == null}>
           <h2 className={styles.requests__heading}>Select play range</h2>
           <PlayRange
-            max={undefined}
-            min={undefined}
             songPreview={selectedTrackSource}
             selectionRange={selectionRange}
             setSelectionRange={setSelectionRange}

@@ -1,8 +1,8 @@
-import { useState } from "preact/hooks";
+import { StateUpdater } from "preact/hooks";
 import styles from "../../routes/requests/Requests.module.css";
 import { Request as RequestType } from "../../types";
 
-export function Request({ request, setActive }: { request: RequestType; setActive: any }) {
+export function Request({ request, setActive }: { request: RequestType; setActive: StateUpdater<RequestType | undefined> }) {
   return (
     <li className={styles["requests__item"]}>
       <button className={styles["requests__btn"]} onClick={() => setActive(request)}>

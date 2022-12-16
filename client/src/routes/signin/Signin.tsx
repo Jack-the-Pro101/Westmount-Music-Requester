@@ -50,9 +50,9 @@ export function Signin() {
             <h2 className={styles.signin__subheading}>Admin Sign In</h2>
 
             <label htmlFor="username">Username</label>
-            <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername(e.target!.value)} maxLength={100} required />
+            <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername((e.target as HTMLInputElement).value)} maxLength={100} required />
             <label htmlFor="password">Password</label>
-            <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target!.value)} maxLength={200} required />
+            <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword((e.target as HTMLInputElement).value)} maxLength={200} required />
 
             <p className={styles.signin__error}>{errorMsg}</p>
 

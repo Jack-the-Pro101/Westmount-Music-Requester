@@ -1,6 +1,5 @@
 import { useContext, useState } from "preact/hooks";
 import { AuthContext } from "../app";
-import { GoogleUser } from "../types";
 
 export function Navbar({ spacer }: { spacer: boolean }) {
   const [dropdownDropped, setDropdownDropped] = useState(false);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import styles from "./Requests.module.css";
 
-import { Request, RequestPage, TrackSourceInfo } from "../../types";
+import { Request, TrackSourceInfo } from "../../types";
 import { Request as RequestElement } from "../../components/requests/Request";
 
 import { PlayRange } from "../../components/requests/PlayRange";
@@ -34,7 +34,7 @@ export function Requests() {
     return true;
   }
 
-  const requestPages = {} as RequestPage;
+  const requestPages = {} as { [key: string]: string[] };
 
   // const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null);
 
@@ -83,7 +83,7 @@ export function Requests() {
     return strings.some((string) => string.replace(/ /g, "").toLowerCase().includes(filter.toLowerCase().replace(/ /g, "")));
   }
 
-  const [selectedTrack, setSelectedTrack] = useState<Request | null>(null);
+  const [selectedTrack, setSelectedTrack] = useState<Request>();
 
   useEffect(() => {
     (async () => {
@@ -147,11 +147,11 @@ export function Requests() {
       <form action="#" className={styles.requests__filter}>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="filter">Search</label>
-          <input type="text" name="filter" id="filter" value={filterQuery} onChange={(e: Event) => setFilterQuery(e.target!.value)} />
+          <input type="text" name="filter" id="filter" value={filterQuery} onChange={(e: Event) => setFilterQuery((e.target as HTMLInputElement).value)} />
         </fieldset>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="sort">Sort By</label>
-          <select name="sort" id="sort" onChange={(e: Event) => setSortBy(e.target!.value)}>
+          <select name="sort" id="sort" onChange={(e: Event) => setSortBy((e.target as HTMLSelectElement).value)}>
             <option value="popular">Most Requested</option>
             <option value="unpopular">Least Requested</option>
             <option value="new">Newest</option>
@@ -160,7 +160,7 @@ export function Requests() {
         </fieldset>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="type-sort">Filter By Type</label>
-          <select name="type-sort" id="type-sort" onChange={(e: Event) => setSortFilter(e.target!.value)}>
+          <select name="type-sort" id="type-sort" onChange={(e: Event) => setSortFilter((e.target as HTMLSelectElement).value)}>
             <option value="none">No Filter</option>
             <option value="pending">Pending</option>
             <option value="pending_manual">Pending Manual</option>
@@ -174,13 +174,10 @@ export function Requests() {
         {requests
           .sort(sortFunction)
           .map((request) => {
-            // @ts-expect-error
             const value = requestPages[request.track._id];
             if (value == null) {
-              // @ts-expect-error
               requestPages[request.track._id] = [request._id];
             } else {
-              // @ts-expect-error
               requestPages[request.track._id].push(request._id);
             }
 
@@ -222,7 +219,7 @@ export function Requests() {
                   className={styles["requests__popup-close-btn"]}
                   onClick={() => {
                     setSelectedTrackSource(undefined);
-                    setSelectedTrack(null);
+                    setSelectedTrack(undefined);
                   }}
                 >
                   <i class="fa-regular fa-xmark"></i>
@@ -237,7 +234,6 @@ export function Requests() {
                   <li className={styles["requests__popup-item"]}>
                     Popularity:{" "}
                     {
-                      // @ts-expect-error
                       requestPages[selectedTrack.track._id].length
                     }{" "}
                     person(s)
@@ -277,7 +273,6 @@ export function Requests() {
                   max={selectedTrack.start + config.songMaxPlayDurationSeconds}
                   songPreview={selectedTrackSource}
                   selectionRange={selectedTrack.start}
-                  setSelectionRange={null}
                   editable={false}
                 />
               </div>
@@ -286,7 +281,7 @@ export function Requests() {
                   className={styles["requests__popup-footer-btn"] + " " + styles["requests__popup-reject-btn"]}
                   onClick={() => {
                     setSelectedTrackSource(undefined);
-                    setSelectedTrack(null);
+                    setSelectedTrack(undefined);
                     submitRequest(selectedTrack, false);
                   }}
                 >
@@ -296,7 +291,7 @@ export function Requests() {
                   className={styles["requests__popup-footer-btn"] + " " + styles["requests__popup-accent-btn"]}
                   onClick={() => {
                     setSelectedTrackSource(undefined);
-                    setSelectedTrack(null);
+                    setSelectedTrack(undefined);
                     submitRequest(selectedTrack, true);
                   }}
                 >

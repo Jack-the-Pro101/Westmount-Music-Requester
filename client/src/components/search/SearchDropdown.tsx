@@ -1,7 +1,13 @@
-import { SpotifyTrack } from "../../types";
+import { CoreSong, SpotifyTrack } from "../../types";
 import styles from "./HomeSearch.module.css";
 
-export function SearchDropdown({ songs, onSelect, isLoading }: { songs: SpotifyTrack[]; onSelect: any; isLoading: boolean }) {
+interface Props {
+  songs: SpotifyTrack[]; 
+  onSelect: (data: CoreSong) => void; 
+  isLoading: boolean; 
+}
+
+export function SearchDropdown({ songs, onSelect, isLoading }: Props) {
   return (
     <ul className={styles.search__dropdown}>
       {songs.length === 0 ? (
