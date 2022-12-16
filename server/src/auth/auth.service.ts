@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { GoogleUser, StoredUser } from "src/types";
-import { UsersService } from "./users.service";
+import { UsersService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
 import { GoogleAuthenticatedRequest } from "src/server";
 

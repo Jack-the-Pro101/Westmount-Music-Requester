@@ -25,7 +25,7 @@ export function MyRequests() {
           <li className={styles.myrequests__item}>
             <div className={styles["myrequests__item-image"]}>
               <img
-                src={request.track.cover}
+                src={request?.track.cover}
                 alt={request.track.title + "'s thumbnail"}
                 referrerpolicy="no-referrer"
                 className={styles["myrequests__item-img"]}

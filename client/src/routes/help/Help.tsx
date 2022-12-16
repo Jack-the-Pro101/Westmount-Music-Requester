@@ -35,13 +35,19 @@ export function Help() {
           </li>
           <li className={styles["help__how-item"]}>
             <p>
-              When a song is accepted by a human, the request is marked as accepted and then begins download of the song to be ready to play on the PA system.
+              When a song is accepted by a human, the request is marked as accepted and then begins download of the song (music piracy epic) to be ready to play
+              on the PA system.
             </p>
           </li>
         </ol>
       </section>
       <section className={styles.help__section} id="statuses">
-        <h2 className={styles.help__heading}>Request Statuses</h2>
+        <h2 className={styles.help__heading}>
+          Request Statuses
+          <a href="#statuses" className={styles.help__anchor}>
+            #
+          </a>
+        </h2>
 
         <ul className={styles["help__statuses-list"]}>
           <li className={styles["help_statuses-item"]}>
@@ -56,14 +62,21 @@ export function Help() {
             <p>Rejected</p>
             <p>A human verifier has rejected the song. This could be due to many reasons.</p>
           </li>
-
+          <li className={styles["help_statuses-item"]}>
+            <p>Pending Manual</p>
+            <p>
+              No lyrics could be found for the song, either because it is an instrumental or that YouTube Music does not have the lyrics. Usually, Spotify will
+              have the lyrics if YouTube Music does not, but lyrics from Spotify cannot be fetched automatically. Therefore, a manual human effort is being
+              awaited to verify.
+            </p>
+          </li>
           <li className={styles["help_statuses-item"]}>
             <p>Pending</p>
             <p>Song has passed profanity check and is awaiting human verification.</p>
           </li>
           <li className={styles["help_statuses-item"]}>
             <p>Pre Pending</p>
-            <p>Song is awaiting automated profanity check before becoming pending.</p>
+            <p>Song is awaiting automated profanity check before continuing.</p>
           </li>
         </ul>
       </section>

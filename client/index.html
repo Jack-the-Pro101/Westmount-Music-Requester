@@ -4,7 +4,7 @@
     <title>Westmount Music Requester</title>
 
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
 
     <script type="module" src="/src/main.tsx" defer></script>
 
@@ -20,6 +20,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="/libs/fontawesome/all.css" />
+
+    <link rel="preload" href="/images/loading2.svg" as="image" />
+
+    <noscript>
+      <link rel="stylesheet" href="/css/index.css" />
+    </noscript>
   </head>
-  <body id="app"></body>
+  <body id="app">
+    <noscript class="noscript">
+      <h1 class="noscript__heading">JavaScript Disabled</h1>
+      <hr class="noscript__hr" />
+      <p class="noscript__text">This page requires JavaScript to function and render. Please enable it.</p>
+    </noscript>
+  </body>
 </html>

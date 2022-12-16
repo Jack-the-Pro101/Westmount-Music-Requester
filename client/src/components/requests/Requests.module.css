@@ -17,6 +17,7 @@
 
 .requests__fieldset {
   border: none;
+  margin: 2em 0;
 }
 
 .requests__fieldset:disabled {
@@ -75,6 +76,11 @@
   height: 12px;
   background-color: hsl(var(--clr-neutral-700));
   clip-path: polygon(50% 92%, 70% 90%, 100% 0, 100% 100%, 0 100%, 0 0, 30% 92%);
+  cursor: w-resize;
+}
+
+.requests__play-range-input--duration::-webkit-slider-thumb:hover {
+  background-color: hsl(var(--clr-neutral-800));
 }
 
 .requests__play-range-input--duration:disabled::-webkit-slider-thumb {
@@ -88,6 +94,11 @@
   height: 12px;
   background-color: hsl(var(--clr-neutral-700));
   clip-path: polygon(50% 92%, 70% 90%, 100% 0, 100% 100%, 0 100%, 0 0, 30% 92%);
+  cursor: w-resize;
+}
+
+.requests__play-range-input--duration::-moz-range-thumb:hover {
+  background-color: hsl(var(--clr-neutral-800));
 }
 
 .requests__play-range-input--duration:disabled::-moz-range-thumb {
@@ -139,6 +150,16 @@
   border: none;
   font-weight: 600;
   border-radius: 2px;
+  transition: background-color 0.25s ease-out;
+}
+
+.requests__play-btn:hover {
+  cursor: pointer;
+}
+
+.requests__play-btn:active {
+  transition: background-color 0s linear;
+  background-color: hsl(var(--clr-neutral-400));
 }
 
 .requests__play-btns-group {
@@ -198,7 +219,7 @@
   border: none;
   border-radius: 4px;
   padding: 1em;
-  margin: 1em 0;
+  margin: 1em 0 2em 0;
   min-height: 8em;
   transition: background-color 0.2s ease;
 }
@@ -367,9 +388,120 @@
 .requests__btns {
   display: flex;
   justify-content: flex-end;
+  gap: 0.5em;
 }
 
 .requests__btn {
-  font-size: 2rem;
+  font-size: 3rem;
   padding: 0.5em 0.75em;
+  border: none;
+  color: hsl(var(--clr-neutral-900));
+  border-radius: 4px;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+}
+
+.requests__btn:hover {
+  cursor: pointer;
+}
+
+.requests__btn[type="reset"] {
+  background-color: hsl(var(--clr-neutral-200));
+}
+
+.requests__btn[type="submit"] {
+  background-image: linear-gradient(36deg, hsl(var(--clr-primary-400)), 45%, hsl(var(--clr-primary-600)));
+}
+
+.requests__confirm {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  visibility: hidden;
+  transition: background-color 0.5s ease, background-filter 0.5s ease, visibility 0s 0.5s linear;
+  pointer-events: none;
+}
+
+.requests__confirm--active {
+  visibility: visible;
+  background-color: rgba(0, 0, 0, 0.7);
+  pointer-events: unset;
+  transition: background-color 0.5s ease, background-filter 0.5s ease, visibility 0s 0s linear;
+}
+
+@supports (backdrop-filter: blur(8px)) {
+  .requests__confirm--active {
+    backdrop-filter: blur(8px);
+    background-color: hsl(var(--clr-neutral-100), 0.1);
+  }
+}
+
+.requests__confirm-container {
+  background-color: hsl(var(--clr-neutral-200));
+  padding: 1em;
+  width: 100%;
+  height: 100%;
+  max-width: 100rem;
+  max-height: 50rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  box-shadow: 0 0 16px -2px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.requests__confirm--active .requests__confirm-container {
+  opacity: 1;
+}
+
+.requests__confirm-info {
+  flex-grow: 1;
+}
+
+.requests__confirm-info h2 {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.requests__confirm-info p {
+  margin-bottom: 1em;
+}
+
+.requests__confirm-info ul {
+  list-style-type: square;
+  margin-left: 1em;
+  margin-bottom: 1em;
+}
+
+.requests__confirm-btns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.requests__confirm-btns button {
+  font-size: 2rem;
+  color: hsl(var(--clr-neutral-900));
+  border: none;
+  background-color: hsl(var(--clr-neutral-300));
+  padding: 0.5em 1em;
+  font-weight: 600;
+}
+
+.requests__confirm-btns button:hover {
+  cursor: pointer;
+}
+
+.requests__confirm-btn {
+  background-image: linear-gradient(36deg, hsl(var(--clr-primary-400)) 45%, hsl(var(--clr-primary-700)));
+}
+
+.requests__back-btn {
+  background-image: linear-gradient(36deg, hsl(var(--clr-accent-400)) 45%, hsl(var(--clr-accent-700)));
 }

@@ -52,6 +52,19 @@ export interface RequestData {
   playRange: number;
 }
 
+export interface Request {
+  _id: string;
+  spotifyId: string;
+  track: StoredTrack;
+  start: number;
+  user: StoredUser;
+  createdAt: string;
+  updatedAt: string;
+  status: "PRE_PENDING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
+
+  popularity: number;
+}
+
 export interface SpotifyArtist {
   external_urls: {
     spotify: string;

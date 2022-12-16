@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import styles from "./Requests.module.css";
 
-import { Request, TrackSourceInfo } from "../../types";
+import { Request, RequestPage, TrackSourceInfo } from "../../types";
 import { Request as RequestElement } from "../../components/requests/Request";
 
 import { PlayRange } from "../../components/requests/PlayRange";
@@ -9,6 +9,7 @@ import { PlayRange } from "../../components/requests/PlayRange";
 import * as config from "../../shared/config.json";
 
 import io from "socket.io-client";
+import { Link } from "react-router-dom";
 
 export function Requests() {
   const [requests, setRequests] = useState<Request[]>([]);
@@ -19,6 +20,21 @@ export function Requests() {
   const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
   const [filterQuery, setFilterQuery] = useState("");
+
+  const [sortBy, setSortBy] = useState("popular");
+  const [sortFilter, setSortFilter] = useState("none");
+
+  const addedTracks: string[] = [];
+
+  function validateTrackShouldAdd(trackId: string) {
+    if (addedTracks.includes(trackId)) {
+      return false;
+    }
+    addedTracks.push(trackId);
+    return true;
+  }
+
+  const requestPages = {} as RequestPage;
 
   // const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null);
 
@@ -90,7 +106,7 @@ export function Requests() {
   }, [selectedTrack]);
 
   async function submitRequest(request: Request, accepted: boolean) {
-    const submission = await fetch("/api/requests/" + request._id, {
+    const submission = await fetch("/api/requests/" + request.track._id, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -107,8 +123,27 @@ export function Requests() {
     }
   }
 
+  function sortFunction(a: Request, b: Request) {
+    switch (sortBy.toLowerCase()) {
+      case "popular":
+        return b.popularity - a.popularity;
+
+      case "unpopular":
+        return a.popularity - b.popularity;
+
+      case "new":
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+      case "old":
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      default:
+        return 0;
+    }
+  }
+
   return (
     <main class={styles.requests}>
+      <h1 className={styles.requests__heading}>Requests</h1>
       <form action="#" className={styles.requests__filter}>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="filter">Search</label>
@@ -116,7 +151,7 @@ export function Requests() {
         </fieldset>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="sort">Sort By</label>
-          <select name="sort" id="sort">
+          <select name="sort" id="sort" onChange={(e: Event) => setSortBy(e.target!.value)}>
             <option value="popular">Most Requested</option>
             <option value="unpopular">Least Requested</option>
             <option value="new">Newest</option>
@@ -124,20 +159,37 @@ export function Requests() {
           </select>
         </fieldset>
         <fieldset className={styles.requests__fieldset}>
-          <label htmlFor="type-sort">Sort By Type</label>
-          <select name="type-sort" id="type-sort">
+          <label htmlFor="type-sort">Filter By Type</label>
+          <select name="type-sort" id="type-sort" onChange={(e: Event) => setSortFilter(e.target!.value)}>
+            <option value="none">No Filter</option>
             <option value="pending">Pending</option>
+            <option value="pending_manual">Pending Manual</option>
             <option value="rejected">Rejected</option>
             <option value="accepted">Accepted</option>
-            <option value="autorejected">Auto Rejected</option>
+            <option value="auto_rejected">Auto Rejected</option>
           </select>
         </fieldset>
       </form>
       <ol className={styles.requests__list}>
         {requests
+          .sort(sortFunction)
+          .map((request) => {
+            // @ts-expect-error
+            const value = requestPages[request.track._id];
+            if (value == null) {
+              // @ts-expect-error
+              requestPages[request.track._id] = [request._id];
+            } else {
+              // @ts-expect-error
+              requestPages[request.track._id].push(request._id);
+            }
+
+            return request;
+          })
           .filter(
             (request) =>
-              request.track &&
+              validateTrackShouldAdd(request.track._id) &&
+              (sortFilter === "none" || (request.status === sortFilter.toUpperCase() && request.track)) &&
               anyStringIncludes(
                 [
                   request.track.title,
@@ -149,9 +201,13 @@ export function Requests() {
                 filterQuery
               )
           )
-          .map((request) => (
-            <RequestElement request={request} key={request._id} setActive={setSelectedTrack} />
-          ))}
+          .map((request, i, array) =>
+            array.length === 0 ? (
+              <li className={styles["requests__list-label"]}>No requests.</li>
+            ) : (
+              <RequestElement request={request} key={request._id} setActive={setSelectedTrack} />
+            )
+          )}
       </ol>
 
       <div className={styles["requests__popup"] + (selectedTrack ? " " + styles["requests__popup--active"] : "")}>
@@ -178,6 +234,20 @@ export function Requests() {
                     Requested by: {selectedTrack.user.name} ({selectedTrack.user?.email || "Internal account"})
                   </li>
                   <li className={styles["requests__popup-item"]}>Status: {selectedTrack.status}</li>
+                  <li className={styles["requests__popup-item"]}>
+                    Popularity:{" "}
+                    {
+                      // @ts-expect-error
+                      requestPages[selectedTrack.track._id].length
+                    }{" "}
+                    person(s)
+                  </li>
+                  {selectedTrack.status === "PENDING_MANUAL" && (
+                    <li className={styles["requests__popup-item"]} style="margin-top: 0.25em; color: hsl(var(--clr-neutral-700))">
+                      <i class="fa-regular fa-circle-exclamation" style="margin-right: 0.5em"></i>
+                      This track may be an instrumental or contains unknown lyrics. View Spotify page and listen to track to check lyrics.
+                    </li>
+                  )}
                 </ul>
 
                 <div className={styles["requests__popup-spotify"]} href={"https://open.spotify.com/track/" + selectedTrack.spotifyId}>

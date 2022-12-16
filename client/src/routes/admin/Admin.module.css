@@ -1,0 +1,26 @@
+.admin {
+  max-width: 120rem;
+  width: 100%;
+  padding: 4em 1em;
+  margin: 0 auto;
+}
+
+.admin__section {
+  margin: 1em 0;
+}
+
+.admin__section fieldset {
+  border: none;
+}
+
+.admin__actions {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+}
+
+.admin__action {
+  padding: 1em;
+  border-radius: 8px;
+  background-color: hsl(var(--clr-neutral-200));
+}

@@ -23,8 +23,6 @@ export function PlayRange({
   const accuracyConstant = 2;
   const songMaxPlayDurationSeconds = config.songMaxPlayDurationSeconds * accuracyConstant;
 
-  if (!setSelectionRange) selectionRange *= accuracyConstant;
-
   if (min) min *= accuracyConstant;
   if (max) max *= accuracyConstant;
 
@@ -33,6 +31,9 @@ export function PlayRange({
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [buffered, setBuffered] = useState(0);
+  const [selectionDisplayRange, setDisplaySelectionRange] = useState(0);
+
+  if (!setSelectionRange) setDisplaySelectionRange(selectionRange * accuracyConstant);
 
   const audioElemRef = useRef<HTMLAudioElement>(null);
   const rangeRef = useRef<HTMLInputElement>(null);
@@ -92,7 +93,7 @@ export function PlayRange({
   useEffect(() => {
     const handler = () => {
       if (songPreview == null) return;
-      setDuration(audioElemRef.current ? audioElemRef.current.duration * accuracyConstant : 10);
+      setDuration(audioElemRef.current ? audioElemRef.current.duration * accuracyConstant : 0);
     };
     if (audioElemRef.current) {
       audioElemRef.current.addEventListener("loadedmetadata", handler);
@@ -133,8 +134,12 @@ export function PlayRange({
         </audio>
       )}
 
-      <label htmlFor="range" className={styles["requests__play-range-label"]}></label>
-      <label htmlFor="track-scrubber" className={styles["requests__play-range-scrubber-label"]}></label>
+      <label htmlFor="range" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
+        Scrub playback
+      </label>
+      <label htmlFor="track-scrubber" style="position: absolute; opacity: 0; pointer-events: none;width: 1px; height: 1px;">
+        Change play range
+      </label>
 
       <input
         type="range"
@@ -159,7 +164,9 @@ export function PlayRange({
           if (!editable) return e.preventDefault();
           const currentSel = Number((e.target as HTMLInputElement).value);
 
-          setSelectionRange?.(currentSel - (currentSel / duration) * songMaxPlayDurationSeconds);
+          const displayRange = Math.round((currentSel - (currentSel / duration) * songMaxPlayDurationSeconds) * 100) / 100;
+          setDisplaySelectionRange(displayRange);
+          setSelectionRange(displayRange / accuracyConstant);
         }}
         style={`--thumb-width: ${(songMaxPlayDurationSeconds / duration) * 100}%; --buffer-percentage: ${buffered}`}
       />
@@ -174,7 +181,7 @@ export function PlayRange({
           <button
             type="button"
             className={styles["requests__play-btn"]}
-            onClick={() => updatePlaybackPosRange(selectionRange)}
+            onClick={() => updatePlaybackPosRange(selectionDisplayRange)}
             title="Jump to start of selected range"
           >
             [
@@ -182,7 +189,7 @@ export function PlayRange({
           <button
             type="button"
             className={styles["requests__play-btn"]}
-            onClick={() => updatePlaybackPosRange(selectionRange + songMaxPlayDurationSeconds)}
+            onClick={() => updatePlaybackPosRange(selectionDisplayRange + songMaxPlayDurationSeconds)}
             title="Jump to end of selected range"
           >
             ]
@@ -223,7 +230,8 @@ export function PlayRange({
           {secondsToHumanReadableString(playbackPos)} / {secondsToHumanReadableString(duration)}
         </p>
         <p className={styles["requests__play-text"]}>
-          Selection range: {secondsToHumanReadableString(selectionRange)}-{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}
+          Selection range: {secondsToHumanReadableString(selectionDisplayRange)}-
+          {secondsToHumanReadableString(selectionDisplayRange + songMaxPlayDurationSeconds)}
         </p>
       </div>
     </div>

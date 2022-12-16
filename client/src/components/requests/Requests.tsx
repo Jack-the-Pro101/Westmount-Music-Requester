@@ -4,9 +4,10 @@ import styles from "./Requests.module.css";
 
 import { PlayRange } from "./PlayRange";
 
-export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) {
+export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCoreSong?: CoreSong; setSelectedCoreSong: Function }) {
   const [isLoading, setIsLoading] = useState(false);
   const [modalShown, setModalShown] = useState(false);
+  const [confirmModalShown, setConfirmModalShown] = useState(false);
   const [trackResults, setTrackResults] = useState<YouTubeSong[]>([]);
   const [selectedTrack, setSelectedTrack] = useState<YouTubeSong>();
   const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
@@ -63,9 +64,7 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
     }
   }
 
-  async function submitRequest(e: Event) {
-    e.preventDefault();
-
+  async function submitRequest() {
     await fetch("/api/requests", {
       method: "POST",
       body: JSON.stringify({
@@ -79,9 +78,15 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
     });
   }
 
+  function confirmRequest(e: Event) {
+    e.preventDefault();
+
+    setConfirmModalShown(true);
+  }
+
   return (
     <div className={styles.requests}>
-      <form action="#" method="post" className={styles.requests__form} onSubmit={(e) => submitRequest(e)}>
+      <form action="#" method="post" className={styles.requests__form} onSubmit={(e) => confirmRequest(e)}>
         <h2 className={styles.requests__heading}>Submit request</h2>
 
         {selectedCoreSong != null && (
@@ -184,6 +189,8 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
         <fieldset className={styles.requests__fieldset} disabled={selectedTrackSource == null}>
           <h2 className={styles.requests__heading}>Select play range</h2>
           <PlayRange
+            max={undefined}
+            min={undefined}
             songPreview={selectedTrackSource}
             selectionRange={selectionRange}
             setSelectionRange={setSelectionRange}
@@ -193,7 +200,17 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
         </fieldset>
 
         <div className={styles.requests__btns}>
-          <button type="reset" disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
+          <button
+            type="reset"
+            disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false}
+            className={styles.requests__btn}
+            onClick={() => {
+              setSelectedTrack(undefined);
+              setSelectedTrackSource(undefined);
+              setTrackResults([]);
+              setSelectedCoreSong(null);
+            }}
+          >
             Cancel
           </button>
           <button type="submit" disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
@@ -201,6 +218,40 @@ export function Requests({ selectedCoreSong }: { selectedCoreSong?: CoreSong }) 
           </button>
         </div>
       </form>
+
+      <div className={`${styles.requests__confirm} ${confirmModalShown && styles["requests__confirm--active"]}`}>
+        <div className={styles["requests__confirm-container"]}>
+          <div className={styles["requests__confirm-info"]}>
+            <h2>Confirm request</h2>
+
+            <p>You are requesting:</p>
+
+            <ul>
+              <li>
+                {selectedTrack?.channel}-{selectedTrack?.title}
+              </li>
+              <li>Will play from {selectionRange}</li>
+            </ul>
+
+            <p>You have limited requests per cycle. Ensure you use them correctly. Does the above info. look good?</p>
+          </div>
+
+          <div className={styles["requests__confirm-btns"]}>
+            <button className={styles["requests__back-btn"]} onClick={() => setConfirmModalShown(false)}>
+              Back
+            </button>
+            <button
+              className={styles["requests__confirm-btn"]}
+              onClick={() => {
+                submitRequest();
+                setConfirmModalShown(false);
+              }}
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

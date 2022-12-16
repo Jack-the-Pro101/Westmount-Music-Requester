@@ -22,7 +22,7 @@ export function Home() {
           <HomeSearch setSelectedCoreSong={setSelectedCoreSong} />
         </div>
         <div className={styles.main__requester}>
-          <Requests selectedCoreSong={selectedCoreSong} />
+          <Requests selectedCoreSong={selectedCoreSong} setSelectedCoreSong={setSelectedCoreSong} />
         </div>
       </main>
     </>

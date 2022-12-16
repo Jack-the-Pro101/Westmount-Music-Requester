@@ -1,7 +1,7 @@
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, VerifyCallback } from "passport-google-oauth2";
 import { Injectable } from "@nestjs/common";
-import { UsersService } from "./users.service";
+import { UsersService } from "../users/users.service";
 
 interface RawGoogleProfile {
   name: {

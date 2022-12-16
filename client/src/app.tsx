@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { Home } from "./routes/home/Home";
@@ -12,6 +12,7 @@ import { StoredUser } from "./types";
 import { Requests } from "./routes/requests/Requests";
 import React from "preact/compat";
 import { Help } from "./routes/help/Help";
+import { Admin } from "./routes/admin/Admin";
 
 interface AuthContextProps {
   user: StoredUser | false | null;
@@ -56,6 +57,8 @@ export const AuthContext = React.createContext<AuthContextProps>({
 export function App() {
   const [user, setUser] = useState<StoredUser | false | null>(null);
 
+  const isSignInRoute = window.location.pathname.includes("signin");
+
   useEffect(() => {
     (async () => {
       const request = await fetch("/api/auth/session");
@@ -70,6 +73,9 @@ export function App() {
         }
       } else {
         setUser(false);
+        if (!isSignInRoute) {
+          window.location.replace("/signin");
+        }
       }
     })();
   }, []);
@@ -77,6 +83,12 @@ export function App() {
   return (
     <>
       <AuthContext.Provider value={{ user, login, logout }}>
+        <div className={"load-block" + (user != null && (user !== false || isSignInRoute) ? " loading-block--loaded" : "")}>
+          <img src="/images/loading2.svg" alt="Loading image" />
+          <p className="load-block__text">
+            {user == null ? "Loading" : user === false ? (isSignInRoute ? "Load Complete" : "Redirecting...") : "Load Complete"}
+          </p>
+        </div>
         <Navbar spacer={false} />
         <BrowserRouter>
           <Routes>
@@ -84,6 +96,7 @@ export function App() {
             <Route path="/myrequests" element={<MyRequests />} />
             <Route path="/help" element={<Help />} />
             <Route path="/signin" element={<Signin />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/requests" element={<Requests />} />
             <Route path="/credits" element={<Credits />} />
             <Route path="/error" element={<Error />} />
