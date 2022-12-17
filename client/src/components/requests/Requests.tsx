@@ -101,7 +101,7 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  YouTube music
+                  YouTube Music
                 </a>
               </>
             )}
