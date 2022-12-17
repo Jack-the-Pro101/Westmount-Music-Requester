@@ -70,7 +70,12 @@ class Downloader {
 
     try {
       const lyrics = await this.yt.music.getLyrics(id);
-      if (!lyrics) return;
+      if (!lyrics) return {
+        lyrics: "",
+        title: info.basic_info.title,
+        cover: info.basic_info.thumbnail?.[0].url,
+        artist: info.basic_info.author,
+      };;
 
       return {
         lyrics: lyrics.description.text,

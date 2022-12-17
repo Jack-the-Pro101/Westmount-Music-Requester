@@ -27,11 +27,16 @@ export function PlayRange({
   if (max) max *= accuracyConstant;
 
   const [playbackPos, setPlaybackPos] = useState(0);
-  const [volume, setVolume] = useState(100);
+  const storedVolume = localStorage.getItem("volume") ? parseFloat(localStorage.getItem("volume") as string) : 1;
+  const [volume, setVolume] = useState(Number.isNaN(storedVolume) ? 1 : storedVolume);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [buffered, setBuffered] = useState(0);
   const [selectionDisplayRange, setDisplaySelectionRange] = useState(0);
+
+  useEffect(() => {
+    localStorage.setItem("volume", volume.toString());
+  }, [volume]);
 
   if (!setSelectionRange) setDisplaySelectionRange(selectionRange * accuracyConstant);
 
