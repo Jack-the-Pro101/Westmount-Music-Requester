@@ -2,6 +2,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, VerifyCallback } from "passport-google-oauth2";
 import { Injectable } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
+import { DomainEmailInvalidException } from "./domain-email-invalid.exception";
 
 interface RawGoogleProfile {
   name: {
@@ -39,7 +40,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       refreshToken,
     };
 
-    if (!userData.email.endsWith("@hwdsb.on.ca")) return done(true, null, { message: "domainEmailInvalid" });
+    if (!userData.email.endsWith("@hwdsb.on.ca")) throw new DomainEmailInvalidException();
 
     const user = await this.usersService.getOrCreateOne(userData.email, false, {
       email: userData.email,
