@@ -9,7 +9,9 @@ export function Error() {
   const errorType = searchParams.get("code");
 
   switch (errorType) {
-    case "":
+    case "auth":
+      errorTitle = "Invalid Email";
+      errorMsg = "You attempted to login using a non-school email. Please retry with the appropriate email (ending in @hwdsb.on.ca)";
       break;
     default:
       if (errorType == null) {

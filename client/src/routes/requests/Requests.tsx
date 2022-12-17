@@ -198,13 +198,9 @@ export function Requests() {
                 filterQuery
               )
           )
-          .map((request, i, array) =>
-            array.length === 0 ? (
-              <li className={styles["requests__list-label"]}>No requests.</li>
-            ) : (
-              <RequestElement request={request} key={request._id} setActive={setSelectedTrack} />
-            )
-          )}
+          .map((request) => (
+            <RequestElement request={request} key={request._id} setActive={setSelectedTrack} />
+          ))}
       </ol>
 
       <div className={styles["requests__popup"] + (selectedTrack ? " " + styles["requests__popup--active"] : "")}>
@@ -231,13 +227,7 @@ export function Requests() {
                     Requested by: {selectedTrack.user.name} ({selectedTrack.user?.email || "Internal account"})
                   </li>
                   <li className={styles["requests__popup-item"]}>Status: {selectedTrack.status}</li>
-                  <li className={styles["requests__popup-item"]}>
-                    Popularity:{" "}
-                    {
-                      requestPages[selectedTrack.track._id].length
-                    }{" "}
-                    person(s)
-                  </li>
+                  <li className={styles["requests__popup-item"]}>Popularity: {requestPages[selectedTrack.track._id].length} person(s)</li>
                   {selectedTrack.status === "PENDING_MANUAL" && (
                     <li className={styles["requests__popup-item"]} style="margin-top: 0.25em; color: hsl(var(--clr-neutral-700))">
                       <i class="fa-regular fa-circle-exclamation" style="margin-right: 0.5em"></i>
@@ -279,6 +269,7 @@ export function Requests() {
               <div className={styles["requests__popup-footer"]}>
                 <button
                   className={styles["requests__popup-footer-btn"] + " " + styles["requests__popup-reject-btn"]}
+                  disabled={selectedTrack.status === "REJECTED"}
                   onClick={() => {
                     setSelectedTrackSource(undefined);
                     setSelectedTrack(undefined);
@@ -289,6 +280,7 @@ export function Requests() {
                 </button>
                 <button
                   className={styles["requests__popup-footer-btn"] + " " + styles["requests__popup-accent-btn"]}
+                  disabled={selectedTrack.status === "ACCEPTED"}
                   onClick={() => {
                     setSelectedTrackSource(undefined);
                     setSelectedTrack(undefined);

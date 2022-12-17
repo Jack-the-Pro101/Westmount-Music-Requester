@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import downloader from "./downloader/downloader";
 
-import { generateBitfield } from "./permissions/manager";
+import { generateBitfield } from "./shared/permissions/manager";
 
 import mongoose from "mongoose";
 import Users from "./models/User";
@@ -19,6 +19,7 @@ const store = new MongoDBStore({
 });
 
 import * as cookieParser from "cookie-parser";
+import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
 
 async function connectDatabase() {
   const connection = mongoose.connection;
@@ -69,6 +70,8 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
+
+  app.useGlobalFilters(new DomainEmailInvalidExceptionFilter());
 
   await app.listen(3000);
 }

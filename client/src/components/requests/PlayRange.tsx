@@ -155,9 +155,13 @@ export function PlayRange({
         type="range"
         name="range"
         id="range"
-        className={`${styles["requests__play-range-input"]} ${styles["requests__play-range-input--duration"]}`}
-        min={0}
-        max={duration}
+        className={`${styles["requests__play-range-input"]} ${styles["requests__play-range-input--duration"]} ${
+          playbackPos >= selectionDisplayRange && playbackPos <= selectionDisplayRange + songMaxPlayDurationSeconds
+            ? styles["requests__play-range-input--duration--active"]
+            : ""
+        }`}
+        min={min || 0}
+        max={max || duration}
         disabled={!editable}
         ref={rangeRef}
         onChange={(e) => {
@@ -168,7 +172,7 @@ export function PlayRange({
           setDisplaySelectionRange(displayRange);
           setSelectionRange?.(displayRange / accuracyConstant);
         }}
-        style={`--thumb-width: ${(songMaxPlayDurationSeconds / duration) * 100}%; --buffer-percentage: ${buffered}`}
+        style={`--thumb-width: ${Math.min((songMaxPlayDurationSeconds / duration) * 100, 100)}%; --buffer-percentage: ${buffered}`}
       />
 
       <div className={`${styles["requests__play-controller"]} ${styles["requests__play-btns"]}`}>

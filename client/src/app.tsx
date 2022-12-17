@@ -54,10 +54,12 @@ export const AuthContext = React.createContext<AuthContextProps>({
   logout: logout,
 });
 
+const exemptedRedirecPaths = ["signin", "error"];
+
 export function App() {
   const [user, setUser] = useState<StoredUser | false | null>(null);
 
-  const isSignInRoute = window.location.pathname.includes("signin");
+  const redirectExempted = exemptedRedirecPaths.some((path) => window.location.pathname.includes(path));
 
   useEffect(() => {
     (async () => {
@@ -73,7 +75,7 @@ export function App() {
         }
       } else {
         setUser(false);
-        if (!isSignInRoute) {
+        if (!redirectExempted) {
           window.location.replace("/signin");
         }
       }
@@ -83,10 +85,10 @@ export function App() {
   return (
     <>
       <AuthContext.Provider value={{ user, login, logout }}>
-        <div className={"load-block" + (user != null && (user !== false || isSignInRoute) ? " loading-block--loaded" : "")}>
+        <div className={"load-block" + (user != null && (user !== false || redirectExempted) ? " loading-block--loaded" : "")}>
           <img src="/images/loading2.svg" alt="Loading image" />
           <p className="load-block__text">
-            {user == null ? "Loading" : user === false ? (isSignInRoute ? "Load Complete" : "Redirecting...") : "Load Complete"}
+            {user == null ? "Loading" : user === false ? (redirectExempted ? "Load Complete" : "Redirecting...") : "Load Complete"}
           </p>
         </div>
         <Navbar spacer={false} />

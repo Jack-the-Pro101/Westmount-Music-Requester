@@ -52,7 +52,7 @@ export function Help() {
         <ul className={styles["help__statuses-list"]}>
           <li className={styles["help_statuses-item"]}>
             <p>Accepted</p>
-            <p>Song has been accepted by human and is ready to play.</p>
+            <p>Song has been accepted by a human and is ready to play.</p>
           </li>
           <li className={styles["help_statuses-item"]}>
             <p>Auto Rejected</p>

@@ -33,6 +33,7 @@
   border: none;
   color: hsl(var(--clr-neutral-900));
   border-radius: 100vmax;
+  border: 1px solid hsl(var(--clr-neutral-300));
 }
 
 .requests__filter input:focus {
@@ -181,6 +182,12 @@
 
 .requests__popup-footer-btn:hover {
   cursor: pointer;
+}
+
+.requests__popup-footer-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: hsl(var(--clr-neutral-300)) !important;
 }
 
 .requests__popup-reject-btn {
