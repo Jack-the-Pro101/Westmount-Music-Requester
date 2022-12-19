@@ -3,8 +3,10 @@ import { CoreSong, TrackSourceInfo, YouTubeSong } from "../../types";
 import styles from "./Requests.module.css";
 
 import { PlayRange } from "./PlayRange";
-import { fetchRetry } from "../../utils";
+import { fetchRetry, secondsToHumanReadableString } from "../../utils";
 import { useNavigate } from "react-router-dom";
+
+import { songMaxPlayDurationSeconds } from "../../shared/config.json";
 
 export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCoreSong?: CoreSong; setSelectedCoreSong: Function }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -229,9 +231,12 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
 
             <ul>
               <li>
-                {selectedTrack?.channel}-{selectedTrack?.title}
+                {selectedTrack?.channel} - {selectedTrack?.title}
               </li>
-              <li>Will play from {selectionRange}</li>
+              <li>
+                Will play from <b>{secondsToHumanReadableString(selectionRange)}</b> to{" "}
+                <b>{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}</b>
+              </li>
             </ul>
 
             <p>You have limited requests per cycle. Ensure you use them correctly. Does the above info. look good?</p>

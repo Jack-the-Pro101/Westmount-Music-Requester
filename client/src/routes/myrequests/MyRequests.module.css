@@ -15,6 +15,12 @@
   list-style-type: none;
 }
 
+.myrequests__info {
+  padding: 2em 0.5em;
+  text-align: center;
+  border-top: 1px solid hsl(var(--clr-neutral-200), 0.5);
+}
+
 .myrequests__item {
   background-color: hsl(var(--clr-neutral-200));
   padding: 0.5em;

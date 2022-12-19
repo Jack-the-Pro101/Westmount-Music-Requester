@@ -10,7 +10,7 @@ import * as config from "../../shared/config.json";
 
 import io from "socket.io-client";
 import { Link } from "react-router-dom";
-import { anyStringIncludes } from "../../utils";
+import { anyStringIncludes, fetchRetry } from "../../utils";
 
 export function Requests() {
   const [requests, setRequests] = useState<Request[]>([]);
@@ -88,11 +88,11 @@ export function Requests() {
       const aborter = new AbortController();
 
       (async () => {
-        const request = await fetch("/api/music/source?id=" + selectedTrack.track.youtubeId, {
+        const request = await fetchRetry(5, "/api/music/source?id=" + selectedTrack.track.youtubeId, {
           signal: aborter.signal,
         });
 
-        if (request.ok) {
+        if (request && request.ok) {
           setSelectedTrackSource(await request.json());
         }
       })();
