@@ -272,16 +272,16 @@ a:hover {
 }
 
 .navbar__item {
-  line-height: calc(2rem + 1.5em);
+  line-height: calc(2rem + 2em);
   font-size: 2rem;
-  max-height: calc(2rem + 1.5em);
+  max-height: calc(2rem + 2em);
   color: hsl(var(--clr-neutral-900));
 }
 
 .navbar__item a {
   text-decoration: none;
   color: inherit;
-  line-height: calc(2rem + 1.5em);
+  line-height: calc(2rem + 2em);
   display: block;
   padding: 0 1em;
 }
@@ -316,8 +316,8 @@ a:hover {
 .navbar__item--logo img {
   width: 100%;
   display: block;
-  width: 4rem;
-  max-width: 4rem;
+  width: 5rem;
+  max-width: 5rem;
 }
 
 .navbar__item:last-child {
@@ -371,10 +371,15 @@ a:hover {
 .navbar__dropdown a {
   padding: 0 1em;
   margin: unset;
+  line-height: inherit;
 }
 
 .navbar__dropdown i {
   margin-right: 0.5em;
+}
+
+.navbar__dropdown-item {
+  line-height: calc(2rem + 1.5em);
 }
 
 .navbar__dropdown-item button {
@@ -393,6 +398,12 @@ a:hover {
 .navbar__dropdown-item button:hover {
   background-color: hsl(var(--clr-neutral-300));
   cursor: pointer;
+}
+
+.navbar__dropdown-breaker {
+  height: 1px;
+  background-color: hsl(var(--clr-neutral-300), 0.7);
+  margin: 0.25em 0;
 }
 
 .navbar__profile {

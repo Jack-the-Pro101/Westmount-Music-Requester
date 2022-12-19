@@ -10,6 +10,7 @@ import * as config from "../../shared/config.json";
 
 import io from "socket.io-client";
 import { Link } from "react-router-dom";
+import { anyStringIncludes } from "../../utils";
 
 export function Requests() {
   const [requests, setRequests] = useState<Request[]>([]);
@@ -77,11 +78,6 @@ export function Requests() {
       }
     })();
   }, []);
-
-  function anyStringIncludes(strings: string[], filter: string) {
-    if (!filter) return true;
-    return strings.some((string) => string.replace(/ /g, "").toLowerCase().includes(filter.toLowerCase().replace(/ /g, "")));
-  }
 
   const [selectedTrack, setSelectedTrack] = useState<Request>();
 
@@ -185,8 +181,8 @@ export function Requests() {
           })
           .filter(
             (request) =>
-              validateTrackShouldAdd(request.track._id) &&
               (sortFilter === "none" || (request.status === sortFilter.toUpperCase() && request.track)) &&
+              validateTrackShouldAdd(request.track._id) &&
               anyStringIncludes(
                 [
                   request.track.title,

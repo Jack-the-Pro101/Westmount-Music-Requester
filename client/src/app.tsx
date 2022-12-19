@@ -91,8 +91,11 @@ export function App() {
             {user == null ? "Loading" : user === false ? (redirectExempted ? "Load Complete" : "Redirecting...") : "Load Complete"}
           </p>
         </div>
-        <Navbar spacer={false} />
         <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navbar spacer={false} />} />
+            <Route path="/*" element={<Navbar spacer={true} />} />
+          </Routes>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/myrequests" element={<MyRequests />} />

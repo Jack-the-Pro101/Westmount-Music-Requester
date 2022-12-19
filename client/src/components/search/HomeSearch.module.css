@@ -156,6 +156,11 @@
   }
 }
 
+.search__dropdown-error {
+  padding: 1em 0;
+  text-align: center;
+}
+
 .search__dropdown-item {
   display: flex;
   align-items: center;

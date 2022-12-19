@@ -3,6 +3,8 @@ import { CoreSong, TrackSourceInfo, YouTubeSong } from "../../types";
 import styles from "./Requests.module.css";
 
 import { PlayRange } from "./PlayRange";
+import { fetchRetry } from "../../utils";
+import { useNavigate } from "react-router-dom";
 
 export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCoreSong?: CoreSong; setSelectedCoreSong: Function }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +15,8 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
   const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
   const [selectionRange, setSelectionRange] = useState(0);
+
+  const redirector = useNavigate();
 
   useEffect(() => {
     if (selectedCoreSong) {
@@ -35,13 +39,12 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
     const aborter = new AbortController();
 
     (async () => {
-      const request = await fetch("/api/music/source?id=" + selectedTrack.id, {
+      const request = await fetchRetry(5, "/api/music/source?id=" + selectedTrack.id, {
         signal: aborter.signal,
       });
+      if (!request) return alert("Failed to fetch song from YouTube");
 
-      if (request.ok) {
-        setSelectedTrackSource(await request.json());
-      }
+      setSelectedTrackSource(await request.json());
     })();
 
     return () => aborter.abort();
@@ -51,21 +54,21 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
     const urlParams = new URLSearchParams();
     urlParams.append("songId", selectedCoreSong!.id.toString());
 
-    const request = await fetch("/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
+    const request = await fetchRetry(5, "/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
       signal: aborter.signal,
     });
 
-    if (request.ok) {
-      const response = (await request.json()) as YouTubeSong[];
-      if (response.length > 0) setSelectedTrack(response[0]);
-      setTrackResults(response);
+    if (!request) return alert("Failed to fetch songs from YouTube");
 
-      setIsLoading(false);
-    }
+    const response = (await request.json()) as YouTubeSong[];
+    if (response.length > 0) setSelectedTrack(response[0]);
+    setTrackResults(response);
+
+    setIsLoading(false);
   }
 
   async function submitRequest() {
-    await fetch("/api/requests", {
+    const request = await fetch("/api/requests", {
       method: "POST",
       body: JSON.stringify({
         spotifyId: selectedCoreSong?.id,
@@ -76,6 +79,12 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
         "Content-Type": "application/json",
       },
     });
+
+    if (request.ok) {
+      redirector("/myrequests");
+    } else {
+      alert("Failed to submit request");
+    }
   }
 
   function confirmRequest(e: Event) {
@@ -188,12 +197,7 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
 
         <fieldset className={styles.requests__fieldset} disabled={selectedTrackSource == null}>
           <h2 className={styles.requests__heading}>Select play range</h2>
-          <PlayRange
-            songPreview={selectedTrackSource}
-            selectionRange={selectionRange}
-            setSelectionRange={setSelectionRange}
-            editable={true}
-          />
+          <PlayRange songPreview={selectedTrackSource} selectionRange={selectionRange} setSelectionRange={setSelectionRange} editable={true} />
         </fieldset>
 
         <div className={styles.requests__btns}>

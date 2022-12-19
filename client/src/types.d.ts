@@ -14,6 +14,7 @@ export interface StoredUser {
   type: "GOOGLE" | "INTERNAL";
   permissions: number;
   name: string;
+  [key: string];
 }
 
 export interface StoredTrack {

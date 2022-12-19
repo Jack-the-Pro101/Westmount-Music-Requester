@@ -181,7 +181,6 @@ export class RequestService {
 
     for (let i = 0, n = requests.length; i < n; ++i) {
       const request = requests[i];
-      console.log(request);
 
       if (!popularityMap.has(request.track._id.toString())) {
         popularityMap.set(request.track._id.toString(), 1);

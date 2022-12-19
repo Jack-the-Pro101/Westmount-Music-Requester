@@ -1,5 +1,6 @@
 import { useContext, useState } from "preact/hooks";
 import { AuthContext } from "../app";
+import { check } from "../shared/permissions/manager";
 
 export function Navbar({ spacer }: { spacer: boolean }) {
   const [dropdownDropped, setDropdownDropped] = useState(false);
@@ -16,7 +17,7 @@ export function Navbar({ spacer }: { spacer: boolean }) {
         <ul className="navbar__list">
           <li className="navbar__item navbar__item--logo">
             <a href="/">
-              <img src="/images/Westmount_Secondary_School_Logo.webp" alt="Westmount logo" />
+              <img src="/images/Logo2.png" alt="Westmount logo" />
             </a>
           </li>
           <li className="navbar__item navbar__item-dropdown-container">
@@ -45,11 +46,27 @@ export function Navbar({ spacer }: { spacer: boolean }) {
                   <i class="fa-regular fa-ballot"></i> Your Requests
                 </a>
               </li>
+              {user && check(["ACCEPT_REQUESTS"], user.permissions) && (
+                <li className="navbar__dropdown-item">
+                  <a href="/requests">
+                    <i class="fa-regular fa-list"></i> User Requests
+                  </a>
+                </li>
+              )}
+              {user && check(["ADMINISTRATOR"], user.permissions) && (
+                <li className="navbar__dropdown-item">
+                  <a href="/admin">
+                    <i class="fa-regular fa-lock-keyhole"></i> Admin Panel
+                  </a>
+                </li>
+              )}
+              <li className="navbar__dropdown-breaker"></li>
               <li className="navbar__dropdown-item">
                 <button className="navbar__dropdown-btn" onClick={() => toggleTheme()}>
                   <i class="fa-regular fa-circle-half-stroke"></i> Toggle Theme
                 </button>
               </li>
+              <li className="navbar__dropdown-breaker"></li>
               <li className="navbar__dropdown-item">
                 <button className="navbar__dropdown-btn" onClick={() => logout()}>
                   <i class="fa-regular fa-right-from-bracket"></i> Sign Out
