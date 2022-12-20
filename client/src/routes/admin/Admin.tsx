@@ -134,6 +134,11 @@ export function Admin() {
     }
   }
 
+  async function dangerRecycle() {
+    if (!confirm("RE-CYCLE CONFIRMATION:\nYOU ARE ABOUT TO RE-CYCLE THE REQUESTS SYSTEM. THIS ACTION IS IRREVERSIBLE. ARE YOU SURE YOU WANT TO CONTINUE?"))
+      return;
+  }
+
   return (
     <main className={styles.admin}>
       {user && (
@@ -351,6 +356,16 @@ export function Admin() {
           </div>
           <div className={styles.admin__danger}>
             <h2 className={styles.admin__heading}>Danger Zone</h2>
+
+            <section className={styles["admin__danger-section"]}>
+              <h3 className={styles["admin__danger-heading"]}>Re-cycle</h3>
+
+              <div className={styles["admin__danger-recycle"]}>
+                <button className={styles["admin__danger-recycle-btn"]} onClick={dangerRecycle}>
+                  RE-CYCLE
+                </button>
+              </div>
+            </section>
           </div>
         </>
       )}

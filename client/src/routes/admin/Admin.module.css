@@ -176,6 +176,44 @@
   border-radius: 8px;
 }
 
+.admin__danger {
+  max-width: 200rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+.admin__danger-recycle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin__danger-heading {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: hsl(var(--clr-neutral-800));
+}
+
+.admin__danger-recycle-btn {
+  font-size: 3rem;
+  padding: 0.5em 0.75em;
+  color: inherit;
+  background-color: red;
+  font-weight: 600;
+  border-radius: 100vmax;
+}
+
+.admin__danger-recycle-btn:hover {
+  cursor: pointer;
+}
+
+.admin__danger-section {
+  margin: 1em 0;
+  padding: 0.5em 0;
+  border-top: 1px solid hsl(var(--clr-neutral-200), 0.4);
+}
+
 @media screen AND (max-width: 1250px) {
   .admin__users {
     grid-template-columns: 1fr;

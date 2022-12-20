@@ -212,6 +212,20 @@ export class RequestService {
 
       if (userDoc == null) return false;
 
+      const existingAcceptedRequest = requestSchema.findOne({ track: trackId, status: "ACCEPTED" });
+
+      if (existingAcceptedRequest != null) {
+        await requestSchema.create({
+          spotifyId: info.spotifyId,
+          start: info.playRange,
+          status: "ACCEPTED",
+          track: trackId,
+          user: userDoc.id,
+        });
+
+        return false;
+      }
+
       await requestSchema.create({
         spotifyId: info.spotifyId,
         start: info.playRange,

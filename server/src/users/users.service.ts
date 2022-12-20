@@ -46,6 +46,7 @@ export class UsersService {
         .limit(limit);
     } catch (err) {
       console.error(err);
+      return [];
     }
   }
 
@@ -56,6 +57,7 @@ export class UsersService {
         .limit(limit);
     } catch (err) {
       console.error(err);
+      return [];
     }
   }
 
