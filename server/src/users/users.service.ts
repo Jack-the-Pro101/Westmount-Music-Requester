@@ -3,10 +3,32 @@ import mongoose from "mongoose";
 
 import Users, { User } from "src/models/User";
 
+import * as bcrypt from "bcrypt";
+
 @Injectable()
 export class UsersService {
   async updateUser(filter: mongoose.FilterQuery<User>, data: Partial<User>) {
-    return await Users.findOneAndUpdate(filter, data);
+    const existingUser = await Users.findOne(filter);
+    if (!existingUser) return {};
+
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        // @ts-expect-error
+        if (data[key] == null) delete data[key];
+        // @ts-expect-error
+        if (data[key] === existingUser[key]) delete data[key];
+      }
+    }
+
+    if (!data.password) {
+      delete data.password;
+    } else {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
+
+    return await Users.findOneAndUpdate(filter, data, {
+      new: true,
+    });
   }
 
   async findOne(usernameOrEmail: string, internal = false): Promise<User | undefined> {
@@ -50,7 +72,7 @@ export class UsersService {
       const user = await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail });
       if (user == null) return await Users.create(data);
 
-      if (!internal && !user.avatar)
+      if ((!internal && user.name === "default") || !user.avatar)
         return await Users.findOneAndUpdate({ email: usernameOrEmail }, data, {
           new: true,
         });

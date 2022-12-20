@@ -110,6 +110,27 @@
   background-color: hsl(var(--clr-neutral-300));
 }
 
+.admin__page-btns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin__page-btns button {
+  font-size: 2rem;
+  color: inherit;
+  padding: 0.25em 0.5em;
+  background-color: hsl(var(--clr-neutral-200));
+  border: 1px solid hsl(var(--clr-neutral-300));
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin__page-btns button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .admin__action input {
   background-color: hsl(var(--clr-neutral-700), 0.1);
   border: 1px solid hsl(var(--clr-neutral-300));

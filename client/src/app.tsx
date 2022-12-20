@@ -13,6 +13,7 @@ import { Requests } from "./routes/requests/Requests";
 import React from "preact/compat";
 import { Help } from "./routes/help/Help";
 import { Admin } from "./routes/admin/Admin";
+import { check } from "./shared/permissions/manager";
 
 interface AuthContextProps {
   user: StoredUser | false | null;
@@ -66,9 +67,10 @@ export function App() {
       const request = await fetch("/api/auth/session");
 
       if (request.ok) {
-        const response = await request.json();
+        const response = (await request.json()) as StoredUser;
 
         if (response) {
+          if (!check(["USE_REQUESTER"], response.permissions)) return window.location.replace("/error?code=banned");
           setUser(response);
 
           return;

@@ -7,6 +7,7 @@ export interface CoreSong {
 }
 
 export interface StoredUser {
+  _id: string;
   email: string;
   username: string;
   password: string;

@@ -8,6 +8,8 @@ import { StoredUser } from "src/types";
 import { validateAllParams } from "src/utils";
 import { Response } from "express";
 
+import * as bcrypt from "bcrypt";
+
 @Controller("/api/admin")
 export class AdminController {
   constructor(private readonly usersService: UsersService) {}
@@ -37,16 +39,30 @@ export class AdminController {
   async createUser(@Body() data: Partial<StoredUser>, @Res() res: Response) {
     if (!data.type) return res.sendStatus(400);
     if (data.type === "INTERNAL") {
-      if (validateAllParams([data.name, data.username, data.permissions, data.password])) return res.sendStatus(400);
+      if (!validateAllParams([data.username, data.permissions, data.password])) return res.sendStatus(400);
+
+      // @ts-expect-error
+      data.password = await bcrypt.hash(data.password, 10);
     } else {
-      if (validateAllParams([data.name, data.email, data.permissions, data.avatar])) return res.sendStatus(400);
+      if (!validateAllParams([data.email, data.permissions, data.avatar])) return res.sendStatus(400);
     }
 
-    return await this.usersService.create(data);
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        if (data[key] == null) delete data[key];
+      }
+    }
+
+    return res.json(await this.usersService.create(data));
   }
 
   @Patch("users/:userId")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async updateUser(@Param("userId") userId: string, @Body() data: Partial<StoredUser>, @Res() res: Response) {}
+  async updateUser(@Param("userId") userId: string, @Body() data: Partial<StoredUser>, @Res() res: Response) {
+    if (!userId) return res.sendStatus(400);
+    if (!data) return res.sendStatus(400);
+
+    return res.json(await this.usersService.updateUser({ _id: userId }, data));
+  }
 }

@@ -13,6 +13,10 @@ export function Error() {
       errorTitle = "Invalid Email";
       errorMsg = "You attempted to login using a non-school email. Please retry with the appropriate email (ending in @hwdsb.on.ca)";
       break;
+    case "banned":
+      errorTitle = "You Are Banned";
+      errorMsg = "Your permissions to use the Westmount Music Requester have been revoked.";
+      break;
     default:
       if (errorType == null) {
         errorTitle = "404 Not Found";
