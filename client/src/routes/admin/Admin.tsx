@@ -50,7 +50,7 @@ export function Admin() {
     const internal = createUserInternalRef.current?.checked;
 
     const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(".new-user-permissions-checkbox");
-    permissionsCheckboxes.forEach((checkbox) => (checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName]) : 0));
+    permissionsCheckboxes.forEach((checkbox) => (checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0));
 
     const request = await fetch("/api/admin/users/", {
       method: "POST",
@@ -89,7 +89,7 @@ export function Admin() {
     const internal = editUserInternalRef.current?.checked;
 
     const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(".edit-user-permissions-checkbox");
-    permissionsCheckboxes.forEach((checkbox) => (checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName]) : 0));
+    permissionsCheckboxes.forEach((checkbox) => (checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0));
 
     const userId = editingUser!._id;
 
@@ -184,7 +184,7 @@ export function Admin() {
                                   className="new-user-permissions-checkbox"
                                   id={flag.toLowerCase() + "_new-checkbox"}
                                   data-flag-name={flag}
-                                  checked={DEFAULT_CHECKED_FLAGS.includes(FLAGS[flag])}
+                                  checked={DEFAULT_CHECKED_FLAGS.includes(FLAGS[flag as keyof typeof FLAGS])}
                                   disabled={flag === "ADMINISTRATOR" ? !check(["ADMINISTRATOR"], user.permissions) : false}
                                 />
                               </li>
