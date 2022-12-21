@@ -22,6 +22,10 @@ const store = new MongoDBStore({
 import * as cookieParser from "cookie-parser";
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
 
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Critical error encountered at:", promise, "Reason:", reason);
+});
+
 async function connectDatabase() {
   const connection = mongoose.connection;
   connection.on("error", (error) => {

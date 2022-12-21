@@ -15,6 +15,7 @@ import { Help } from "./routes/help/Help";
 import { Admin } from "./routes/admin/Admin";
 import { BASE_URL } from "./env";
 import { check } from "./shared/permissions/manager";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 interface AuthContextProps {
   user?: StoredUser | null;
@@ -85,32 +86,34 @@ export function App() {
 
   return (
     <>
-      <AuthContext.Provider value={{ user, login, logout }}>
-        <div className={"load-block" + (user !== undefined && (user !== null || redirectExempted) ? " loading-block--loaded" : "")}>
-          <img src="/images/loading2.svg" alt="Loading image" />
-          <p className="load-block__text">
-            {user === undefined ? "Loading" : user === null ? (redirectExempted ? "Load complete" : "Redirecting...") : "Load complete"}
-          </p>
-        </div>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navbar spacer={false} />} />
-            <Route path="/*" element={<Navbar spacer={true} />} />
-          </Routes>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/my-requests" element={<MyRequests />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/sign-in" element={<Signin />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/requests" element={<Requests />} />
-            <Route path="/credits" element={<Credits />} />
-            <Route path="/error" element={<Error />} />
-            <Route path="/*" element={<Error />} />
-          </Routes>
-        </BrowserRouter>
-        <Footer />
-      </AuthContext.Provider>
+      <ErrorBoundary>
+        <AuthContext.Provider value={{ user, login, logout }}>
+          <div className={"load-block" + (user !== undefined && (user !== null || redirectExempted) ? " loading-block--loaded" : "")}>
+            <img src="/images/loading2.svg" alt="Loading image" />
+            <p className="load-block__text">
+              {user === undefined ? "Loading" : user === null ? (redirectExempted ? "Load complete" : "Redirecting...") : "Load complete"}
+            </p>
+          </div>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Navbar spacer={false} />} />
+              <Route path="/*" element={<Navbar spacer={true} />} />
+            </Routes>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/my-requests" element={<MyRequests />} />
+              <Route path="/help" element={<Help />} />
+              <Route path="/sign-in" element={<Signin />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/requests" element={<Requests />} />
+              <Route path="/credits" element={<Credits />} />
+              <Route path="/error" element={<Error />} />
+              <Route path="/*" element={<Error />} />
+            </Routes>
+          </BrowserRouter>
+          <Footer />
+        </AuthContext.Provider>
+      </ErrorBoundary>
     </>
   );
 }
