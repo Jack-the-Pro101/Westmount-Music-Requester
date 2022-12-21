@@ -38,14 +38,14 @@ export function Navbar({ spacer }: { spacer: boolean }) {
                 <i class="fa-solid fa-caret-down" style={"margin-left: 1.5rem;" + (dropdownDropped ? "transform: rotate(180deg)" : "")}></i>
               </button>
             ) : (
-              <a href={"/signin"} className={`${user == null ? "loading" : ""}`}>
+              <a href={"/sign-in"} className={`${user == null ? "loading" : ""}`}>
                 Sign In
               </a>
             )}
 
             <ul className={"navbar__dropdown" + (dropdownDropped ? " navbar__dropdown--active" : "")}>
               <li className="navbar__dropdown-item">
-                <a href="/myrequests">
+                <a href="/my-requests">
                   <i class="fa-regular fa-ballot"></i> Your Requests
                 </a>
               </li>

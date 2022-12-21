@@ -3,7 +3,7 @@ import { BrowserRouter, NavigateFunction, Route, Routes } from "react-router-dom
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { Home } from "./routes/home/Home";
-import { MyRequests } from "./routes/myrequests/MyRequests";
+import { MyRequests } from "./routes/my-requests/MyRequests";
 import { Signin } from "./routes/signin/Signin";
 import { Error } from "./routes/error/Error";
 import { Credits } from "./routes/credits/Credits";
@@ -28,7 +28,7 @@ async function logout(navigate: NavigateFunction) {
   });
 
   if (logoutRequest.ok) {
-    window.location.replace("/signin");
+    navigate("/sign-in");
   } else {
     alert(`Failed to logout\nError ${logoutRequest.status}: ${logoutRequest.statusText}`);
   }
@@ -54,12 +54,12 @@ export const AuthContext = createContext<AuthContextProps>({
   logout: logout,
 });
 
-const exemptedRedirecPaths = ["signin", "error"];
+const exemptedRedirectPaths = ["sign-in", "error"];
 
 export function App() {
   const [user, setUser] = useState<StoredUser | null>();
 
-  const redirectExempted = exemptedRedirecPaths.some((path) => window.location.pathname.includes(path));
+  const redirectExempted = exemptedRedirectPaths.some((path) => window.location.pathname.includes(path));
 
   useEffect(() => {
     (async () => {
@@ -77,7 +77,7 @@ export function App() {
       } else {
         setUser(null);
         if (!redirectExempted) {
-          window.location.replace("/signin");
+          window.location.replace("/sign-in");
         }
       }
     })();
@@ -99,9 +99,9 @@ export function App() {
           </Routes>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/myrequests" element={<MyRequests />} />
+            <Route path="/my-requests" element={<MyRequests />} />
             <Route path="/help" element={<Help />} />
-            <Route path="/signin" element={<Signin />} />
+            <Route path="/sign-in" element={<Signin />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/requests" element={<Requests />} />
             <Route path="/credits" element={<Credits />} />
