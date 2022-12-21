@@ -1,10 +1,13 @@
 import { useContext, useState } from "preact/hooks";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../app";
 
 export function Navbar({ spacer }: { spacer: boolean }) {
   const [dropdownDropped, setDropdownDropped] = useState(false);
 
   const { user, logout } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   function toggleTheme() {
     document.querySelector("html")?.classList.toggle("light");
@@ -51,7 +54,7 @@ export function Navbar({ spacer }: { spacer: boolean }) {
                 </button>
               </li>
               <li className="navbar__dropdown-item">
-                <button className="navbar__dropdown-btn" onClick={() => logout()}>
+                <button className="navbar__dropdown-btn" onClick={() => logout(navigate)}>
                   <i class="fa-regular fa-right-from-bracket"></i> Sign Out
                 </button>
               </li>

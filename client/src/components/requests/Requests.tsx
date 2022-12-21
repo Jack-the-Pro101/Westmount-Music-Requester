@@ -3,6 +3,7 @@ import { CoreSong, TrackSourceInfo, YouTubeSong } from "../../types";
 import styles from "./Requests.module.css";
 
 import { PlayRange } from "./PlayRange";
+import { BASE_URL } from "../../env";
 
 export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCoreSong?: CoreSong; setSelectedCoreSong: Function }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +36,7 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
     const aborter = new AbortController();
 
     (async () => {
-      const request = await fetch("/api/music/source?id=" + selectedTrack.id, {
+      const request = await fetch(BASE_URL + "/api/music/source?id=" + selectedTrack.id, {
         signal: aborter.signal,
       });
 
@@ -51,7 +52,7 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
     const urlParams = new URLSearchParams();
     urlParams.append("songId", selectedCoreSong!.id.toString());
 
-    const request = await fetch("/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
+    const request = await fetch(BASE_URL + "/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
       signal: aborter.signal,
     });
 
@@ -65,7 +66,7 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
   }
 
   async function submitRequest() {
-    await fetch("/api/requests", {
+    await fetch(BASE_URL + "/api/requests", {
       method: "POST",
       body: JSON.stringify({
         spotifyId: selectedCoreSong?.id,

@@ -10,6 +10,7 @@ import * as config from "../../shared/config.json";
 
 import io from "socket.io-client";
 import { Link } from "react-router-dom";
+import { BASE_URL } from "../../env";
 
 export function Requests() {
   const [requests, setRequests] = useState<Request[]>([]);
@@ -68,7 +69,7 @@ export function Requests() {
 
   useEffect(() => {
     (async () => {
-      const request = await fetch("/api/requests");
+      const request = await fetch(BASE_URL + "/api/requests");
 
       if (request.ok) {
         setRequests((await request.json()) as Request[]);
@@ -92,7 +93,7 @@ export function Requests() {
       const aborter = new AbortController();
 
       (async () => {
-        const request = await fetch("/api/music/source?id=" + selectedTrack.track.youtubeId, {
+        const request = await fetch(BASE_URL + "/api/music/source?id=" + selectedTrack.track.youtubeId, {
           signal: aborter.signal,
         });
 
@@ -106,7 +107,7 @@ export function Requests() {
   }, [selectedTrack]);
 
   async function submitRequest(request: Request, accepted: boolean) {
-    const submission = await fetch("/api/requests/" + request.track._id, {
+    const submission = await fetch(BASE_URL + "/api/requests/" + request.track._id, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
