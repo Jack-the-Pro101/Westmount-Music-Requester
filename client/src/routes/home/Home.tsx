@@ -7,10 +7,13 @@ import styles from "./Home.module.css";
 import { CoreSong, Request } from "../../types";
 
 import { maxSongsPerCycle } from "../../shared/config.json";
+import { useNavigate } from "react-router-dom";
 
 export function Home() {
   const [selectedCoreSong, setSelectedCoreSong] = useState<CoreSong>();
   const [currentRequests, setCurrentRequests] = useState<Request[]>([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -21,7 +24,7 @@ export function Home() {
 
         if (requestsJson.length >= maxSongsPerCycle) {
           alert("You have reached the maximum amount of requests this cycle. Redirecting...");
-          return (window.location.href = "/myrequests");
+          return navigate("/my-requests");
         }
 
         setCurrentRequests(requestsJson);

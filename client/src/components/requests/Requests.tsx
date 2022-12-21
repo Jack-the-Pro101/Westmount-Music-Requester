@@ -27,6 +27,8 @@ export function Requests({
 
   const [selectionRange, setSelectionRange] = useState(0);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (selectedCoreSong) {
       const aborter = new AbortController();
@@ -93,7 +95,7 @@ export function Requests({
     });
 
     if (request.ok) {
-      window.location.href = "/myrequests";
+      navigate("/my-requests");
     } else {
       alert("Failed to submit request");
     }
