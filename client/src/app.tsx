@@ -14,6 +14,7 @@ import { createContext } from "preact";
 import { Help } from "./routes/help/Help";
 import { Admin } from "./routes/admin/Admin";
 import { BASE_URL } from "./env";
+import { check } from "./shared/permissions/manager";
 
 interface AuthContextProps {
   user?: StoredUser | null;
@@ -65,9 +66,10 @@ export function App() {
       const request = await fetch(BASE_URL + "/api/auth/session");
 
       if (request.ok) {
-        const response = await request.json();
+        const response = (await request.json()) as StoredUser;
 
         if (response) {
+          if (!check(["USE_REQUESTER"], response.permissions)) return window.location.replace("/error?code=banned");
           setUser(response);
 
           return;
@@ -90,8 +92,11 @@ export function App() {
             {user === undefined ? "Loading" : user === null ? (redirectExempted ? "Load complete" : "Redirecting...") : "Load complete"}
           </p>
         </div>
-        <Navbar spacer={false} />
         <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navbar spacer={false} />} />
+            <Route path="/*" element={<Navbar spacer={true} />} />
+          </Routes>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/myrequests" element={<MyRequests />} />

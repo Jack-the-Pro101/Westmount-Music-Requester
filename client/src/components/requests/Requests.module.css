@@ -409,6 +409,11 @@
   text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
 }
 
+.requests__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
 .requests__btn:hover {
   cursor: pointer;
 }

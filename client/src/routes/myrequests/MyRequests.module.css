@@ -11,8 +11,22 @@
   text-align: center;
 }
 
+.myrequests__heading {
+  margin-bottom: 0.5em;
+}
+
+.myrequests__subtitle {
+  color: hsl(var(--clr-neutral-700));
+}
+
 .myrequests__list {
   list-style-type: none;
+}
+
+.myrequests__info {
+  padding: 2em 0.5em;
+  text-align: center;
+  border-top: 1px solid hsl(var(--clr-neutral-200), 0.5);
 }
 
 .myrequests__item {

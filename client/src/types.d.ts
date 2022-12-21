@@ -7,6 +7,7 @@ export interface CoreSong {
 }
 
 export interface StoredUser {
+  _id: string;
   email: string;
   username: string;
   password: string;
@@ -14,6 +15,7 @@ export interface StoredUser {
   type: "GOOGLE" | "INTERNAL";
   permissions: number;
   name: string;
+  [key: string];
 }
 
 export interface StoredTrack {

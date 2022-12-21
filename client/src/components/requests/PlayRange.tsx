@@ -4,6 +4,7 @@ import { TrackSourceInfo } from "../../types";
 import styles from "./Requests.module.css";
 
 import * as config from "../../shared/config.json";
+import { secondsToHumanReadableString } from "../../utils";
 
 export function PlayRange({
   songPreview,
@@ -121,16 +122,6 @@ export function PlayRange({
     };
   }, [songPreview, audioElemRef]);
 
-  function secondsToHumanReadableString(seconds: number) {
-    seconds /= accuracyConstant;
-    const sliceRange = seconds > 60 * 60 ? [11, 19] : [14, 19];
-
-    const time = new Date(seconds * 1000).toISOString().slice(...sliceRange);
-
-    if (seconds >= 60) return time.replace(/^[0:]+/, "");
-    return time;
-  }
-
   return (
     <div className={styles["requests__play-range"]}>
       {songPreview && (
@@ -236,11 +227,11 @@ export function PlayRange({
       </div>
       <div className={`${styles["requests__play-controller"]} ${styles["requests__play-time"]}`}>
         <p className={styles["requests__play-text"]}>
-          {secondsToHumanReadableString(playbackPos)} / {secondsToHumanReadableString(duration)}
+          {secondsToHumanReadableString(playbackPos / accuracyConstant)} / {secondsToHumanReadableString(duration / accuracyConstant)}
         </p>
         <p className={styles["requests__play-text"]}>
-          Selection range: {secondsToHumanReadableString(selectionDisplayRange)}-
-          {secondsToHumanReadableString(selectionDisplayRange + songMaxPlayDurationSeconds)}
+          Selection range: {secondsToHumanReadableString(selectionDisplayRange / accuracyConstant)}-
+          {secondsToHumanReadableString((selectionDisplayRange + songMaxPlayDurationSeconds) / accuracyConstant)}
         </p>
       </div>
     </div>

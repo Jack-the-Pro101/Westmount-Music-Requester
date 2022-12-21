@@ -4,10 +4,37 @@ import HomeSearch from "../../components/search/HomeSearch";
 import { Requests } from "../../components/requests/Requests";
 
 import styles from "./Home.module.css";
-import { CoreSong } from "../../types";
+import { CoreSong, Request } from "../../types";
+
+import { maxSongsPerCycle } from "../../shared/config.json";
 
 export function Home() {
   const [selectedCoreSong, setSelectedCoreSong] = useState<CoreSong>();
+  const [currentRequests, setCurrentRequests] = useState<Request[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const requests = await fetch("/api/requests/me");
+
+      if (requests.ok) {
+        const requestsJson = (await requests.json()) as Request[];
+
+        if (requestsJson.length >= maxSongsPerCycle) {
+          alert("You have reached the maximum amount of requests this cycle. Redirecting...");
+          return (window.location.href = "/myrequests");
+        }
+
+        setCurrentRequests(requestsJson);
+      }
+    })();
+  }, []);
+
+  function setSelectedCoreSongRelay(coreSong: CoreSong) {
+    if (currentRequests.some((request) => request.spotifyId === coreSong.id))
+      return alert("You have already requested this track and cannot request it again this cycle.");
+
+    setSelectedCoreSong(coreSong);
+  }
 
   return (
     <>
@@ -19,10 +46,10 @@ export function Home() {
               <wbr /> Music Requester
             </h1>
           </header>
-          <HomeSearch setSelectedCoreSong={setSelectedCoreSong} />
+          <HomeSearch setSelectedCoreSong={setSelectedCoreSongRelay} />
         </div>
         <div className={styles.main__requester}>
-          <Requests selectedCoreSong={selectedCoreSong} setSelectedCoreSong={setSelectedCoreSong} />
+          <Requests selectedCoreSong={selectedCoreSong} setSelectedCoreSong={setSelectedCoreSong} currentRequests={currentRequests} />
         </div>
       </main>
     </>

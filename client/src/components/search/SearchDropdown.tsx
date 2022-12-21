@@ -2,17 +2,20 @@ import { CoreSong, SpotifyTrack } from "../../types";
 import styles from "./HomeSearch.module.css";
 
 interface Props {
-  songs: SpotifyTrack[]; 
-  onSelect: (data: CoreSong) => void; 
-  isLoading: boolean; 
+  songs: SpotifyTrack[];
+  onSelect: (data: CoreSong) => void;
+  isLoading: boolean;
+  isEmpty: boolean;
 }
 
-export function SearchDropdown({ songs, onSelect, isLoading }: Props) {
+export function SearchDropdown({ songs, onSelect, isLoading, isEmpty }: Props) {
   return (
     <ul className={styles.search__dropdown}>
       {songs.length === 0 ? (
         isLoading ? (
           <li className={styles["search__dropdown-loading"]}>Finding music</li>
+        ) : isEmpty ? (
+          <li className={styles["search__dropdown-error"]}>No results found.</li>
         ) : null
       ) : (
         songs

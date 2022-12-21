@@ -1,11 +1,23 @@
 import { useEffect, useState } from "react";
-import { CoreSong, TrackSourceInfo, YouTubeSong } from "../../types";
+import { CoreSong, Request, TrackSourceInfo, YouTubeSong } from "../../types";
 import styles from "./Requests.module.css";
 
 import { PlayRange } from "./PlayRange";
 import { BASE_URL } from "../../env";
+import { fetchRetry, secondsToHumanReadableString } from "../../utils";
+import { useNavigate } from "react-router-dom";
 
-export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCoreSong?: CoreSong; setSelectedCoreSong: Function }) {
+import { songMaxPlayDurationSeconds } from "../../shared/config.json";
+
+export function Requests({
+  selectedCoreSong,
+  setSelectedCoreSong,
+  currentRequests,
+}: {
+  selectedCoreSong?: CoreSong;
+  setSelectedCoreSong: Function;
+  currentRequests: Request[];
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [modalShown, setModalShown] = useState(false);
   const [confirmModalShown, setConfirmModalShown] = useState(false);
@@ -35,14 +47,16 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
 
     const aborter = new AbortController();
 
+    if (currentRequests.some((request) => request.track.youtubeId === selectedTrack.id))
+      return alert("You have already requested this track and cannot request it again this cycle.");
+
     (async () => {
-      const request = await fetch(BASE_URL + "/api/music/source?id=" + selectedTrack.id, {
+      const request = await fetchRetry(5, BASE_URL + "/api/music/source?id=" + selectedTrack.id, {
         signal: aborter.signal,
       });
+      if (!request) return alert("Failed to fetch song from YouTube");
 
-      if (request.ok) {
-        setSelectedTrackSource(await request.json());
-      }
+      setSelectedTrackSource(await request.json());
     })();
 
     return () => aborter.abort();
@@ -52,21 +66,21 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
     const urlParams = new URLSearchParams();
     urlParams.append("songId", selectedCoreSong!.id.toString());
 
-    const request = await fetch(BASE_URL + "/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
+    const request = await fetchRetry(5, BASE_URL + "/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
       signal: aborter.signal,
     });
 
-    if (request.ok) {
-      const response = (await request.json()) as YouTubeSong[];
-      if (response.length > 0) setSelectedTrack(response[0]);
-      setTrackResults(response);
+    if (!request) return alert("Failed to fetch songs from YouTube");
 
-      setIsLoading(false);
-    }
+    const response = (await request.json()) as YouTubeSong[];
+    if (response.length > 0) setSelectedTrack(response[0]);
+    setTrackResults(response);
+
+    setIsLoading(false);
   }
 
   async function submitRequest() {
-    await fetch(BASE_URL + "/api/requests", {
+    const request = await fetch(BASE_URL + "/api/requests", {
       method: "POST",
       body: JSON.stringify({
         spotifyId: selectedCoreSong?.id,
@@ -77,6 +91,12 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
         "Content-Type": "application/json",
       },
     });
+
+    if (request.ok) {
+      window.location.href = "/myrequests";
+    } else {
+      alert("Failed to submit request");
+    }
   }
 
   function confirmRequest(e: Event) {
@@ -173,6 +193,9 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
                     <button
                       className={styles["requests__select-btn"]}
                       onClick={() => {
+                        if (currentRequests.some((request) => request.track.youtubeId === track.id))
+                          return alert("You have already requested this track and cannot request it again this cycle.");
+
                         setSelectedTrack(track);
                         setModalShown(false);
                       }}
@@ -189,12 +212,7 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
 
         <fieldset className={styles.requests__fieldset} disabled={selectedTrackSource == null}>
           <h2 className={styles.requests__heading}>Select play range</h2>
-          <PlayRange
-            songPreview={selectedTrackSource}
-            selectionRange={selectionRange}
-            setSelectionRange={setSelectionRange}
-            editable={true}
-          />
+          <PlayRange songPreview={selectedTrackSource} selectionRange={selectionRange} setSelectionRange={setSelectionRange} editable={true} />
         </fieldset>
 
         <div className={styles.requests__btns}>
@@ -226,9 +244,12 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
 
             <ul>
               <li>
-                {selectedTrack?.channel}-{selectedTrack?.title}
+                {selectedTrack?.channel} - {selectedTrack?.title}
               </li>
-              <li>Will play from {selectionRange}</li>
+              <li>
+                Will play from <b>{secondsToHumanReadableString(selectionRange)}</b> to{" "}
+                <b>{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}</b>
+              </li>
             </ul>
 
             <p>You have limited requests per cycle. Ensure you use them correctly. Does the above info. look good?</p>

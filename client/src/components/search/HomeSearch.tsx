@@ -10,10 +10,12 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [songs, setSongs] = useState<SpotifyTrack[]>([]);
+  const [isEmpty, setIsEmpty] = useState(false);
 
   function updateSearch(text: string) {
     setSearch(text);
     setSongs([]);
+    setIsEmpty(false);
   }
 
   async function handleSubmit(e: Event) {
@@ -33,8 +35,14 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
       const data = (await request.json()) as SpotifyTrack[];
 
       setSongs(data);
+      if (data.length === 0) {
+        setIsEmpty(true);
+      } else {
+        setIsEmpty(false);
+      }
     } else {
       console.log("Request failed: ", request.status);
+      setIsEmpty(true);
     }
 
     setIsLoading(false);
@@ -43,6 +51,7 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
   function songSelected(data: CoreSong) {
     setSearch("");
     setSongs([]);
+    setIsEmpty(false);
     setSelectedCoreSong(data);
   }
 
@@ -70,7 +79,7 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
             <i class="fa-regular fa-magnifying-glass"></i>
           </button>
         </div>
-        <SearchDropdown songs={songs} onSelect={songSelected} isLoading={isLoading} />
+        <SearchDropdown songs={songs} onSelect={songSelected} isLoading={isLoading} isEmpty={isEmpty} />
         {/* <div className={styles["search__dropdown-filler"]}></div> */}
       </form>
     </div>
