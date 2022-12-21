@@ -137,6 +137,16 @@ export function Admin() {
   async function dangerRecycle() {
     if (!confirm("RE-CYCLE CONFIRMATION:\nYOU ARE ABOUT TO RE-CYCLE THE REQUESTS SYSTEM. THIS ACTION IS IRREVERSIBLE. ARE YOU SURE YOU WANT TO CONTINUE?"))
       return;
+
+    const recycleRequest = await fetch("/api/requests", {
+      method: "DELETE",
+    });
+
+    if (recycleRequest.ok) {
+      alert("Re-cycle successfully completed.");
+    } else {
+      alert("Failed to re-cycle requests.");
+    }
   }
 
   return (
@@ -244,10 +254,12 @@ export function Admin() {
                           />
                         </fieldset>
 
-                        <button type="cancel" onClick={() => setEditingUser(null)}>
-                          Cancel
-                        </button>
-                        <button type="submit">Edit</button>
+                        <div style="display: flex; gap: 1em;">
+                          <button type="cancel" onClick={() => setEditingUser(null)}>
+                            Cancel
+                          </button>
+                          <button type="submit">Edit</button>
+                        </div>
                       </form>
                     )}
                   </li>

@@ -1,3 +1,4 @@
 {
-  "songMaxPlayDurationSeconds": 90
+  "songMaxPlayDurationSeconds": 90,
+  "maxSongsPerCycle": 2
 }

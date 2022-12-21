@@ -132,8 +132,10 @@ export class RequestService {
     }
   }
 
-  async validateRequest(data: RequestData) {
+  async validateRequest(data: RequestData, user: StoredUser) {
     const { playRange, spotifyId, youtubeId } = data;
+
+    if ((await this.getPersonalRequests(user._id)).length >= config.maxSongsPerCycle) return false;
 
     if (playRange < 0) return false;
 
@@ -212,7 +214,7 @@ export class RequestService {
 
       if (userDoc == null) return false;
 
-      const existingAcceptedRequest = requestSchema.findOne({ track: trackId, status: "ACCEPTED" });
+      const existingAcceptedRequest = await requestSchema.findOne({ track: trackId, status: "ACCEPTED" });
 
       if (existingAcceptedRequest != null) {
         await requestSchema.create({
@@ -238,6 +240,12 @@ export class RequestService {
       console.error(err);
       return false;
     }
+  }
+
+  async checkExistingRequest(spotifyId: string, trackId: string, userId: string) {
+    const existingRequest = await requestSchema.findOne({ $or: [{ spotifyId: spotifyId }, { track: trackId }], user: userId });
+    if (existingRequest != null) return true;
+    return false;
   }
 
   async updateRequest(query: mongoose.FilterQuery<Request>, data: mongoose.UpdateQuery<Request>) {
@@ -278,5 +286,9 @@ export class RequestService {
         filename: downloadResult,
       });
     }
+  }
+
+  async recycleRequests() {
+    return await requestSchema.collection.drop();
   }
 }

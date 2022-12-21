@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CoreSong, TrackSourceInfo, YouTubeSong } from "../../types";
+import { CoreSong, Request, TrackSourceInfo, YouTubeSong } from "../../types";
 import styles from "./Requests.module.css";
 
 import { PlayRange } from "./PlayRange";
@@ -8,7 +8,15 @@ import { useNavigate } from "react-router-dom";
 
 import { songMaxPlayDurationSeconds } from "../../shared/config.json";
 
-export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCoreSong?: CoreSong; setSelectedCoreSong: Function }) {
+export function Requests({
+  selectedCoreSong,
+  setSelectedCoreSong,
+  currentRequests,
+}: {
+  selectedCoreSong?: CoreSong;
+  setSelectedCoreSong: Function;
+  currentRequests: Request[];
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [modalShown, setModalShown] = useState(false);
   const [confirmModalShown, setConfirmModalShown] = useState(false);
@@ -17,8 +25,6 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
   const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
   const [selectionRange, setSelectionRange] = useState(0);
-
-  const redirector = useNavigate();
 
   useEffect(() => {
     if (selectedCoreSong) {
@@ -39,6 +45,9 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
     if (!selectedTrack) return;
 
     const aborter = new AbortController();
+
+    if (currentRequests.some((request) => request.track.youtubeId === selectedTrack.id))
+      return alert("You have already requested this track and cannot request it again this cycle.");
 
     (async () => {
       const request = await fetchRetry(5, "/api/music/source?id=" + selectedTrack.id, {
@@ -83,7 +92,7 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
     });
 
     if (request.ok) {
-      redirector("/myrequests");
+      window.location.href = "/myrequests";
     } else {
       alert("Failed to submit request");
     }
@@ -183,6 +192,9 @@ export function Requests({ selectedCoreSong, setSelectedCoreSong }: { selectedCo
                     <button
                       className={styles["requests__select-btn"]}
                       onClick={() => {
+                        if (currentRequests.some((request) => request.track.youtubeId === track.id))
+                          return alert("You have already requested this track and cannot request it again this cycle.");
+
                         setSelectedTrack(track);
                         setModalShown(false);
                       }}

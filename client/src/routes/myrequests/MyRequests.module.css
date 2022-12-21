@@ -11,6 +11,14 @@
   text-align: center;
 }
 
+.myrequests__heading {
+  margin-bottom: 0.5em;
+}
+
+.myrequests__subtitle {
+  color: hsl(var(--clr-neutral-700));
+}
+
 .myrequests__list {
   list-style-type: none;
 }

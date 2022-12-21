@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { Request, Response } from "express";
 import { RequestData } from "src/types";
 
@@ -11,11 +11,13 @@ import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
 import mongoose from "mongoose";
 import { StoredAuthenticatedRequest } from "src/server";
+import { Throttle } from "@nestjs/throttler";
 
 @Controller("/api/requests")
 export class RequestController {
   constructor(private readonly requestService: RequestService) {}
 
+  @Throttle(2, 1)
   @Get()
   @Roles("ACCEPT_REQUESTS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
@@ -23,6 +25,7 @@ export class RequestController {
     return await this.requestService.getRequests();
   }
 
+  @Throttle(1, 4)
   @Post()
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
@@ -32,10 +35,13 @@ export class RequestController {
     if (!validateAllParams([spotifyId, youtubeId, playRange])) return res.sendStatus(400);
 
     try {
-      if (!(await this.requestService.validateRequest(info))) return res.sendStatus(400);
-      res.sendStatus(202);
+      if (!(await this.requestService.validateRequest(info, req.user))) return res.sendStatus(400);
 
       const trackId = await this.requestService.getTrackId(youtubeId);
+
+      if (await this.requestService.checkExistingRequest(spotifyId, trackId, req.user._id)) return res.sendStatus(400);
+
+      res.sendStatus(202);
 
       if (!(await this.requestService.createRequest(info, req.user, trackId))) return;
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
@@ -50,6 +56,7 @@ export class RequestController {
     }
   }
 
+  @Throttle(3, 20)
   @Patch(":trackId")
   @Roles("ACCEPT_REQUESTS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
@@ -69,6 +76,15 @@ export class RequestController {
     res.sendStatus(200);
   }
 
+  @Throttle(1, 30)
+  @Delete()
+  @Roles("ADMINISTRATOR")
+  @UseGuards(AuthenticatedGuard, RolesGuard)
+  async recycleRequests() {
+    return await this.requestService.recycleRequests();
+  }
+
+  @Throttle(3, 3)
   @Get("/me")
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)

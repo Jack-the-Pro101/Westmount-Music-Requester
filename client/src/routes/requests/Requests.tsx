@@ -12,6 +12,8 @@ import io from "socket.io-client";
 import { Link } from "react-router-dom";
 import { anyStringIncludes, fetchRetry } from "../../utils";
 
+const requestPages = {} as { [key: string]: string[] };
+
 export function Requests() {
   const [requests, setRequests] = useState<Request[]>([]);
 
@@ -35,44 +37,34 @@ export function Requests() {
     return true;
   }
 
-  const requestPages = {} as { [key: string]: string[] };
-
-  // const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null);
-
-  // useEffect(() => {
-  //   const socketIo = io.connect("/api/requests");
-
-  //   setSocket(socketIo);
-
-  //   socket?.on("connect", () => {
-  //     setSocketConnected(true);
-  //   });
-
-  //   socket?.on("disconnect", () => {
-  //     setSocketConnected(false);
-  //   });
-
-  //   socket?.on("pong", () => {
-  //     setSocketLastPong(new Date());
-  //   });
-
-  //   return () => {
-  //     socket?.off("connect");
-  //     socket?.off("disconnect");
-  //     socket?.off("pong");
-  //   };
-  // }, []);
-
-  // function pingSocket() {
-  //   socket?.emit("ping");
-  // }
-
   useEffect(() => {
     (async () => {
       const request = await fetch("/api/requests");
 
       if (request.ok) {
-        setRequests((await request.json()) as Request[]);
+        const rawRequests = (await request.json()) as Request[];
+        const newRequests: Request[] = [];
+
+        for (let i = 0, n = rawRequests.length; i < n; i++) {
+          const rawRequest = rawRequests[i];
+
+          if (!rawRequest) continue;
+          if (!requestPages[rawRequest._id]) {
+            const value = requestPages[rawRequest.track._id];
+            if (value == null) {
+              requestPages[rawRequest.track._id] = [rawRequest._id];
+              newRequests.push(rawRequest);
+            } else {
+              requestPages[rawRequest.track._id].push(rawRequest._id);
+            }
+          }
+        }
+
+        for (let i = 0; i < newRequests.length; i++) {
+          newRequests[i].popularity = requestPages[newRequests[i].track._id].length;
+        }
+
+        setRequests(newRequests);
       } else {
         alert("Failed to get requests");
       }
@@ -169,20 +161,10 @@ export function Requests() {
       <ol className={styles.requests__list}>
         {requests
           .sort(sortFunction)
-          .map((request) => {
-            const value = requestPages[request.track._id];
-            if (value == null) {
-              requestPages[request.track._id] = [request._id];
-            } else {
-              requestPages[request.track._id].push(request._id);
-            }
-
-            return request;
-          })
           .filter(
             (request) =>
               (sortFilter === "none" || (request.status === sortFilter.toUpperCase() && request.track)) &&
-              validateTrackShouldAdd(request.track._id) &&
+              // validateTrackShouldAdd(request.track._id) &&
               anyStringIncludes(
                 [
                   request.track.title,
@@ -213,6 +195,7 @@ export function Requests() {
                     setSelectedTrackSource(undefined);
                     setSelectedTrack(undefined);
                   }}
+                  title="Close modal"
                 >
                   <i class="fa-regular fa-xmark"></i>
                 </button>

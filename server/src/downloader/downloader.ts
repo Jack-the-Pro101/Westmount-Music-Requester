@@ -3,6 +3,7 @@ import { exec } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import { FfmpegPostProcessOptions } from "src/types";
+import mongoose from "mongoose";
 
 class Downloader {
   private yt?: Innertube;
@@ -50,8 +51,6 @@ class Downloader {
 
     const songs = await this.yt.music.search(query, { type: "song" });
 
-    songs.results?.splice(5);
-
     return songs.results;
   }
 
@@ -70,12 +69,13 @@ class Downloader {
 
     try {
       const lyrics = await this.yt.music.getLyrics(id);
-      if (!lyrics) return {
-        lyrics: "",
-        title: info.basic_info.title,
-        cover: info.basic_info.thumbnail?.[0].url,
-        artist: info.basic_info.author,
-      };;
+      if (!lyrics)
+        return {
+          lyrics: "",
+          title: info.basic_info.title,
+          cover: info.basic_info.thumbnail?.[0].url,
+          artist: info.basic_info.author,
+        };
 
       return {
         lyrics: lyrics.description.text,
@@ -133,7 +133,7 @@ class Downloader {
       type: "audio",
     });
 
-    const filepath = path.join(process.env.DOWNLOADS!, filename + "." + format.mime_type.split(";")[0].split("/")[1]);
+    const filepath = path.join(process.env.DOWNLOADS!, filename + ` ${new mongoose.Types.ObjectId()} .` + format.mime_type.split(";")[0].split("/")[1]);
 
     await new Promise(async (resolve) => {
       const writer = fs.createWriteStream(filepath, {

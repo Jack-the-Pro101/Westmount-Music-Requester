@@ -9,6 +9,7 @@ export class MusicService {
   private spotifyTokenRefreshing = false;
 
   private async refreshSpotifyToken() {
+    this.spotifyTokenRefreshing = true;
     const payload = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_SECRET}`, "utf-8").toString("base64");
 
     const request = await fetch("https://accounts.spotify.com/api/token", {
@@ -26,6 +27,7 @@ export class MusicService {
 
     const data = await request.json();
     this.spotifyToken = data.access_token;
+    this.spotifyTokenRefreshing = false;
   }
   async searchSpotify(query: string): Promise<SpotifyTrack[]> {
     try {
@@ -82,18 +84,25 @@ export class MusicService {
     return await downloader.getSource(id);
   }
 
-  async searchYt(query: string): Promise<YouTubeSong[] | undefined> {
+  async searchYt(query: string): Promise<YouTubeSong[]> {
     const info = await downloader.searchYt(query);
 
-    return info
-      ?.filter((song) => song.id)
-      .map((song) => ({
-        id: song.id!,
-        title: song.title ?? "[Unknown]",
-        thumbnail: song.thumbnails[0].url,
-        channel: song.artists?.[0]?.name || "[Unknown]",
-        url: "https://music.youtube.com/watch?v=" + song.id,
-        duration: song.duration?.seconds || 0,
-      }));
+    if (info == null) return [];
+
+    info.splice(5);
+
+    return (
+      info
+        .filter((song) => song.id)
+        // .filter((song) => song.id && (song.badges.length === 0 ? true : !song.badges.some((badge) => badge.icon_type === "MUSIC_EXPLICIT_BADGE")))
+        .map((song) => ({
+          id: song.id!,
+          title: song.title ?? "[Unknown]",
+          thumbnail: song.thumbnails[0].url,
+          channel: song.artists?.[0]?.name || "[Unknown]",
+          url: "https://music.youtube.com/watch?v=" + song.id,
+          duration: song.duration?.seconds || 0,
+        }))
+    );
   }
 }

@@ -17,7 +17,7 @@ export function Navbar({ spacer }: { spacer: boolean }) {
         <ul className="navbar__list">
           <li className="navbar__item navbar__item--logo">
             <a href="/">
-              <img src="/images/Logo2.png" alt="Westmount logo" />
+              <img src="/images/logo/logo256.webp" alt="Westmount Music Requester logo" />
             </a>
           </li>
           <li className="navbar__item navbar__item-dropdown-container">

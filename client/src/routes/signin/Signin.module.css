@@ -115,6 +115,11 @@ hr {
   padding: 1em 0.5em;
 }
 
+.signin__form button[type="submit"]:hover {
+  cursor: pointer;
+  background-color: hsl(var(--clr-neutral-400));
+}
+
 .signin__fieldset-section {
   display: flex;
   align-items: center;
