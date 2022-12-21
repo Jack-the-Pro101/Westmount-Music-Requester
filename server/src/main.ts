@@ -1,4 +1,5 @@
 import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import downloader from "./downloader/downloader";
 
@@ -8,8 +9,6 @@ import mongoose from "mongoose";
 import Users from "./models/User";
 
 import * as bcrypt from "bcrypt";
-
-import * as crypto from "crypto";
 
 import * as passport from "passport";
 import * as session from "express-session";
@@ -40,7 +39,6 @@ async function connectDatabase() {
 
 async function initTasks() {
   const user = await Users.findOne({ username: process.env.SYS_ADMIN_USERNAME });
-  const utilUser = await Users.findOne({ username: "Util" });
 
   if (user == null) {
     await Users.create({
@@ -51,28 +49,16 @@ async function initTasks() {
       name: "Administrator",
     });
   }
-  if (utilUser == null) {
-    await Users.create({
-      username: "Util",
-      password: "$2b$10$HnULhLePibtieujNYNRtjOmtofveBoPE6mvD5Rr42xsYq6Y0FX6Yy",
-      type: "INTERNAL",
-      permissions: generateBitfield("EVERYTHING"),
-      name: "Util",
-    });
-  }
 }
 
 async function bootstrap() {
-  if (process.env.NODE_ENV === "production") {
-    if (!process.env.MONGODB_URI) throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
-    if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD) throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
-  }
+  if (!process.env.MONGODB_URI && process.env.NODE_ENV === "production") throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
 
   await downloader.initialize();
   await connectDatabase();
   await initTasks();
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
   app.use(
     session({
@@ -93,6 +79,6 @@ async function bootstrap() {
     credentials: true,
   });
   
-  await app.listen(3000);
+  await app.listen(3000, "0.0.0.0");
 }
 bootstrap();
