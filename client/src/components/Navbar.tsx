@@ -1,4 +1,5 @@
 import { useContext, useState } from "preact/hooks";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../app";
 import { check } from "../shared/permissions/manager";
 
@@ -6,6 +7,8 @@ export function Navbar({ spacer }: { spacer: boolean }) {
   const [dropdownDropped, setDropdownDropped] = useState(false);
 
   const { user, logout } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   function toggleTheme() {
     document.querySelector("html")?.classList.toggle("light");
@@ -35,14 +38,14 @@ export function Navbar({ spacer }: { spacer: boolean }) {
                 <i class="fa-solid fa-caret-down" style={"margin-left: 1.5rem;" + (dropdownDropped ? "transform: rotate(180deg)" : "")}></i>
               </button>
             ) : (
-              <a href={"/signin"} className={`${user == null ? "loading" : ""}`}>
+              <a href={"/sign-in"} className={`${user == null ? "loading" : ""}`}>
                 Sign In
               </a>
             )}
 
             <ul className={"navbar__dropdown" + (dropdownDropped ? " navbar__dropdown--active" : "")}>
               <li className="navbar__dropdown-item">
-                <a href="/myrequests">
+                <a href="/my-requests">
                   <i class="fa-regular fa-ballot"></i> Your Requests
                 </a>
               </li>
@@ -68,7 +71,7 @@ export function Navbar({ spacer }: { spacer: boolean }) {
               </li>
               <li className="navbar__dropdown-breaker"></li>
               <li className="navbar__dropdown-item">
-                <button className="navbar__dropdown-btn" onClick={() => logout()}>
+                <button className="navbar__dropdown-btn" onClick={() => logout(navigate)}>
                   <i class="fa-regular fa-right-from-bracket"></i> Sign Out
                 </button>
               </li>

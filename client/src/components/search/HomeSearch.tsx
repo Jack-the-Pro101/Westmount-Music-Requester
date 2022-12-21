@@ -4,6 +4,7 @@ import { CoreSong, SpotifyTrack } from "../../types";
 import { SearchDropdown } from "./SearchDropdown";
 
 import styles from "./HomeSearch.module.css";
+import { BASE_URL } from "../../env";
 
 export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSong: (value: CoreSong) => void }) {
   const [search, setSearch] = useState("");
@@ -22,7 +23,7 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
 
     setIsLoading(true);
 
-    const request = await fetch("/api/music/search", {
+    const request = await fetch(BASE_URL + "/api/music/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,4 +1,5 @@
 import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import downloader from "./downloader/downloader";
 
@@ -8,8 +9,6 @@ import mongoose from "mongoose";
 import Users from "./models/User";
 
 import * as bcrypt from "bcrypt";
-
-import * as crypto from "crypto";
 
 import * as passport from "passport";
 import * as session from "express-session";
@@ -22,6 +21,10 @@ const store = new MongoDBStore({
 
 import * as cookieParser from "cookie-parser";
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Critical error encountered at:", promise, "Reason:", reason);
+});
 
 async function connectDatabase() {
   const connection = mongoose.connection;
@@ -40,7 +43,6 @@ async function connectDatabase() {
 
 async function initTasks() {
   const user = await Users.findOne({ username: process.env.SYS_ADMIN_USERNAME });
-  const utilUser = await Users.findOne({ username: "Util" });
 
   if (user == null) {
     await Users.create({
@@ -49,15 +51,6 @@ async function initTasks() {
       type: "INTERNAL",
       permissions: generateBitfield("EVERYTHING"),
       name: "Administrator",
-    });
-  }
-  if (utilUser == null) {
-    await Users.create({
-      username: "Util",
-      password: "$2b$10$HnULhLePibtieujNYNRtjOmtofveBoPE6mvD5Rr42xsYq6Y0FX6Yy",
-      type: "INTERNAL",
-      permissions: generateBitfield("EVERYTHING"),
-      name: "Util",
     });
   }
 }
@@ -72,7 +65,7 @@ async function bootstrap() {
   await connectDatabase();
   await initTasks();
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
   app.use(
     session({
@@ -88,6 +81,11 @@ async function bootstrap() {
 
   app.useGlobalFilters(new DomainEmailInvalidExceptionFilter());
 
-  await app.listen(3000);
+  process.env.NODE_ENV === "production" && app.enableCors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  });
+  
+  await app.listen(3000, "0.0.0.0");
 }
 bootstrap();

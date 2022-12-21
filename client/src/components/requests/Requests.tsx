@@ -3,6 +3,7 @@ import { CoreSong, Request, TrackSourceInfo, YouTubeSong } from "../../types";
 import styles from "./Requests.module.css";
 
 import { PlayRange } from "./PlayRange";
+import { BASE_URL } from "../../env";
 import { fetchRetry, secondsToHumanReadableString } from "../../utils";
 import { useNavigate } from "react-router-dom";
 
@@ -25,6 +26,8 @@ export function Requests({
   const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
   const [selectionRange, setSelectionRange] = useState(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedCoreSong) {
@@ -50,7 +53,7 @@ export function Requests({
       return alert("You have already requested this track and cannot request it again this cycle.");
 
     (async () => {
-      const request = await fetchRetry(5, "/api/music/source?id=" + selectedTrack.id, {
+      const request = await fetchRetry(5, BASE_URL + "/api/music/source?id=" + selectedTrack.id, {
         signal: aborter.signal,
       });
       if (!request) return alert("Failed to fetch song from YouTube");
@@ -65,7 +68,7 @@ export function Requests({
     const urlParams = new URLSearchParams();
     urlParams.append("songId", selectedCoreSong!.id.toString());
 
-    const request = await fetchRetry(5, "/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
+    const request = await fetchRetry(5, BASE_URL + "/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
       signal: aborter.signal,
     });
 
@@ -79,7 +82,7 @@ export function Requests({
   }
 
   async function submitRequest() {
-    const request = await fetch("/api/requests", {
+    const request = await fetch(BASE_URL + "/api/requests", {
       method: "POST",
       body: JSON.stringify({
         spotifyId: selectedCoreSong?.id,
@@ -92,7 +95,7 @@ export function Requests({
     });
 
     if (request.ok) {
-      window.location.href = "/myrequests";
+      navigate("/my-requests");
     } else {
       alert("Failed to submit request");
     }

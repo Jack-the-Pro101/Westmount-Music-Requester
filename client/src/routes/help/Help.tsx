@@ -12,14 +12,14 @@ export function Help() {
           </li>
           <li className={styles["help__how-item"]}>
             <p>
-              Once a song is selected, YouTube music is searched to retrieve a downloadable source instead of downloading from Spotify. This is due to Spotify
-              placing strict copyright safeguards in their system which prevents songs from being downloaded. However, Spotify has an API (Application
-              Programming Interface) for searching songs whilst YouTube doesn't, which is why Spotify is used to search.
+              Once a song is selected, YouTube Music is searched to retrieve a downloadable source instead of downloading from Spotify. This is due to Spotify
+              placing strict copyright safeguards in their system which prevents songs from being downloaded effectively. However, Spotify has a more suitable API
+              (Application Programming Interface) for searching songs, which is why Spotify is used to search.
             </p>
           </li>
           <li className={styles["help__how-item"]}>
             <p>
-              YouTube music returns sources which can be previewed in the play range selector. The selector plays audio directly from the deciphered YouTube
+              YouTube Music returns sources which can be previewed in the play range selector. The selector plays audio directly from the deciphered YouTube
               audio source.
             </p>
           </li>
@@ -35,7 +35,7 @@ export function Help() {
           </li>
           <li className={styles["help__how-item"]}>
             <p>
-              When a song is accepted by a human, the request is marked as accepted and then begins download of the song (music piracy epic) to be ready to play
+              When a song is accepted by a human, the request is marked as accepted and then begins download of the song in preparation for playback
               on the PA system.
             </p>
           </li>
@@ -75,7 +75,7 @@ export function Help() {
             <p>Song has passed profanity check and is awaiting human verification.</p>
           </li>
           <li className={styles["help_statuses-item"]}>
-            <p>Pre Pending</p>
+            <p>Awaiting</p>
             <p>Song is awaiting automated profanity check before continuing.</p>
           </li>
         </ul>

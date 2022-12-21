@@ -5,10 +5,22 @@ import { AuthModule } from "./auth/auth.module";
 import { RequestModule } from "./request/request.module";
 import { APP_GUARD } from "@nestjs/core";
 import { AdminModule } from "./admin/Admin.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { join } from "path";
 
 @Module({
-  imports: [ConfigModule.forRoot(), ThrottlerModule.forRoot(), MusicModule, AuthModule, RequestModule, AdminModule],
+  imports: [
+    ConfigModule.forRoot(), 
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "client/dist"),
+    }),
+    ThrottlerModule.forRoot(),
+    MusicModule, 
+    AuthModule, 
+    RequestModule, 
+    AdminModule,
+  ],
   controllers: [],
   providers: [
     {
