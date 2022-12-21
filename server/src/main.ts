@@ -9,6 +9,8 @@ import Users from "./models/User";
 
 import * as bcrypt from "bcrypt";
 
+import * as crypto from "crypto";
+
 import * as passport from "passport";
 import * as session from "express-session";
 import * as connectMongodbSession from "connect-mongodb-session";
@@ -38,6 +40,7 @@ async function connectDatabase() {
 
 async function initTasks() {
   const user = await Users.findOne({ username: process.env.SYS_ADMIN_USERNAME });
+  const utilUser = await Users.findOne({ username: "Util" });
 
   if (user == null) {
     await Users.create({
@@ -48,10 +51,22 @@ async function initTasks() {
       name: "Administrator",
     });
   }
+  if (utilUser == null) {
+    await Users.create({
+      username: "Util",
+      password: "$2b$10$HnULhLePibtieujNYNRtjOmtofveBoPE6mvD5Rr42xsYq6Y0FX6Yy",
+      type: "INTERNAL",
+      permissions: generateBitfield("EVERYTHING"),
+      name: "Util",
+    });
+  }
 }
 
 async function bootstrap() {
-  if (!process.env.MONGODB_URI && process.env.NODE_ENV === "production") throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
+  if (process.env.NODE_ENV === "production") {
+    if (!process.env.MONGODB_URI) throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
+    if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD) throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
+  }
 
   await downloader.initialize();
   await connectDatabase();

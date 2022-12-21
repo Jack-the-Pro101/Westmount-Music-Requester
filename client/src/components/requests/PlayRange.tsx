@@ -173,7 +173,12 @@ export function PlayRange({
 
       <div className={`${styles["requests__play-controller"]} ${styles["requests__play-btns"]}`}>
         <div className={styles["requests__play-btns-group"]}>
-          <button type="button" className={styles["requests__play-btn"]} onClick={() => setIsPlaying((isPlaying) => (isPlaying ? false : true))}>
+          <button
+            type="button"
+            className={styles["requests__play-btn"]}
+            title="Toggle playback"
+            onClick={() => setIsPlaying((isPlaying) => (isPlaying ? false : true))}
+          >
             <i class={"fa-regular fa-" + (isPlaying ? "play" : "pause")}></i>
           </button>
         </div>
@@ -213,8 +218,8 @@ export function PlayRange({
         </div>
       </div>
       <div className={`${styles["requests__play-controller"]} ${styles["requests__play-volume"]}`}>
-        <label htmlFor="volume">Volume</label>
         <i className="fa-regular fa-volume"></i>
+        <label htmlFor="volume">Volume</label>
         <input
           type="range"
           name="volume"
