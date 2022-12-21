@@ -191,6 +191,7 @@ export function Requests({
 
                     <button
                       className={styles["requests__select-btn"]}
+                      title="Select source"
                       onClick={() => {
                         if (currentRequests.some((request) => request.track.youtubeId === track.id))
                           return alert("You have already requested this track and cannot request it again this cycle.");
