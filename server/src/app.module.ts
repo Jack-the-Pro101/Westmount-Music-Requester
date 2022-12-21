@@ -13,7 +13,7 @@ import { join } from "path";
   imports: [
     ConfigModule.forRoot(), 
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "..", "client/dist"),
+      rootPath: join(__dirname, "..", "..", "client/dist"),
     }),
     ThrottlerModule.forRoot(),
     MusicModule, 
