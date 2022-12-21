@@ -15,7 +15,6 @@ const ErrorBoundary = ({ children }: { children: ComponentChildren }) => {
             alignItems: "center",
             justifyContent: "center",
             height: "100vh",
-            width: "100vw",
             textAlign: "center",
         }}>
             <h1>Something went wrong</h1>
