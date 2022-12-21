@@ -58,6 +58,11 @@
   overflow-x: hidden;
 }
 
+.requests__play-range-input--duration:focus {
+  outline: 2px solid hsl(var(--clr-primary-500), 0.65);
+  outline-offset: 2px;
+}
+
 .requests__play-range-input--duration::before {
   content: "";
   position: absolute;
@@ -121,6 +126,10 @@
   background-color: transparent;
   margin-top: 24px;
   height: 24px;
+}
+
+.requests__play-range-input--scrubber:focus {
+  outline: 2px solid hsl(var(--clr-primary-500), 0.65);
 }
 
 .requests__play-range-input--scrubber::-webkit-slider-thumb {
@@ -195,6 +204,7 @@
   margin-left: 0.5em;
   width: 100%;
   max-width: 12em;
+  accent-color: hsl(var(--clr-primary-400));
 }
 
 .requests__play-time {

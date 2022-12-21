@@ -45,6 +45,8 @@ export class MusicService {
         if (response.error.status === 401) {
           if (!this.spotifyTokenRefreshing) await this.refreshSpotifyToken();
           return await this.searchSpotify(query);
+        } else {
+          return [];
         }
       }
 

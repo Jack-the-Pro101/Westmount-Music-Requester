@@ -6,15 +6,18 @@ import { LocalAuthGuard } from "./local-auth.guard";
 import { AuthenticatedGuard } from "./authenticated.guard";
 import { Request, Response } from "express";
 import { GoogleAuthenticatedRequest, StoredAuthenticatedRequest } from "src/server";
+import { Throttle } from "@nestjs/throttler";
 
 @Controller("/api/auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Throttle(4, 6)
   @Get()
   @UseGuards(GoogleOAuthGuard)
   async googleAuth() {}
 
+  @Throttle(2, 5)
   @Delete("logout")
   @UseGuards(AuthenticatedGuard)
   logout(@Req() req: Request) {
@@ -28,6 +31,7 @@ export class AuthController {
     });
   }
 
+  @Throttle(15, 5)
   @Get("session")
   @UseGuards(AuthenticatedGuard)
   getSession(@Req() req: StoredAuthenticatedRequest) {
@@ -43,8 +47,9 @@ export class AuthController {
     };
   }
 
-  @UseGuards(LocalAuthGuard)
+  @Throttle(4, 6)
   @Post("login")
+  @UseGuards(LocalAuthGuard)
   login(@Req() req: StoredAuthenticatedRequest) {
     return {
       id: req.user.id,
@@ -56,6 +61,7 @@ export class AuthController {
     };
   }
 
+  @Throttle(4, 6)
   @Get("google-redirect")
   @UseGuards(GoogleOAuthGuard)
   googleAuthRedirect(@Req() req: GoogleAuthenticatedRequest, @Res() res: Response) {

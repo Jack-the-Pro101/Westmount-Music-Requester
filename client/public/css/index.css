@@ -60,26 +60,6 @@
   --clr-neutral-300: 217, 10%, 70%;
   --clr-neutral-200: 218, 15%, 80%;
   --clr-neutral-100: 220, 16%, 90%;
-
-  --clr-primary-900: 206, 56%, 5%;
-  --clr-primary-800: 206, 56%, 15%;
-  --clr-primary-700: 206, 56%, 30%;
-  --clr-primary-600: 206, 56%, 45%;
-  --clr-primary-500: 206, 56%, 57%;
-  --clr-primary-400: 206, 56%, 60%;
-  --clr-primary-300: 206, 56%, 70%;
-  --clr-primary-200: 206, 56%, 80%;
-  --clr-primary-100: 206, 56%, 90%;
-
-  --clr-accent-900: 17, 100%, 5%;
-  --clr-accent-800: 17, 100%, 15%;
-  --clr-accent-700: 17, 100%, 30%;
-  --clr-accent-600: 17, 100%, 40%;
-  --clr-accent-500: 17, 100%, 50%;
-  --clr-accent-400: 17, 100%, 60%;
-  --clr-accent-300: 17, 100%, 69%;
-  --clr-accent-200: 17, 100%, 80%;
-  --clr-accent-100: 17, 100%, 90%;
 }
 
 ::-webkit-scrollbar {
