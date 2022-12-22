@@ -35,7 +35,8 @@ export function SearchDropdown({ songs, onSelect, isLoading, isEmpty }: Props) {
               </div>
               <button
                 className={styles["search__dropdown-select-btn"]}
-                onClick={(e) =>
+                type="button"
+                onClick={() =>
                   onSelect({ title: song.name, artist: song.artists[0].name, id: song.id, url: song.external_urls.spotify, coverUrl: song.album.images[0].url })
                 }
               >
