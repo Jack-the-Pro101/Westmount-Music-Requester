@@ -1,8 +1,9 @@
 import { useContext, useState } from "preact/hooks";
 import { AuthContext } from "../../app";
-import styles from "./Signin.module.css";
+import { BASE_URL } from "../../env";
+import styles from "./SignIn.module.css";
 
-export function Signin() {
+export function SignIn() {
   const { login } = useContext(AuthContext);
 
   const [adminSigninShown, setAdminSigninShown] = useState(false);
@@ -29,7 +30,7 @@ export function Signin() {
         <h1 className={styles.signin__heading}>Sign In</h1>
 
         <fieldset className={styles.signin__fieldset}>
-          <a href="/api/auth" tabIndex={-1}>
+          <a href={BASE_URL + "/api/auth"} tabIndex={-1}>
             <button className={styles["signin__option-btn"]} type="button">
               Sign in with Google
             </button>

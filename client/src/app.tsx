@@ -4,7 +4,7 @@ import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { Home } from "./routes/home/Home";
 import { MyRequests } from "./routes/my-requests/MyRequests";
-import { Signin } from "./routes/signin/Signin";
+import { SignIn } from "./routes/signin/SignIn";
 import { Error } from "./routes/error/Error";
 import { Credits } from "./routes/credits/Credits";
 
@@ -103,7 +103,7 @@ export function App() {
               <Route path="/" element={<Home />} />
               <Route path="/my-requests" element={<MyRequests />} />
               <Route path="/help" element={<Help />} />
-              <Route path="/sign-in" element={<Signin />} />
+              <Route path="/sign-in" element={<SignIn />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/requests" element={<Requests />} />
               <Route path="/credits" element={<Credits />} />

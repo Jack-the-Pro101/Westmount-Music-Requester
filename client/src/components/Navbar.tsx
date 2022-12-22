@@ -38,7 +38,7 @@ export function Navbar({ spacer }: { spacer: boolean }) {
                 <i class="fa-solid fa-caret-down" style={"margin-left: 1.5rem;" + (dropdownDropped ? "transform: rotate(180deg)" : "")}></i>
               </button>
             ) : (
-              <a href={"/sign-in"} className={`${user == null ? "loading" : ""}`}>
+              <a href={"/sign-in"} className={`${user === undefined ? "loading" : ""}`}>
                 Sign In
               </a>
             )}
