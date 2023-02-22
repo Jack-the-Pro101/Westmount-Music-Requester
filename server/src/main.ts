@@ -81,11 +81,12 @@ async function bootstrap() {
 
   app.useGlobalFilters(new DomainEmailInvalidExceptionFilter());
 
-  process.env.NODE_ENV !== "production" && app.enableCors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  });
-  
-  await app.listen(3000, "0.0.0.0");
+  process.env.NODE_ENV !== "production" &&
+    app.enableCors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    });
+
+  await app.listen(process.env.NODE_ENV === "production" ? 80 : 3000, "0.0.0.0");
 }
 bootstrap();
