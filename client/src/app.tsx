@@ -29,7 +29,8 @@ async function logout(navigate: NavigateFunction) {
   });
 
   if (logoutRequest.ok) {
-    navigate("/sign-in");
+    // navigate("/sign-in"); Change to remove user from navbar, then can use
+    window.location.href = "/sign-in";
   } else {
     alert(`Failed to logout\nError ${logoutRequest.status}: ${logoutRequest.statusText}`);
   }

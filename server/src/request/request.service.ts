@@ -271,7 +271,12 @@ export class RequestService {
     const request = await requestSchema.findOne({ track: trackId }); // This could use the average start time of all requests
     const requestTrack = await trackSchema.findOne({ _id: trackId });
 
-    const filename = sanitizeFilename(`${requestTrack!.title} - ${requestTrack!.artist}`, "_");
+    const filename = sanitizeFilename(`${requestTrack!.youtubeId} ${requestTrack!.title} - ${requestTrack!.artist}`, "_");
+
+    if ((await downloadedTracksSchema.findOne({ filename })) != null) {
+      console.log(filename, "already downloaded. Stopping re-download.");
+      return;
+    }
 
     const downloadResult = await downloader.download(requestTrack!.youtubeId, filename, {
       format: "mp3",

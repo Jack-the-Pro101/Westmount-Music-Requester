@@ -5,6 +5,9 @@
 
 .requests__heading {
   margin-bottom: 1em;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .requests__subtitle {
@@ -22,6 +25,10 @@
 
 .requests__fieldset:disabled {
   opacity: 0.5;
+}
+
+.requests__fieldset-play-range {
+  margin-top: 3.5em;
 }
 
 .requests__play-range {
@@ -219,6 +226,7 @@
   justify-content: center;
   padding: 2em 0;
   width: 100%;
+  color: hsl(var(--clr-neutral-800));
 }
 
 .requests__load-img {

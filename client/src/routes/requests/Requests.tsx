@@ -106,9 +106,20 @@ export function Requests() {
     });
 
     if (submission.ok) {
-      alert("OK");
+      alert("Successfully accepted.");
+
+      setRequests(
+        requests.map((req) => {
+          if (req.track._id !== request.track._id) return req;
+
+          const newRequest = req;
+          newRequest.status = accepted ? "ACCEPTED" : "REJECTED";
+
+          return newRequest;
+        })
+      );
     } else {
-      alert("FAIL");
+      alert("Failed to accept.");
     }
   }
 

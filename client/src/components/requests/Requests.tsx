@@ -110,7 +110,9 @@ export function Requests({
   return (
     <div className={styles.requests}>
       <form action="#" method="post" className={styles.requests__form} onSubmit={(e) => confirmRequest(e)}>
-        <h2 className={styles.requests__heading}>Submit request</h2>
+        <h2 className={styles.requests__heading} style={{ fontSize: "4rem", fontWeight: 500 }}>
+          Submit request
+        </h2>
 
         {selectedCoreSong != null && (
           <p className={styles.requests__subtitle}>
@@ -213,7 +215,7 @@ export function Requests({
           </div>
         </div>
 
-        <fieldset className={styles.requests__fieldset} disabled={selectedTrackSource == null}>
+        <fieldset className={`${styles.requests__fieldset} ${styles["requests__fieldset-play-range"]}`} disabled={selectedTrackSource == null}>
           <h2 className={styles.requests__heading}>Select play range</h2>
           <PlayRange songPreview={selectedTrackSource} selectionRange={selectionRange} setSelectionRange={setSelectionRange} editable={true} />
         </fieldset>

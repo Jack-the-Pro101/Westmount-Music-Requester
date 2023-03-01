@@ -81,6 +81,7 @@
   max-width: 750px;
   width: 100%;
   margin: 0 auto;
+  margin-bottom: 6em;
   padding: 1em;
   background-color: hsl(var(--clr-neutral-100), 0.4);
   border-radius: 8px;
