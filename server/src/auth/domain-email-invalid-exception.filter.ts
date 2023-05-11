@@ -8,6 +8,6 @@ export class DomainEmailInvalidExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response: Response = ctx.getResponse();
 
-    response.redirect("http://localhost:5173/error?code=auth");
+    response.redirect(process.env.NODE_ENV! === "production" ? `${process.env.ROOT_DOMAIN!}/error?code=auth` : "http://localhost:5173/error?code=auth");
   }
 }
