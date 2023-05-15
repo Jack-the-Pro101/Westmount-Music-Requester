@@ -38,12 +38,14 @@ export class RequestController {
       if (!(await this.requestService.validateRequest(info, req.user))) return res.sendStatus(400);
 
       const trackId = await this.requestService.getTrackId(youtubeId);
+      if (trackId == null) return;
 
       if (await this.requestService.checkExistingRequest(spotifyId, trackId, req.user._id)) return res.sendStatus(400);
 
       res.sendStatus(202);
 
-      if (!(await this.requestService.createRequest(info, req.user, trackId))) return;
+      if (!(await this.requestService.createRequest(info, req.user, trackId)))
+        return console.error(`Failed to create request for ${req.user._id}, requesting song ${spotifyId} at ${youtubeId}`);
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
 
       if (scanResult === false) {
@@ -52,6 +54,7 @@ export class RequestController {
         await this.requestService.updateRequest({ track: trackId, status: "PRE_PENDING" }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
       }
     } catch (err) {
+      res.sendStatus(500);
       console.error(err);
     }
   }

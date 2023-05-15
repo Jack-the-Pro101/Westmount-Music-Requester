@@ -20,6 +20,9 @@ import { Request } from "src/models/Request";
 
 class ScanBuffer {
   private texts: ((value?: unknown) => void)[] = [];
+  private scanningYtTracks: {
+    [key: string]: true;
+  } = {};
 
   constructor() {
     setInterval(() => {
@@ -34,6 +37,26 @@ class ScanBuffer {
       this.texts.push(resolver);
     });
   }
+
+  async waitScanComplete(youtubeId: string) {
+    if (!this.scanningYtTracks[youtubeId]) {
+      this.scanningYtTracks[youtubeId] = true;
+      return;
+    }
+
+    return await new Promise<void>((resolve) => {
+      const checkScanDone = setInterval(() => {
+        if (!this.scanningYtTracks[youtubeId]) {
+          clearInterval(checkScanDone);
+          resolve();
+        }
+      }, 2000);
+    });
+  }
+
+  scanComplete(youtubeId: string) {
+    delete this.scanningYtTracks[youtubeId];
+  }
 }
 
 @Injectable()
@@ -45,38 +68,36 @@ export class RequestService {
 
   async scanLyrics(youtubeId: string, trackId: mongoose.Types.ObjectId): Promise<boolean | undefined> {
     try {
+      await this.scanBuffer.waitScanComplete(youtubeId);
+
       const existingTrack = await trackSchema.findOne({ youtubeId });
 
       if (existingTrack) {
         if (existingTrack.uncertain) return;
-        return !existingTrack.explicit;
+        if (existingTrack.explicit != null) return !existingTrack.explicit === true;
       }
 
       const lyrics = await downloader.getLyrics(youtubeId);
 
-      if (!lyrics || !lyrics.lyrics) {
-        trackSchema
-          .create({
-            _id: trackId,
-            title: lyrics.title,
-            artist: lyrics.artist,
-            youtubeId,
-            cover: lyrics.cover,
-            explicit: false,
-            uncertain: true,
-          })
+      if (!lyrics) {
+        await trackSchema
+          .findOneAndUpdate(
+            { _id: trackId },
+            {
+              explicit: null,
+              uncertain: true,
+            }
+          )
           .catch((err) => {
             console.error(err);
           });
-
-        return;
       }
 
       const possibleProfaneLines: string[] = [];
 
       for (let i = 0, n = profaneWords.length; i < n; ++i) {
         const word = profaneWords[i].toLowerCase();
-        const matches = lyrics.lyrics.matchAll(new RegExp(`^.*${word}.*$`, "gim"));
+        const matches = lyrics.matchAll(new RegExp(`^.*${word}.*$`, "gim"));
 
         for (const match of matches) {
           const line = match[0];
@@ -113,18 +134,18 @@ export class RequestService {
         }
       }
 
-      trackSchema
-        .create({
-          _id: trackId,
-          title: lyrics.title,
-          artist: lyrics.artist,
-          cover: lyrics.cover,
-          youtubeId,
-          explicit: isProfane,
-        })
+      await trackSchema
+        .findOneAndUpdate(
+          { _id: trackId },
+          {
+            explicit: isProfane,
+          }
+        )
         .catch((err) => {
           console.error(err);
         });
+
+      this.scanBuffer.scanComplete(youtubeId);
 
       return !isProfane;
     } catch (err) {
@@ -205,7 +226,21 @@ export class RequestService {
   }
 
   async getTrackId(youtubeId: string) {
-    return (await trackSchema.findOne({ youtubeId: youtubeId }))?.id || new mongoose.Types.ObjectId();
+    const track = await trackSchema.findOne({ youtubeId: youtubeId });
+    if (track != null) return track.id;
+
+    const info = await downloader.getYtMusicInfo(youtubeId);
+    if (info == null) return console.error("Failed to create track, info was null");
+
+    const newTrack = await trackSchema.create({
+      title: info.basic_info.title,
+      cover: info.basic_info.thumbnail?.[0].url,
+      artist: info.basic_info.author,
+      explicit: null,
+      youtubeId,
+    });
+
+    return newTrack.id;
   }
 
   async createRequest(info: RequestData, user: StoredUser, trackId: mongoose.Types.ObjectId): Promise<boolean> {

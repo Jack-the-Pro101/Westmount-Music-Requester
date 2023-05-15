@@ -7,10 +7,10 @@ import { MyRequests } from "./routes/my-requests/MyRequests";
 import { SignIn } from "./routes/signin/SignIn";
 import { Error } from "./routes/error/Error";
 import { Credits } from "./routes/credits/Credits";
-
+import { FLAGS } from "./shared/permissions/manager";
 import { StoredUser } from "./types";
 import { Requests } from "./routes/requests/Requests";
-import { createContext } from "preact";
+import { createContext, JSX } from "preact";
 import { Help } from "./routes/help/Help";
 import { Admin } from "./routes/admin/Admin";
 import { BASE_URL } from "./env";
@@ -56,7 +56,50 @@ export const AuthContext = createContext<AuthContextProps>({
   logout: logout,
 });
 
-const exemptedRedirectPaths = ["sign-in", "error"];
+const routeMap = [
+  {
+    path: "/",
+    element: <Home />,
+    permissions: [],
+  },
+  {
+    path: "/my-requests",
+    element: <MyRequests />,
+    permissions: [],
+  },
+  {
+    path: "/help",
+    element: <Help />,
+    permissions: [],
+  },
+  {
+    path: "/sign-in",
+    element: <SignIn />,
+    permissions: [],
+  },
+  {
+    path: "/admin",
+    element: <Admin />,
+    permissions: ["ADMINISTRATOR"],
+  },
+  {
+    path: "/requests",
+    element: <Requests />,
+    permissions: ["ACCEPT_REQUESTS"],
+  },
+  {
+    path: "/credits",
+    element: <Credits />,
+    permissions: [],
+  },
+  {
+    path: "/error",
+    element: <Error />,
+    permissions: [],
+  },
+];
+
+const exemptedRedirectPaths = ["sign-in", "credits", "error"];
 
 export function App() {
   const [user, setUser] = useState<StoredUser | null>();
@@ -101,14 +144,11 @@ export function App() {
               <Route path="/*" element={<Navbar spacer={true} />} />
             </Routes>
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/my-requests" element={<MyRequests />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="/sign-in" element={<SignIn />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/requests" element={<Requests />} />
-              <Route path="/credits" element={<Credits />} />
-              <Route path="/error" element={<Error />} />
+              {routeMap.map((route) =>
+                route.permissions.length === 0 || (user != null && check(route.permissions, user.permissions)) ? (
+                  <Route path={route.path} element={route.element} />
+                ) : null
+              )}
               <Route path="/*" element={<Error />} />
             </Routes>
           </BrowserRouter>

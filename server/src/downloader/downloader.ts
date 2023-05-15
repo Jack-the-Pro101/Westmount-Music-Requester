@@ -45,61 +45,43 @@ class Downloader {
     }
   }
 
-  async searchYt(query: string) {
+  async checkReady() {
     if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
     await this.checkSession();
+  }
 
-    const songs = await this.yt.music.search(query, { type: "song" });
+  async searchYt(query: string) {
+    await this.checkReady();
+
+    const songs = await this.yt!.music.search(query, { type: "song" });
 
     return songs.results;
   }
 
-  async getBasicInfo(id: string) {
-    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
-    await this.checkSession();
+  async getYtMusicInfo(id: string) {
+    await this.checkReady();
 
-    return await this.yt.getBasicInfo(id);
+    return await this.yt!.music.getInfo(id).catch(() => null);
   }
 
   async getLyrics(id: string) {
-    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
-    await this.checkSession();
-
-    const info = await this.yt.music.getInfo(id);
+    await this.checkReady();
 
     try {
-      const lyrics = await this.yt.music.getLyrics(id);
-      if (!lyrics)
-        return {
-          lyrics: "",
-          title: info.basic_info.title,
-          cover: info.basic_info.thumbnail?.[0].url,
-          artist: info.basic_info.author,
-        };
+      const lyrics = await this.yt!.music.getLyrics(id);
+      if (!lyrics) return "";
 
-      return {
-        lyrics: lyrics.description.text,
-        title: info.basic_info.title,
-        cover: info.basic_info.thumbnail?.[0].url,
-        artist: info.basic_info.author,
-      };
+      return lyrics.description.text;
     } catch (err) {
-      console.error(err);
-      return {
-        lyrics: "",
-        title: info.basic_info.title,
-        cover: info.basic_info.thumbnail?.[0].url,
-        artist: info.basic_info.author,
-      };
+      return "";
     }
   }
 
   async getSource(id: string) {
-    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
-    await this.checkSession();
+    await this.checkReady();
 
     try {
-      const trackInfo = await this.yt.music.getInfo(id);
+      const trackInfo = await this.yt!.music.getInfo(id);
 
       if (!trackInfo.streaming_data) throw new Error("No streaming data found!");
 
@@ -109,7 +91,7 @@ class Downloader {
       const bestAudioFormat = [...adaptiveAudioFormats, ...audioFormats].sort((a, b) => b.average_bitrate - a.average_bitrate)[0];
 
       return {
-        url: bestAudioFormat.decipher(this.yt.session.player),
+        url: bestAudioFormat.decipher(this.yt!.session.player),
         duration: bestAudioFormat.approx_duration_ms,
         mime_type: bestAudioFormat.mime_type.split(";")[0],
         format: "audio",
@@ -120,15 +102,14 @@ class Downloader {
   }
 
   async download(id: string, filename: string, ffmpegArgs: FfmpegPostProcessOptions) {
-    if (!this.yt || !this.ready) throw new Error("Downloader not ready!");
-    await this.checkSession();
+    await this.checkReady();
 
-    const format = await this.yt.getStreamingData(id, {
+    const format = await this.yt!.getStreamingData(id, {
       quality: "best",
       type: "audio",
     });
 
-    const video = await this.yt.download(id, {
+    const video = await this.yt!.download(id, {
       quality: "best",
       type: "audio",
     });

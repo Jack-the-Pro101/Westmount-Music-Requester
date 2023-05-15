@@ -6,6 +6,9 @@
   max-width: 160rem;
   margin: 0 auto;
   width: 100%;
+  margin-bottom: 1.5em;
+  padding-bottom: 1.5em;
+  border-bottom: 1px solid hsl(var(--clr-neutral-200));
 }
 
 .help__heading {

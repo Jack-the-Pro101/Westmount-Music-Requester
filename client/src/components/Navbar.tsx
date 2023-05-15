@@ -11,7 +11,8 @@ export function Navbar({ spacer }: { spacer: boolean }) {
   const navigate = useNavigate();
 
   function toggleTheme() {
-    document.querySelector("html")?.classList.toggle("light");
+    document.querySelector("html")!.classList.toggle("light");
+    localStorage.setItem("theme", localStorage.getItem("theme") === "light" ? "dark" : "light");
   }
 
   return (

@@ -9,9 +9,13 @@ import { CoreSong, Request } from "../../types";
 import { maxSongsPerCycle } from "../../shared/config.json";
 import { useNavigate } from "react-router-dom";
 
+import { version } from "../../../package.json";
+
 export function Home() {
   const [selectedCoreSong, setSelectedCoreSong] = useState<CoreSong>();
   const [currentRequests, setCurrentRequests] = useState<Request[]>([]);
+
+  const [canRequest, setCanRequest] = useState(true);
 
   const navigate = useNavigate();
 
@@ -23,8 +27,7 @@ export function Home() {
         const requestsJson = (await requests.json()) as Request[];
 
         if (requestsJson.length >= maxSongsPerCycle) {
-          alert("You have reached the maximum amount of requests this cycle. Redirecting...");
-          return navigate("/my-requests");
+          setCanRequest(false);
         }
 
         setCurrentRequests(requestsJson);
@@ -47,12 +50,15 @@ export function Home() {
             <h1 className={styles.header__title}>
               <span className={styles.header__gradient}>Westmount</span>
               <wbr /> Music Requester
+              <a href="/help#beta" className={styles.header__version}>
+                BETA v{version}
+              </a>
             </h1>
           </header>
           <HomeSearch setSelectedCoreSong={setSelectedCoreSongRelay} />
         </div>
         <div className={styles.main__requester}>
-          <Requests selectedCoreSong={selectedCoreSong} setSelectedCoreSong={setSelectedCoreSong} currentRequests={currentRequests} />
+          <Requests selectedCoreSong={selectedCoreSong} setSelectedCoreSong={setSelectedCoreSong} currentRequests={currentRequests} canRequest={canRequest} />
         </div>
       </main>
     </>

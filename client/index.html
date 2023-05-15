@@ -6,6 +6,16 @@
     <meta charset="UTF-8" />
     <link rel="shortcut icon" href="/images/logo/favicon.ico" type="image/x-icon" />
 
+    <script>
+      const theme = localStorage.getItem("theme");
+
+      if (theme === "light") {
+        document.querySelector("html").classList.add("light");
+      } else {
+        document.querySelector("html").classList.remove("light");
+      }
+    </script>
+
     <script type="module" src="/src/main.tsx" defer></script>
 
     <meta name="author" content="Emperor of Bluegaria (Jack H.)" />

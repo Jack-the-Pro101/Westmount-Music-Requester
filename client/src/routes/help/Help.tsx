@@ -4,6 +4,14 @@ export function Help() {
   return (
     <main className={styles.help}>
       <section className={styles.help__section} id="howitworks">
+        <h2 className={styles.help__heading}>Beta?</h2>
+
+        <p>
+          The application is currently in its beta release, meaning bugs and glitches may appear. Please report any if you find them, as your help is
+          appreciated!
+        </p>
+      </section>
+      <section className={styles.help__section} id="howitworks">
         <h2 className={styles.help__heading}>How Does It Work?</h2>
 
         <ol className={styles.help__how}>
@@ -13,8 +21,8 @@ export function Help() {
           <li className={styles["help__how-item"]}>
             <p>
               Once a song is selected, YouTube Music is searched to retrieve a downloadable source instead of downloading from Spotify. This is due to Spotify
-              placing strict copyright safeguards in their system which prevents songs from being downloaded effectively. However, Spotify has a more suitable API
-              (Application Programming Interface) for searching songs, which is why Spotify is used to search.
+              placing strict copyright safeguards in their system which prevents songs from being downloaded effectively. However, Spotify has a more suitable
+              API (Application Programming Interface) for searching songs, which is why Spotify is used to search.
             </p>
           </li>
           <li className={styles["help__how-item"]}>
@@ -35,8 +43,8 @@ export function Help() {
           </li>
           <li className={styles["help__how-item"]}>
             <p>
-              When a song is accepted by a human, the request is marked as accepted and then begins download of the song in preparation for playback
-              on the PA system.
+              When a song is accepted by a human, the request is marked as accepted and then begins download of the song in preparation for playback on the PA
+              system.
             </p>
           </li>
         </ol>

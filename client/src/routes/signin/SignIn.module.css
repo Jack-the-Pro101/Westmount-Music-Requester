@@ -107,7 +107,7 @@ hr {
 .signin__form button[type="submit"] {
   background-color: hsl(var(--clr-neutral-300));
   color: hsl(var(--clr-neutral-900));
-  margin-top: 2em;
+  margin-top: 1.5em;
   font-size: 2rem;
   font-weight: 600;
   border-radius: 4px;
@@ -137,6 +137,7 @@ hr {
 .signin__fieldset.hidden {
   visibility: hidden;
   opacity: 0;
+  transition: opacity 0.3s ease, visibility 0s 0.3s linear;
 }
 
 .signin__option-btn {
@@ -149,6 +150,12 @@ hr {
   padding: 1em 0.5em;
   font-size: 2.25rem;
   cursor: pointer;
+}
+
+.signin__error {
+  color: red;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
 }
 
 @media screen AND (max-width: 650px) {

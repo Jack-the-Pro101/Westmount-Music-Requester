@@ -14,6 +14,7 @@ export function Credits() {
           </header>
           <ul className={styles.credits__list}>
             <li className={styles.credits__item}>Primary Developer - Jack Huang</li>
+            <li className={styles.credits__item}>Production Engineer - Michael Pfaff</li>
             <li className={styles.credits__item}>
               Developer -{" "}
               <a href="https://github.com/infiniwave" target="_blank" rel="noopener noreferrer">

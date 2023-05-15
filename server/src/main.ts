@@ -56,6 +56,8 @@ async function initTasks() {
 }
 
 async function bootstrap() {
+  console.log("Running in", process.env.NODE_ENV === "production" ? "production" : "dev environment");
+
   if (process.env.NODE_ENV === "production") {
     if (!process.env.MONGODB_URI) throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
     if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD) throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
@@ -87,6 +89,6 @@ async function bootstrap() {
       credentials: true,
     });
 
-  await app.listen(process.env.NODE_ENV === "production" ? 80 : 3000, "0.0.0.0");
+  await app.listen(process.env.PORT || 3000, process.env.BIND_INTERFACE!);
 }
 bootstrap();

@@ -98,6 +98,10 @@ a:hover {
   text-decoration: underline;
 }
 
+button:disabled {
+  opacity: 0.65;
+}
+
 .noscript {
   padding: 1em;
   text-align: center;
@@ -423,7 +427,6 @@ a:hover {
   background-color: hsl(var(--clr-neutral-200));
   padding: 1em;
   min-height: 30vh;
-  margin-top: 2em;
   display: flex;
   align-items: center;
 }

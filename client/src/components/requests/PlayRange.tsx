@@ -58,9 +58,7 @@ export function PlayRange({
   }
 
   function updatePlaybackPosRange(event: TargetedEvent<HTMLInputElement, Event>): void;
-
   function updatePlaybackPosRange(time: number): void;
-
   function updatePlaybackPosRange(input: TargetedEvent<HTMLInputElement, Event> | number) {
     if (typeof input === "number") {
       audioElemRef.current!.currentTime = input / accuracyConstant;
@@ -93,6 +91,9 @@ export function PlayRange({
 
   useEffect(() => {
     if (songPreview == null) return;
+    setBuffered(0);
+    setPlaybackPos(0);
+    setDuration(0);
     if (audioElemRef.current) isPlaying ? audioElemRef.current.pause() : audioElemRef.current.play();
   }, [songPreview]);
 
@@ -109,8 +110,10 @@ export function PlayRange({
       if (!audioElemRef.current) return;
 
       const buffer = audioElemRef.current.buffered;
-
       let duration = audioElemRef.current.duration;
+
+      if (isNaN(duration)) return;
+
       if (min != null && max != null) duration = (max - min) / accuracyConstant;
 
       setBuffered(buffer.end(buffer.length - 1) / duration);
@@ -124,6 +127,12 @@ export function PlayRange({
 
   return (
     <div className={styles["requests__play-range"]}>
+      {songPreview && (
+        <div className={`${styles.requests__loading} ${buffered > 0 ? styles["requests__loading--done"] : ""}`}>
+          <img src="/images/loading3.svg" alt="Loading" className={styles["requests__loading-image"]} />
+        </div>
+      )}
+
       {songPreview && (
         <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPlaying(true)} ref={audioElemRef} volume={volume}>
           <source src={songPreview.url} type={songPreview.mime_type} />
@@ -189,7 +198,7 @@ export function PlayRange({
             onClick={() => updatePlaybackPosRange(selectionDisplayRange)}
             title="Jump to start of selected range"
           >
-            [
+            <i class="fa-light fa-arrow-left-long-to-line"></i>
           </button>
           <button
             type="button"
@@ -197,7 +206,7 @@ export function PlayRange({
             onClick={() => updatePlaybackPosRange(selectionDisplayRange + songMaxPlayDurationSeconds)}
             title="Jump to end of selected range"
           >
-            ]
+            <i class="fa-light fa-arrow-right-long-to-line"></i>
           </button>
           {/* <button
             type="button"

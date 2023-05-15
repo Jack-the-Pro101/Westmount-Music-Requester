@@ -26,7 +26,6 @@ const tracks = mongoose.model(
 
       explicit: {
         type: Boolean,
-        required: true,
       },
 
       uncertain: {

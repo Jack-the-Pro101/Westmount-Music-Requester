@@ -13,10 +13,12 @@ export function Requests({
   selectedCoreSong,
   setSelectedCoreSong,
   currentRequests,
+  canRequest,
 }: {
   selectedCoreSong?: CoreSong;
   setSelectedCoreSong: Function;
   currentRequests: Request[];
+  canRequest: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [modalShown, setModalShown] = useState(false);
@@ -110,7 +112,7 @@ export function Requests({
   return (
     <div className={styles.requests}>
       <form action="#" method="post" className={styles.requests__form} onSubmit={(e) => confirmRequest(e)}>
-        <h2 className={styles.requests__heading} style={{ fontSize: "4rem", fontWeight: 500 }}>
+        <h2 className={styles.requests__heading} style={{ fontSize: "3.75rem", fontWeight: 500 }}>
           Submit request
         </h2>
 
@@ -220,6 +222,13 @@ export function Requests({
           <PlayRange songPreview={selectedTrackSource} selectionRange={selectionRange} setSelectionRange={setSelectionRange} editable={true} />
         </fieldset>
 
+        {!canRequest && (
+          <p className={styles.requests__msg}>
+            <i class="fa-solid fa-circle-info"></i> <strong>Note</strong>: You have requested the max amount of tracks this cycle and will not be able to
+            request more. However, this panel will remain operational for preview purposes only.
+          </p>
+        )}
+
         <div className={styles.requests__btns}>
           <button
             type="reset"
@@ -234,7 +243,11 @@ export function Requests({
           >
             Cancel
           </button>
-          <button type="submit" disabled={!selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
+          <button
+            type="submit"
+            disabled={!canRequest || !selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false}
+            className={styles.requests__btn}
+          >
             Request
           </button>
         </div>

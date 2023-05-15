@@ -1,4 +1,4 @@
-import { useContext, useState } from "preact/hooks";
+import { useContext, useEffect, useState } from "preact/hooks";
 import { AuthContext } from "../../app";
 import { BASE_URL } from "../../env";
 import styles from "./SignIn.module.css";
@@ -7,22 +7,34 @@ export function SignIn() {
   const { login } = useContext(AuthContext);
 
   const [adminSigninShown, setAdminSigninShown] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [errorCount, setErrorCount] = useState(0);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  let errorMsg = "";
   async function handleSignin(e: Event) {
     e.preventDefault();
 
+    setLoading(true);
     const user = await login(username, password);
+    setLoading(false);
 
     if (user) {
       window.location.replace("/");
     } else {
-      errorMsg = "Username or password invalid.";
+      setErrorMsg(`Username or password invalid. ${errorCount > 0 ? `(${errorCount})` : ""}`);
+      setErrorCount((count) => count + 1);
     }
   }
+
+  useEffect(() => {
+    const removeError = setTimeout(() => {
+      setErrorMsg("");
+    }, 5000);
+
+    return () => clearTimeout(removeError);
+  }, [errorCount]);
 
   return (
     <main className={styles.signin}>
@@ -40,8 +52,8 @@ export function SignIn() {
 
         <div style="display: flex; flex-direction: column">
           <fieldset className={styles.signin__fieldset} style="order: 2">
-            <div className={styles["signin__fieldset-section"]}>
-              <label htmlFor="is-admin">Admin login?</label>
+            <div className={styles["signin__fieldset-section"]} style={{ marginBottom: 0 }}>
+              <label htmlFor="is-admin">Admin sign in?</label>
               <input type="checkbox" name="is-admin" id="is-admin" onChange={() => setAdminSigninShown(!adminSigninShown)} checked={adminSigninShown} />
             </div>
           </fieldset>
@@ -51,13 +63,33 @@ export function SignIn() {
             <h2 className={styles.signin__subheading}>Admin Sign In</h2>
 
             <label htmlFor="username">Username</label>
-            <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername((e.target as HTMLInputElement).value)} maxLength={100} required />
+            <input
+              type="text"
+              name="username"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername((e.target as HTMLInputElement).value)}
+              maxLength={100}
+              required
+              placeholder="Enter username"
+            />
             <label htmlFor="password">Password</label>
-            <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword((e.target as HTMLInputElement).value)} maxLength={200} required />
+            <input
+              type="password"
+              name="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword((e.target as HTMLInputElement).value)}
+              maxLength={200}
+              required
+              placeholder="Enter password"
+            />
 
             <p className={styles.signin__error}>{errorMsg}</p>
 
-            <button type="submit">Sign In</button>
+            <button type="submit" disabled={loading}>
+              Sign In
+            </button>
           </fieldset>
         </div>
       </form>
