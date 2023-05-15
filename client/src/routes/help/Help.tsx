@@ -3,7 +3,7 @@ import styles from "./Help.module.css";
 export function Help() {
   return (
     <main className={styles.help}>
-      <section className={styles.help__section} id="howitworks">
+      <section className={styles.help__section} id="beta">
         <h2 className={styles.help__heading}>Beta?</h2>
 
         <p>

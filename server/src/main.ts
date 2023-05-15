@@ -89,6 +89,6 @@ async function bootstrap() {
       credentials: true,
     });
 
-  await app.listen(process.env.PORT || 3000, process.env.BIND_INTERFACE!);
+  await app.listen(process.env.BIND_PORT || 3000, process.env.BIND_INTERFACE!);
 }
 bootstrap();
