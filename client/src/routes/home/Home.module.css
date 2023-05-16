@@ -8,7 +8,7 @@
   text-align: center;
   color: hsl(var(--clr-neutral-900));
   text-shadow: 0 0 12px hsl(var(--clr-primary-700), 0.5);
-  font-weight: 500;
+  font-weight: 700;
   text-transform: uppercase;
   position: relative;
 }
@@ -37,6 +37,7 @@
   position: relative;
   isolation: isolate;
   padding: 0 0.5em;
+  padding-top: 2.5em;
 }
 
 .main::before {

@@ -112,7 +112,7 @@ export function Requests({
   return (
     <div className={styles.requests}>
       <form action="#" method="post" className={styles.requests__form} onSubmit={(e) => confirmRequest(e)}>
-        <h2 className={styles.requests__heading} style={{ fontSize: "3.75rem", fontWeight: 500 }}>
+        <h2 className={styles.requests__heading} style={{ fontSize: "3.75rem" }}>
           Submit request
         </h2>
 

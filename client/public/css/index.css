@@ -421,6 +421,7 @@ button:disabled {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
+  visibility: hidden;
 }
 
 .footer {
