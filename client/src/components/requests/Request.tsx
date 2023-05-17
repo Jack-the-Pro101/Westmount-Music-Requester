@@ -2,6 +2,13 @@ import { StateUpdater } from "preact/hooks";
 import styles from "../../routes/requests/Requests.module.css";
 import { Request as RequestType } from "../../types";
 
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  weekday: "short",
+})
+
 export function Request({ request, setActive }: { request: RequestType; setActive: StateUpdater<RequestType | undefined> }) {
   return (
     <li className={styles["requests__item"]}>
@@ -16,12 +23,7 @@ export function Request({ request, setActive }: { request: RequestType; setActiv
         <div className={styles["requests__item-col"]}>
           <p style="color: hsl(var(--clr-neutral-700));">
             Requested{" "}
-            {new Intl.DateTimeFormat(undefined, {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              weekday: "short",
-            }).format(new Date(request.createdAt))}
+            {dateFormatter.format(new Date(request.createdAt))}
           </p>
         </div>
       </button>

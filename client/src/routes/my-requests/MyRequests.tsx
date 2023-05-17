@@ -4,6 +4,13 @@ import styles from "./MyRequests.module.css";
 
 import * as config from "../../shared/config.json";
 
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  weekday: "short",
+});
+
 export function MyRequests() {
   const [requests, setRequests] = useState<Request[]>([]);
 
@@ -13,6 +20,8 @@ export function MyRequests() {
 
       if (requests.ok) {
         setRequests((await requests.json()) as Request[]);
+      }else {
+        alert("Failed to get your requests, error code " + requests.status)
       }
     })();
   }, []);
@@ -54,12 +63,7 @@ export function MyRequests() {
                     </p>
                     <p>
                       Requested on{" "}
-                      {new Intl.DateTimeFormat(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        weekday: "short",
-                      }).format(new Date(request.createdAt))}
+                      {dateFormatter.format(new Date(request.createdAt))}
                     </p>
                   </div>
                   <div className={styles["myrequests__item-status"]}>

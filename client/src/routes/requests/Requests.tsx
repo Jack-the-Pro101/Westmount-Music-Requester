@@ -106,7 +106,7 @@ export function Requests() {
     });
 
     if (submission.ok) {
-      alert("Successfully accepted.");
+      alert(`Successfully ${accepted ? "accepted" : "rejected"}.`);
 
       setRequests(
         requests.map((req) => {
@@ -119,7 +119,7 @@ export function Requests() {
         })
       );
     } else {
-      alert("Failed to accept.");
+      alert("Failed to patch request.");
     }
   }
 
