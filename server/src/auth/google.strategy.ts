@@ -17,8 +17,15 @@ interface RawGoogleProfile {
   }[];
 }
 
+class MyStrategy extends Strategy {
+  constructor(options: any, verify: any) {
+    options.authorizationURL = "https://accounts.google.com/o/oauth2/v2/auth?prompt=select_account+consent";
+    super(options, verify);
+  }
+}
+
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
+export class GoogleStrategy extends PassportStrategy(MyStrategy, "google") {
   constructor(private readonly usersService: UsersService) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
