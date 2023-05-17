@@ -21,6 +21,7 @@ export function Requests({
   canRequest: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalShown, setModalShown] = useState(false);
   const [confirmModalShown, setConfirmModalShown] = useState(false);
   const [trackResults, setTrackResults] = useState<YouTubeSong[]>([]);
@@ -84,6 +85,7 @@ export function Requests({
   }
 
   async function submitRequest() {
+    setIsSubmitting(true);
     const request = await fetch(BASE_URL + "/api/requests", {
       method: "POST",
       body: JSON.stringify({
@@ -99,6 +101,7 @@ export function Requests({
     if (request.ok) {
       navigate("/my-requests");
     } else {
+      setIsSubmitting(false);
       alert("Failed to submit request");
     }
   }
@@ -254,8 +257,9 @@ export function Requests({
       </form>
 
       <div className={`${styles.requests__confirm} ${confirmModalShown && styles["requests__confirm--active"]}`}>
-        <div className={styles["requests__confirm-container"]}>
-          <div className={styles["requests__confirm-info"]}>
+        <div className={`${styles["requests__confirm-container"]} ${isSubmitting ? styles["requests__confirm-container--loading"] : ""}`}>
+          <div className={`${styles["requests__confirm-content"]} ${isSubmitting ? styles["requests__confirm-content--submitting"] : ""}`}>
+            <div className={styles["requests__confirm-info"]}>
             <h2>Confirm request</h2>
 
             <p>You are requesting:</p>
@@ -281,11 +285,11 @@ export function Requests({
               className={styles["requests__confirm-btn"]}
               onClick={() => {
                 submitRequest();
-                setConfirmModalShown(false);
               }}
             >
               Confirm
             </button>
+          </div>
           </div>
         </div>
       </div>
