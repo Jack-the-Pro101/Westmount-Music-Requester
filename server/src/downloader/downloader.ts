@@ -114,10 +114,10 @@ class Downloader {
       type: "audio",
     });
 
-    const filepath = path.join(process.env.DOWNLOADS!, filename + ` ${new mongoose.Types.ObjectId()} .` + format.mime_type.split(";")[0].split("/")[1]);
+    const tempFilepath = path.join(process.env.DOWNLOADS!, `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`); 
 
     await new Promise(async (resolve) => {
-      const writer = fs.createWriteStream(filepath, {
+      const writer = fs.createWriteStream(tempFilepath, {
         encoding: "binary",
       });
 
@@ -141,11 +141,9 @@ class Downloader {
       });
     });
 
-    const processedFilename = filename + "." + ffmpegArgs.format;
-
     await new Promise((resolve, reject) => {
-      const worker = exec(`ffmpeg -i "${filepath}" -c:a ${ffmpegArgs.codec} -ss ${ffmpegArgs.start} -t ${ffmpegArgs.end} "${processedFilename}"`, {
-        cwd: process.env.DOWNLOADS,
+      const worker = exec(`ffmpeg -i "${tempFilepath}" -c:a ${ffmpegArgs.codec} -ss ${ffmpegArgs.start} -t ${ffmpegArgs.end} "${filename}"`, {
+        cwd: process.env.DOWNLOADS!,
       });
 
       worker.on("close", (code) => {
@@ -155,11 +153,11 @@ class Downloader {
           reject();
         }
       });
-    });
+    }).catch((err) => console.error(err));
 
-    fs.rmSync(filepath);
+    fs.rmSync(tempFilepath);
 
-    return processedFilename;
+    return filename;
   }
 }
 

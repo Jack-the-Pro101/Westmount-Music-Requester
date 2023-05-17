@@ -1,4 +1,6 @@
 {
   "songMaxPlayDurationSeconds": 90,
-  "maxSongsPerCycle": 2
+  "maxSongsPerCycle": 2,
+  "downloadExt": "mp3",
+  "downloadFfmpegCodec": "libmp3lame"
 }

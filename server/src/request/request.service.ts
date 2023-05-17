@@ -277,6 +277,13 @@ export class RequestService {
     }
   }
 
+  async cancelRequest(requestId: string) {
+    const request = await requestSchema.findOneAndDelete({_id: requestId});
+
+    if (request == null) return false;
+    return true;
+  }
+
   async checkExistingRequest(spotifyId: string, trackId: string, userId: string) {
     const existingRequest = await requestSchema.findOne({ $or: [{ spotifyId: spotifyId }, { track: trackId }], user: userId });
     if (existingRequest != null) return true;
@@ -306,7 +313,7 @@ export class RequestService {
     const request = await requestSchema.findOne({ track: trackId }); // This could use the average start time of all requests
     const requestTrack = await trackSchema.findOne({ _id: trackId });
 
-    const filename = sanitizeFilename(`${requestTrack!.youtubeId} ${requestTrack!.title} - ${requestTrack!.artist}`, "_");
+    const filename = sanitizeFilename(`${requestTrack!.youtubeId} ${requestTrack!.title} - ${requestTrack!.artist}`, "_") + `.${config.downloadExt}`;
 
     if ((await downloadedTracksSchema.findOne({ filename })) != null) {
       console.log(filename, "already downloaded. Stopping re-download.");
@@ -314,8 +321,8 @@ export class RequestService {
     }
 
     const downloadResult = await downloader.download(requestTrack!.youtubeId, filename, {
-      format: "mp3",
-      codec: "libmp3lame",
+      format: config.downloadExt,
+      codec: config.downloadFfmpegCodec,
       start: request!.start,
       end: config.songMaxPlayDurationSeconds,
     });

@@ -59,6 +59,16 @@ export class RequestController {
     }
   }
 
+  @Throttle(4, 30)
+  @Delete(":requestId")
+  @Roles("USE_REQUESTER")
+  @UseGuards(AuthenticatedGuard, RolesGuard)
+  async deleteRequest(@Param("requestId") requestId: string, @Res() res: Response) {
+    if (!validateAllParams([requestId])) return res.sendStatus(400);
+
+    return res.sendStatus(await this.requestService.cancelRequest(requestId) ? 200 : 500)
+  }
+
   @Throttle(3, 20)
   @Patch(":trackId")
   @Roles("ACCEPT_REQUESTS")
