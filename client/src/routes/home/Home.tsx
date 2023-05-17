@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import HomeSearch from "../../components/search/HomeSearch";
 import { Requests } from "../../components/requests/Requests";
@@ -14,6 +14,7 @@ import { version } from "../../../package.json";
 export function Home() {
   const [selectedCoreSong, setSelectedCoreSong] = useState<CoreSong>();
   const [currentRequests, setCurrentRequests] = useState<Request[]>([]);
+  const requestsRef = useRef<HTMLDivElement>(null);
 
   const [canRequest, setCanRequest] = useState(true);
 
@@ -40,6 +41,7 @@ export function Home() {
       return alert("You have already requested this track and cannot request it again this cycle.");
 
     setSelectedCoreSong(coreSong);
+    requestsRef.current!.scrollIntoView();
   }
 
   return (
@@ -57,7 +59,7 @@ export function Home() {
           </header>
           <HomeSearch setSelectedCoreSong={setSelectedCoreSongRelay} />
         </div>
-        <div className={styles.main__requester}>
+        <div className={styles.main__requester} ref={requestsRef}>
           <Requests selectedCoreSong={selectedCoreSong} setSelectedCoreSong={setSelectedCoreSong} currentRequests={currentRequests} canRequest={canRequest} />
         </div>
       </main>
