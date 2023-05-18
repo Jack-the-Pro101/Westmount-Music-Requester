@@ -69,16 +69,19 @@ export function MyRequests() {
                   />
                 </div>
                 <div className={styles["myrequests__item-content"]}>
-                  <div className={styles["myrequests__item-options"]}>
+                  {/* Request cancelling code, cannot be implemented yet */}
+                  {/* <div className={styles["myrequests__item-options"]}>
                     <button className={styles["myrequests__item-cancel"]}>
                       <i class="fa-regular fa-ellipsis-vertical"></i>
                     </button>
                     <ul className={styles["myrequests__item-options-list"]}>
-                      <li className={styles["myrequests__item-options-item"]}>
-                        <button onClick={() => cancelRequest(request)}>Cancel request</button>
-                      </li>
+                      {request.status !== "ACCEPTED" && (
+                        <li className={styles["myrequests__item-options-item"]}>
+                          <button onClick={() => cancelRequest(request)}>Cancel request</button>
+                        </li>
+                      )}
                     </ul>
-                  </div>
+                  </div> */}
                   <div className={styles["myrequests__item-info"]}>
                     <p>{request?.track?.title || "[Awaiting]"}</p>
                     <p>
