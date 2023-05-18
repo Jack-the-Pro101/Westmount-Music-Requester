@@ -9,7 +9,7 @@ import { MusicService } from "./music.service";
 export class MusicController {
   constructor(private readonly musicService: MusicService) {}
 
-  @Throttle(5, 5)
+  @Throttle(3, 10)
   @Post("/search")
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)

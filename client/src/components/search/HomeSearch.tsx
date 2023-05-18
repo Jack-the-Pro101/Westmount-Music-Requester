@@ -6,6 +6,15 @@ import { SearchDropdown } from "./SearchDropdown";
 import styles from "./HomeSearch.module.css";
 import { BASE_URL } from "../../env";
 
+function statusCodeToMessage(code: number) {
+  switch (code) {
+    case 429:
+      return "Slow down, you are sending requests too fast!";
+    default:
+      return "";
+  }
+}
+
 export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSong: (value: CoreSong) => void }) {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -41,8 +50,9 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
         setIsEmpty(false);
       }
     } else {
-      console.log("Request failed: ", request.status);
       setIsEmpty(true);
+
+      alert(`Request failed: code ${request.status}\n\n${statusCodeToMessage(request.status)}`);
     }
 
     setIsLoading(false);
