@@ -20,11 +20,29 @@ export function MyRequests() {
 
       if (requests.ok) {
         setRequests((await requests.json()) as Request[]);
-      }else {
-        alert("Failed to get your requests, error code " + requests.status)
+      } else {
+        alert(`Failed to get your requests, error code ${requests.status}`);
       }
     })();
   }, []);
+
+  async function cancelRequest(request: Request) {
+    if (!confirm(`Are you sure you want to cancel your request for: ${request.track.title} - ${request.track.artist}?`)) return;
+
+    const requestId = request._id;
+
+    const cancel = await fetch("/api/requests/" + requestId, {
+      method: "DELETE",
+    });
+
+    if (cancel.ok) {
+      setRequests((requests) => requests.filter((request) => request._id !== requestId));
+
+      alert(`Cancelled request for: ${request.track.title} - ${request.track.artist}`);
+    } else {
+      alert(`Failed to cancel request, error ${cancel.status}`);
+    }
+  }
 
   return (
     <main className={styles.myrequests}>
@@ -51,6 +69,16 @@ export function MyRequests() {
                   />
                 </div>
                 <div className={styles["myrequests__item-content"]}>
+                  <div className={styles["myrequests__item-options"]}>
+                    <button className={styles["myrequests__item-cancel"]}>
+                      <i class="fa-regular fa-ellipsis-vertical"></i>
+                    </button>
+                    <ul className={styles["myrequests__item-options-list"]}>
+                      <li className={styles["myrequests__item-options-item"]}>
+                        <button onClick={() => cancelRequest(request)}>Cancel request</button>
+                      </li>
+                    </ul>
+                  </div>
                   <div className={styles["myrequests__item-info"]}>
                     <p>{request?.track?.title || "[Awaiting]"}</p>
                     <p>
@@ -61,10 +89,7 @@ export function MyRequests() {
                           </a>
                         ))}
                     </p>
-                    <p>
-                      Requested on{" "}
-                      {dateFormatter.format(new Date(request.createdAt))}
-                    </p>
+                    <p>Requested on {dateFormatter.format(new Date(request.createdAt))}</p>
                   </div>
                   <div className={styles["myrequests__item-status"]}>
                     {request.status.toLowerCase().replace(/_/g, " ")}{" "}
