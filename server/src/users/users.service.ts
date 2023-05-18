@@ -74,7 +74,7 @@ export class UsersService {
       const user = await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail });
       if (user == null) return await Users.create(data);
 
-      if ((!internal && user.name === "default") || !user.avatar)
+      if (!internal && (user.name !== data.name || user.avatar !== data.avatar))
         return await Users.findOneAndUpdate({ email: usernameOrEmail }, data, {
           new: true,
         });
