@@ -91,6 +91,7 @@ export class RequestService {
           .catch((err) => {
             console.error(err);
           });
+          return;
       }
 
       const possibleProfaneLines: string[] = [];

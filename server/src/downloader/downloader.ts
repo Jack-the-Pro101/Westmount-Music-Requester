@@ -88,7 +88,7 @@ class Downloader {
       const adaptiveAudioFormats = trackInfo.streaming_data.adaptive_formats.filter((format) => format.has_audio && !format.has_video);
       const audioFormats = trackInfo.streaming_data.formats.filter((format) => format.has_audio && !format.has_video);
 
-      const bestAudioFormat = [...adaptiveAudioFormats, ...audioFormats].sort((a, b) => b.average_bitrate - a.average_bitrate)[0];
+      const bestAudioFormat = [...adaptiveAudioFormats, ...audioFormats].sort((a, b) => b.average_bitrate! - a.average_bitrate!)[0];
 
       return {
         url: bestAudioFormat.decipher(this.yt!.session.player),
