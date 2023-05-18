@@ -98,6 +98,14 @@ a:hover {
   text-decoration: underline;
 }
 
+button,
+input,
+select,
+textarea {
+  color: hsl(var(--clr-neutral-900));
+  font-size: 2rem;
+}
+
 button:disabled {
   opacity: 0.65;
 }
@@ -372,8 +380,6 @@ button:disabled {
   display: block;
   text-align: left;
   width: 100%;
-  font-size: 2rem;
-  color: hsl(var(--clr-neutral-900));
   line-height: inherit;
   padding: 0 1em;
 }

@@ -321,7 +321,6 @@
   background-color: transparent;
   border: 1px solid hsl(var(--clr-neutral-400));
   font-size: 3rem;
-  color: hsl(var(--clr-neutral-900));
   padding: 0 1em;
   width: 8rem;
   height: 8rem;
@@ -610,8 +609,6 @@
 }
 
 .requests__confirm-btns button {
-  font-size: 2rem;
-  color: hsl(var(--clr-neutral-900));
   border: none;
   background-color: hsl(var(--clr-neutral-300));
   padding: 0.5em 1em;

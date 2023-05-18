@@ -111,8 +111,6 @@
   background-color: transparent;
   display: block;
   border: none;
-  color: hsl(var(--clr-neutral-900));
-  font-size: 2rem;
   cursor: pointer;
   padding: 0.25em 0;
 }

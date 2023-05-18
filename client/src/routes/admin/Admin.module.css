@@ -79,8 +79,6 @@
   background-color: transparent;
   border: none;
   text-align: left;
-  color: hsl(var(--clr-neutral-900));
-  font-size: 2rem;
   font-weight: inherit;
   display: flex;
   justify-content: space-between;
@@ -100,7 +98,6 @@
   color: inherit;
   background-color: hsl(var(--clr-neutral-200));
   padding: 0.25em;
-  font-size: 2rem;
   border: none;
   border-radius: 8px;
 }
@@ -117,7 +114,6 @@
 }
 
 .admin__page-btns button {
-  font-size: 2rem;
   color: inherit;
   padding: 0.25em 0.5em;
   background-color: hsl(var(--clr-neutral-200));
@@ -136,15 +132,11 @@
   border: 1px solid hsl(var(--clr-neutral-300));
   border-radius: 100vmax;
   padding: 0.5em 0.75em;
-  font-size: 2rem;
-  color: hsl(var(--clr-neutral-900));
 }
 
 .admin__form button {
   width: 100%;
   padding: 0.5em 0.75em;
-  font-size: 2rem;
-  color: hsl(var(--clr-neutral-900));
   border-radius: 100vmax;
   background-color: hsl(var(--clr-neutral-300));
   border: none;
@@ -163,7 +155,6 @@
   margin-right: 0.5em;
 }
 .admin__users-search input {
-  font-size: 2rem;
   color: inherit;
   background-color: hsl(var(--clr-neutral-200), 0.75);
   border: none;
@@ -175,7 +166,6 @@
   color: inherit;
   background-color: hsl(var(--clr-neutral-300));
   padding: 0.5em 0.75em;
-  font-size: 2rem;
   border: none;
   border-radius: 8px;
 }
