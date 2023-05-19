@@ -48,9 +48,9 @@ export class RequestController {
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
       
       if (scanResult === false) {
-        await this.requestService.updateRequest({ track: trackId, status: "PRE_PENDING" }, { status: "AUTO_REJECTED" });
+        await this.requestService.updateRequest({ track: trackId, status: "AWAITING" }, { status: "AUTO_REJECTED" });
       } else {
-        await this.requestService.updateRequest({ track: trackId, status: "PRE_PENDING" }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
+        await this.requestService.updateRequest({ track: trackId, status: "AWAITING" }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
       }
       res.status(202).send();
     } catch (err) {

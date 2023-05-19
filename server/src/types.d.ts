@@ -63,7 +63,7 @@ export interface Request {
   user: StoredUser;
   createdAt: string;
   updatedAt: string;
-  status: "PRE_PENDING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
+  status: "AWAITING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
 
   popularity: number;
 }
