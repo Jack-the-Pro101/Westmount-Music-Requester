@@ -274,7 +274,7 @@ export function Requests({
               </li>
             </ul>
 
-            <p>You have limited requests per cycle. Ensure you use them correctly. Does the above info. look good?</p>
+            <p>You have limited requests per cycle, so ensure you use them correctly. Does the above information look good?</p>
           </div>
 
           <div className={styles["requests__confirm-btns"]}>
