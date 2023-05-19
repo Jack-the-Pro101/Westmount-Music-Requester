@@ -16,7 +16,8 @@ export class AuthService {
     const stateToken = Object.getOwnPropertyDescriptor(req.query, "state")?.value;
     if (!code || !stateToken || typeof code !== "string" || typeof stateToken !== "string") throw new BadRequestException();
     try {
-      verify(stateToken, process.env.JWT_SECRET!);
+      const result = verify(stateToken, process.env.JWT_SECRET!) as { expires: number; };
+      if (Date.now() > result.expires) throw new BadRequestException();
     } catch {
       throw new BadRequestException();
     }
