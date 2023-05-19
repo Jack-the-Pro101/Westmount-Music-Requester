@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@fastify/cookie": "^8.3.0",
+    "@fastify/session": "^10.3.0",
     "@fastify/static": "^6.10.1",
     "@nestjs/common": "^9.4.1",
     "@nestjs/config": "^2.3.2",

@@ -11,6 +11,7 @@ export class AuthService {
 
   async googleLogin(req: FastifyRequest): Promise<GoogleUser | undefined> {
     const user = req.session.grant.response?.profile;
+    console.log(user);
     if (!user) return;
 
     if (!user.email.endsWith("@hwdsb.on.ca")) throw new DomainEmailInvalidException();

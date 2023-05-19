@@ -31,6 +31,9 @@ importers:
       '@fastify/cookie':
         specifier: ^8.3.0
         version: 8.3.0
+      '@fastify/session':
+        specifier: ^10.3.0
+        version: 10.3.0
       '@fastify/static':
         specifier: ^6.10.1
         version: 6.10.1
@@ -793,6 +796,13 @@ packages:
       fast-decode-uri-component: 1.0.1
       http-errors: 2.0.0
       mime: 3.0.0
+    dev: false
+
+  /@fastify/session@10.3.0:
+    resolution: {integrity: sha512-XQgx+QdBwGvZK8i9/nvtVGOL2q9ivf8HzxSFd6+baJZcDAhnsB1/sbsOLiiNxFBL4Gu/1QVVobYdaZjysjWvOg==}
+    dependencies:
+      fastify-plugin: 4.5.0
+      safe-stable-stringify: 2.4.3
     dev: false
 
   /@fastify/static@6.10.1:
