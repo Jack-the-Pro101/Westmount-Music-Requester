@@ -77,7 +77,7 @@ export class AuthController {
   @Throttle(4, 6)
   @Get("google-redirect")
   async googleAuthRedirect(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
-    const user = await this.authService.googleLogin(req);
+    const user = await this.authService.googleLogin(req, res);
 
     if (user) {
       if (process.env.NODE_ENV !== "production") {

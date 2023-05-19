@@ -2,15 +2,15 @@ import { Injectable } from "@nestjs/common";
 import { GoogleUser, StoredUser } from "src/types";
 import { UsersService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
-import { FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 import { DomainEmailInvalidException } from "./domain-email-invalid.exception";
 
 @Injectable()
 export class AuthService {
   constructor(private usersService: UsersService) {}
 
-  async googleLogin(req: FastifyRequest): Promise<GoogleUser | undefined> {
-    const user = req.session.grant.response?.profile;
+  async googleLogin(req: FastifyRequest, res: FastifyReply): Promise<GoogleUser | undefined> {
+    const user = res.grant.response?.profile;
     console.log(user);
     if (!user) return;
 
