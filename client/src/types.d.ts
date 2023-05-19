@@ -49,19 +49,6 @@ export interface YouTubeSong {
   duration: number;
 }
 
-export interface GoogleUserInfo {
-  email: string;
-  firstName: string;
-  lastName: string;
-  picture: string;
-  accessToken: string;
-}
-
-export type GoogleUser = {
-  iat: number;
-  user: GoogleUserInfo;
-};
-
 export interface TrackSourceInfo {
   duration: number;
   url: string;

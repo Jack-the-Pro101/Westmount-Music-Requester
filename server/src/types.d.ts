@@ -15,30 +15,32 @@ export interface YouTubeSong {
   duration: number;
 }
 
-export interface StoredUser {
-  _id: string;
-  id: string;
+// export interface StoredUser {
+//   _id: string;
+//   email: string;
+//   username: string;
+//   password: string;
+//   avatar: string;
+//   type: "GOOGLE" | "INTERNAL";
+//   permissions: number;
+//   name: string;
+// }
+
+export type StoredUser = {
+  type: "GOOGLE";
   email: string;
+  avatar: string;
+  name: string;
+  permissions: number;
+} | {
+  type: "INTERNAL",
   username: string;
   password: string;
-  avatar: string;
-  type: "GOOGLE" | "INTERNAL";
-  permissions: number;
   name: string;
-  [key: string];
-}
-
-export interface GoogleUserInfo {
-  email: string;
-  firstName: string;
-  lastName: string;
-  picture: string;
-  accessToken: string;
-}
-
-export type GoogleUser = {
-  user: GoogleUserInfo;
+  permissions: number;
 };
+
+export type WithId<T> = T & { _id: string; };
 
 export interface TrackSourceInfo {
   url: string;

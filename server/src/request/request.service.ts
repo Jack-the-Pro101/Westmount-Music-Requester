@@ -8,7 +8,7 @@ import userSchema from "src/models/User";
 import downloader from "src/downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
-import { RequestData, Request as RequestType, StoredUser } from "src/types";
+import { RequestData, Request as RequestType, StoredUser, WithId } from "../types";
 import mongoose from "mongoose";
 import Perspective from "./perspective";
 import { MusicService } from "src/music/music.service";
@@ -154,7 +154,7 @@ export class RequestService {
     }
   }
 
-  async validateRequest(data: RequestData, user: StoredUser) {
+  async validateRequest(data: RequestData, user: WithId<StoredUser>) {
     const { playRange, spotifyId, youtubeId } = data;
 
     if ((await this.getPersonalRequests(user._id)).length >= config.maxSongsPerCycle) return false;
@@ -320,6 +320,7 @@ export class RequestService {
       console.log(filename, "already downloaded. Stopping re-download.");
       return;
     }
+    console.log("this executed");
 
     const downloadResult = await downloader.download(requestTrack!.youtubeId, filename, {
       format: config.downloadExt,

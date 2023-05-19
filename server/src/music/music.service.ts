@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { SpotifySearch, SpotifyTrack, TrackSourceInfo, YouTubeSong } from "src/types";
+import { SpotifySearch, SpotifyTrack, TrackSourceInfo, YouTubeSong } from "../types";
 
 import downloader from "../downloader/downloader";
 

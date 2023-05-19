@@ -31,9 +31,6 @@ importers:
       '@fastify/cookie':
         specifier: ^8.3.0
         version: 8.3.0
-      '@fastify/session':
-        specifier: ^10.3.0
-        version: 10.3.0
       '@fastify/static':
         specifier: ^6.10.1
         version: 6.10.1
@@ -70,9 +67,6 @@ importers:
       fastify:
         specifier: ^4.17.0
         version: 4.17.0
-      grant:
-        specifier: ^5.4.21
-        version: 5.4.21
       jsonwebtoken:
         specifier: ^9.0.0
         version: 9.0.0
@@ -91,6 +85,9 @@ importers:
       striptags:
         specifier: ^3.2.0
         version: 3.2.0
+      ulid:
+        specifier: ^2.3.0
+        version: 2.3.0
       youtubei.js:
         specifier: ^5.1.0
         version: 5.1.0
@@ -796,13 +793,6 @@ packages:
       fast-decode-uri-component: 1.0.1
       http-errors: 2.0.0
       mime: 3.0.0
-    dev: false
-
-  /@fastify/session@10.3.0:
-    resolution: {integrity: sha512-XQgx+QdBwGvZK8i9/nvtVGOL2q9ivf8HzxSFd6+baJZcDAhnsB1/sbsOLiiNxFBL4Gu/1QVVobYdaZjysjWvOg==}
-    dependencies:
-      fastify-plugin: 4.5.0
-      safe-stable-stringify: 2.4.3
     dev: false
 
   /@fastify/static@6.10.1:
@@ -4207,6 +4197,11 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       '@lukeed/csprng': 1.1.0
+    dev: false
+
+  /ulid@2.3.0:
+    resolution: {integrity: sha512-keqHubrlpvT6G2wH0OEfSW4mquYRcbe/J8NMmveoQOjUqmo+hXtO+ORCpWhdbZ7k72UtY61BL7haGxW6enBnjw==}
+    hasBin: true
     dev: false
 
   /undici@5.22.1:

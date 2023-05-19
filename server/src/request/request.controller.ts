@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
 
-import { RequestData } from "src/types";
+import { RequestData } from "../types";
 
 import { validateAllParams } from "src/utils";
 

@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import Users, { User } from "src/models/User";
 
 import * as bcrypt from "bcrypt";
+import { StoredUser, WithId } from "../types";
+import { ulid } from "ulid";
 
 @Injectable()
 export class UsersService {
@@ -69,17 +71,19 @@ export class UsersService {
     }
   }
 
-  async getOrCreateOne(usernameOrEmail: string, internal = false, data: Partial<User>): Promise<User | undefined | null> {
+  async createOrUpdateOne(user: StoredUser): Promise<StoredUser | undefined> {
     try {
-      const user = await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail });
-      if (user == null) return await Users.create(data);
-
-      if (!internal && (user.name !== data.name || user.avatar !== data.avatar))
-        return await Users.findOneAndUpdate({ email: usernameOrEmail }, data, {
-          new: true,
-        });
-
-      return user;
+      if (user.type === "GOOGLE") {
+        const dbUser: WithId<StoredUser> | undefined = await Users.findOne({ email: user.email }) ?? undefined;
+        if (!dbUser) return (await Users.create({ ...user, _id: ulid() })).toObject() as StoredUser;
+        // TODO: What if Google user's email changes?
+        // TODO: What if user's OAuth session is invalidated?
+        return (await Users.findOneAndUpdate({ _id: dbUser._id }, { avatar: user.avatar, name: user.name }, { new: true }))?.toObject() ?? undefined;
+      } else {
+        const dbUser = await Users.findOne({ username: user.username });
+        if (!dbUser) return (await Users.create({ ...user, _id: ulid() })).toObject() as StoredUser;
+        return dbUser.toObject() as StoredUser;
+      }
     } catch (err) {
       console.error(err);
     }

@@ -11,7 +11,6 @@ import Users from "./models/User";
 import * as bcrypt from "bcrypt";
 
 import fastifyCookie from "@fastify/cookie";
-import grant from "grant";
 
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
 
@@ -31,6 +30,19 @@ async function connectDatabase() {
     connection.on("open", () => console.log("Reconnected to MongoDB database"));
   });
   connection.on("connection", () => console.log("Connection established"));
+  // mongoose.set("toJSON", {
+  //   transform: (doc, converted) => {
+  //     delete converted.__v;
+
+  //     const { _id, id } = converted;
+
+  //     if (_id && !id) {
+  //       converted.id = _id.toString();
+  //       delete converted._id;
+  //     }
+  //   }
+  // });
+  // mongoose.Schema.prototype.pre("")
   await mongoose.connect(process.env.MONGODB_URI!, {});
 }
 
@@ -64,18 +76,18 @@ async function bootstrap() {
   app.register(fastifyCookie, {
     secret: process.env.JWT_SECRET!,
   });
-  app.register(grant.fastify({
-    defaults: {
-      origin: "http://localhost:3000",
-      transport: "session"
-    },
-    google: {
-      key: process.env.GOOGLE_CLIENT_ID,
-      secret: process.env.GOOGLE_CLIENT_SECRET,
-      callback: process.env.NODE_ENV === "production" ? process.env.GOOGLE_CALLBACK : "http://localhost:3000/api/auth/google-redirect",
-      scope: ["email", "profile"]
-    }
-  }))
+  // app.register(grant.fastify({
+  //   defaults: {
+  //     origin: "http://localhost:3000",
+  //     transport: "state"
+  //   },
+  //   google: {
+  //     key: process.env.GOOGLE_CLIENT_ID,
+  //     secret: process.env.GOOGLE_CLIENT_SECRET,
+  //     callback: process.env.NODE_ENV === "production" ? process.env.GOOGLE_CALLBACK : "http://localhost:3000/api/auth/google-redirect",
+  //     scope: ["email", "profile"]
+  //   }
+  // }))
 
   app.useGlobalFilters(new DomainEmailInvalidExceptionFilter());
 

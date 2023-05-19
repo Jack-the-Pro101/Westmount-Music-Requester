@@ -4,10 +4,18 @@ import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
 import { UsersService } from "src/users/users.service";
 
-import { StoredUser } from "src/types";
+import { StoredUser } from "../types";
 import { validateAllParams } from "src/utils";
 
 import * as bcrypt from "bcrypt";
+
+type CreateUser = {
+  type: "INTERNAL";
+  username: string;
+  password: string;
+  permissions: number;
+  name?: string;
+};
 
 @Controller("/api/admin")
 export class AdminController {
@@ -16,7 +24,7 @@ export class AdminController {
   @Get("users/search")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async searchUsers(@Req() req: Request, @Query("page") page: number, @Query("limit") limit: number, @Query("query") query: string) {
+  async searchUsers(@Query("page") page: number, @Query("limit") limit: number, @Query("query") query: string) {
     if (query == null) query = "";
     return await this.usersService.searchUsers(
       { $or: [{ username: { $regex: query, $options: "i" } }, { email: { $regex: query, $options: "i" } }] },
@@ -28,29 +36,21 @@ export class AdminController {
   @Get("users/:limit")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async getUsers(@Req() req: Request, @Query("page") page: number, @Param("limit") limit: number) {
+  async getUsers(@Query("page") page: number, @Param("limit") limit: number) {
     return await this.usersService.getUsers(limit, page || 0);
   }
 
   @Post("users")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async createUser(@Body() data: Partial<StoredUser>, @Res() res: Response) {
-    if (!data.type) throw new BadRequestException();
-    if (data.type === "INTERNAL") {
-      if (!validateAllParams([data.username, data.permissions, data.password])) throw new BadRequestException();
-      data.password = await bcrypt.hash(data.password!, 10);
-    } else {
-      if (!validateAllParams([data.email, data.permissions, data.avatar])) throw new BadRequestException();
-    }
-
-    for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        if (data[key] == null) delete data[key];
-      }
-    }
-
-    return await this.usersService.create(data);
+  async createUser(@Body() data: CreateUser) {
+    if (!validateAllParams([data.username, data.permissions, data.password])) throw new BadRequestException();
+    const hash = await bcrypt.hash(data.password, 10);
+    return await this.usersService.create({
+      username: data.username,
+      password: hash,
+      permissions: data.permissions
+    });
   }
 
   @Patch("users/:userId")

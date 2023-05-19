@@ -1,14 +1,10 @@
 import { GrantSession } from "grant";
-import { GoogleUser, StoredUser } from "./types";
+import { StoredUser, WithId } from "./types";
 
 import { FastifyRequest, FastifyReply } from "fastify";
 
 declare module "fastify" {
   interface FastifyRequest {
-    user: StoredUser;
+    user: WithId<StoredUser>;
   }
-  interface FastifyReply {
-    grant: GrantSession;
-  }
-}
-
+} // query

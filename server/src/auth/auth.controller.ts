@@ -5,7 +5,8 @@ import { AuthenticatedGuard } from "./authenticated.guard";
 import { Throttle } from "@nestjs/throttler";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { sign } from "jsonwebtoken";
-import { getCurrentOauthUrl } from "src/utils";
+import { getCurrentOauthUrl } from "../utils";
+import { StoredUser } from "../types";
 
 interface FastifyUser {
   username: string;
@@ -34,16 +35,9 @@ export class AuthController {
   @Get("session")
   @UseGuards(AuthenticatedGuard)
   getSession(@Req() req: FastifyRequest) {
-    const isGoogleUser = req.user.type === "GOOGLE";
-
-    return {
-      id: req.user.id,
-      email: isGoogleUser ? req.user.email : null,
-      name: req.user.name,
-      avatar: isGoogleUser ? req.user.avatar : null,
-      type: req.user.type,
-      permissions: req.user.permissions,
-    };
+    let user = Object.assign({}, req.user) as StoredUser & { password?: string };
+    delete user.password;
+    return user;
   }
 
   @Throttle(4, 6)
@@ -65,7 +59,7 @@ export class AuthController {
     }, process.env.JWT_SECRET!);
     response.setCookie("WMR_SID", token, { path: "/" });
     response.send({
-      id: user.id,
+      _id: user._id,
       email: null,
       name: user.name,
       avatar: null,
@@ -76,20 +70,21 @@ export class AuthController {
 
   @Throttle(4, 6)
   @Get("google-redirect")
-  async googleAuthRedirect(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
-    const user = await this.authService.googleLogin(req, res);
-
+  async googleAuthRedirect(@Req() req: FastifyRequest, @Res({ passthrough: true}) res: FastifyReply) {
+    const user = await this.authService.googleLogin(req);
     if (user) {
+      const token = sign(user, process.env.JWT_SECRET!);
+      res.setCookie("WMR_SID", token, { path: "/" });
       if (process.env.NODE_ENV !== "production") {
-        res.redirect("http://localhost:5173");
+        res.status(302).redirect("http://localhost:5173");
       } else {
-        res.redirect("/");
+        res.status(302).redirect("/");
       }
     } else {
       if (process.env.NODE_ENV !== "production") {
-        res.redirect("http://localhost:5173/error?code=auth");
+        res.status(302).redirect("http://localhost:5173/error?code=auth");
       } else {
-        res.redirect("/error?code=auth");
+        res.status(302).redirect("/error?code=auth");
       }
     }
   }

@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { FastifyRequest } from "fastify";
 import { verify } from "jsonwebtoken";
-import { StoredUser } from "src/types";
+import { StoredUser, WithId } from "../types";
 
 @Injectable()
 export class AuthenticatedGuard implements CanActivate {
@@ -10,10 +10,10 @@ export class AuthenticatedGuard implements CanActivate {
     const token = request.cookies["WMR_SID"];
     if (!token) throw new UnauthorizedException();
     try {
-      const user = verify(token, process.env.JWT_SECRET!) as StoredUser;
+      const user = verify(token, process.env.JWT_SECRET!) as WithId<StoredUser>;
       request.user = user;
       return true;
-    } catch {
+    } catch(e) {
       throw new UnauthorizedException();
     }
   }

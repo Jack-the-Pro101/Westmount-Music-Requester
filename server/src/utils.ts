@@ -38,3 +38,80 @@ export function getCurrentOauthUrl() {
   const token = sign({ expires: Date.now() + 3600000 }, process.env.JWT_SECRET!);
   return getOauthUrl(process.env.GOOGLE_CLIENT_ID!, "http://localhost:3000/api/auth/google-redirect", ["email", "profile"], token);
 }
+
+export async function getAccessToken(clientId: string, clientSecret: string, code: string, redirectUri: string): Promise<string | undefined> {
+  try {
+    const response = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code: code,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code"
+      }),
+    });
+    const json = await response.json();
+
+    return json.access_token as string;
+  } catch {}
+}
+
+interface GoogleRawProfileOld {
+  resourceName: string;
+  names: {
+    metadata: unknown;
+    displayName: string;
+    familyName: string;
+    givenName: string;
+  }[];
+  emailAddresses: {
+    metadata: unknown;
+    value: string;
+  }[];
+  photos: {
+    metadata: unknown;
+    url: string;
+  }[];
+}
+
+export async function getUserProfileOld(accessToken: string): Promise<GoogleRawProfileOld | undefined> {
+  try {
+    const response = await fetch("https://people.googleapis.com/v1/people/me?peopleFields=names,emailAddresses,photos", {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const json: GoogleRawProfileOld = await response.json();
+    return json;
+  } catch {}
+}
+
+interface GoogleRawProfile {
+  sub: string;
+  name: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+  email: string;
+  email_verified: boolean;
+  locale: string;
+}
+
+export async function getUserProfile(accessToken: string): Promise<GoogleRawProfile | undefined> {
+  try {
+    const response = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const json: GoogleRawProfile = await response.json();
+    return json;
+  } catch {}
+}
