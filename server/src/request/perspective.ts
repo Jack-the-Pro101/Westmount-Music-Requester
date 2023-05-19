@@ -1,4 +1,4 @@
-import * as striptags from "striptags";
+import striptags from "striptags";
 
 const COMMENT_ANALYZER_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
 const MAX_LENGTH = 20480;
@@ -8,7 +8,7 @@ export class PerspectiveAPIClientError extends Error {
     super(message);
     Error.captureStackTrace(this, this.constructor);
     this.name = "PerspectiveAPIClientError";
-  }
+  } 
 }
 
 export class TextEmptyError extends PerspectiveAPIClientError {

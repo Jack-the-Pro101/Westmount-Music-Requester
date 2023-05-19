@@ -38,7 +38,7 @@ const users = mongoose.model(
       name: {
         type: String,
         required: false,
-        default: "default",
+        default: "User",
       },
     },
     {

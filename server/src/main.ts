@@ -1,5 +1,5 @@
 import { NestFactory } from "@nestjs/core";
-import { NestExpressApplication } from "@nestjs/platform-express";
+import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { AppModule } from "./app.module";
 import downloader from "./downloader/downloader";
 
@@ -10,16 +10,9 @@ import Users from "./models/User";
 
 import * as bcrypt from "bcrypt";
 
-import * as passport from "passport";
-import * as session from "express-session";
-import * as connectMongodbSession from "connect-mongodb-session";
-const MongoDBStore = connectMongodbSession(session);
-const store = new MongoDBStore({
-  uri: process.env.MONGODB_URI!,
-  collection: "sessions",
-});
+import fastifyCookie from "@fastify/cookie";
+import grant from "grant";
 
-import * as cookieParser from "cookie-parser";
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
 
 process.on("unhandledRejection", (reason, promise) => {
@@ -67,19 +60,22 @@ async function bootstrap() {
   await connectDatabase();
   await initTasks();
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.use(cookieParser());
-  app.use(
-    session({
-      store: store,
-      secret: process.env.JWT_SECRET!,
-      resave: false,
-      saveUninitialized: false,
-      name: "WMR_SID",
-    })
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+  app.register(fastifyCookie, {
+    secret: process.env.JWT_SECRET!,
+  });
+  app.register(grant.fastify({
+    defaults: {
+      origin: "http://localhost:3000",
+      transport: "session"
+    },
+    google: {
+      key: process.env.GOOGLE_CLIENT_ID,
+      secret: process.env.GOOGLE_CLIENT_SECRET,
+      callback: process.env.NODE_ENV === "production" ? process.env.GOOGLE_CALLBACK : "http://localhost:3000/api/auth/google-redirect",
+      scope: ["email", "profile"]
+    }
+  }))
 
   app.useGlobalFilters(new DomainEmailInvalidExceptionFilter());
 

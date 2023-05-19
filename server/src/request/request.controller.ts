@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
-import { Request, Response } from "express";
+import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
+
 import { RequestData } from "src/types";
 
 import { validateAllParams } from "src/utils";
@@ -10,8 +10,8 @@ import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
 import mongoose from "mongoose";
-import { StoredAuthenticatedRequest } from "src/server";
 import { Throttle } from "@nestjs/throttler";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 @Controller("/api/requests")
 export class RequestController {
@@ -29,33 +29,33 @@ export class RequestController {
   @Post()
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async createReq(@Body() info: RequestData, @Req() req: StoredAuthenticatedRequest, @Res() res: Response) {
+  async createReq(@Body() info: RequestData, @Req() req: FastifyRequest, @Res() res: FastifyReply) {
     const { spotifyId, youtubeId, playRange } = info;
 
-    if (!validateAllParams([spotifyId, youtubeId, playRange])) return res.sendStatus(400);
+    if (!validateAllParams([spotifyId, youtubeId, playRange])) throw new BadRequestException();
 
     try {
-      if (!(await this.requestService.validateRequest(info, req.user))) return res.sendStatus(400);
+      if (!(await this.requestService.validateRequest(info, req.user))) throw new BadRequestException();
 
       const trackId = await this.requestService.getTrackId(youtubeId);
       if (trackId == null) return;
 
-      if (await this.requestService.checkExistingRequest(spotifyId, trackId, req.user._id)) return res.sendStatus(400);
+      if (await this.requestService.checkExistingRequest(spotifyId, trackId, req.user._id)) throw new BadRequestException();
 
-      res.sendStatus(202);
-
+      
       if (!(await this.requestService.createRequest(info, req.user, trackId)))
-        return console.error(`Failed to create request for ${req.user._id}, requesting song ${spotifyId} at ${youtubeId}`);
+      return console.error(`Failed to create request for ${req.user._id}, requesting song ${spotifyId} at ${youtubeId}`);
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
-
+      
       if (scanResult === false) {
         await this.requestService.updateRequest({ track: trackId, status: "PRE_PENDING" }, { status: "AUTO_REJECTED" });
       } else {
         await this.requestService.updateRequest({ track: trackId, status: "PRE_PENDING" }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
       }
+      res.status(202).send();
     } catch (err) {
-      res.sendStatus(500);
       console.error(err);
+      throw new InternalServerErrorException();
     }
   }
 
@@ -76,20 +76,18 @@ export class RequestController {
   @Patch(":trackId")
   @Roles("ACCEPT_REQUESTS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async acceptRequest(@Param("trackId") trackId: string, @Body() info: { evaluation: boolean }, @Res() res: Response) {
+  async acceptRequest(@Param("trackId") trackId: string, @Body() info: { evaluation: boolean }, @Res() res: FastifyReply) {
     const { evaluation } = info;
-    if (!validateAllParams([evaluation])) return res.sendStatus(400);
+    if (!validateAllParams([evaluation])) throw new BadRequestException();
 
-    if (!mongoose.Types.ObjectId.isValid(trackId) || new mongoose.Types.ObjectId(trackId).toString() !== trackId) return res.sendStatus(400);
+    if (!mongoose.Types.ObjectId.isValid(trackId) || new mongoose.Types.ObjectId(trackId).toString() !== trackId) throw new BadRequestException();
 
     if (!evaluation) {
       await this.requestService.updateManyRequests({ track: trackId }, { status: "REJECTED" });
-      return res.sendStatus(200);
+      return;
     }
 
     this.requestService.finalizeRequest(trackId);
-
-    res.sendStatus(200);
   }
 
   @Throttle(1, 30)
@@ -104,7 +102,8 @@ export class RequestController {
   @Get("/me")
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async getPersonalRequests(@Req() req: StoredAuthenticatedRequest) {
+  async getPersonalRequests(@Req() req: FastifyRequest) {
+    console.log(req.user);
     return await this.requestService.getPersonalRequests(req.user._id.toString());
   }
 }

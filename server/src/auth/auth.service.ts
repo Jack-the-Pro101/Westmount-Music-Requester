@@ -2,16 +2,25 @@ import { Injectable } from "@nestjs/common";
 import { GoogleUser, StoredUser } from "src/types";
 import { UsersService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
-import { GoogleAuthenticatedRequest } from "src/server";
+import { FastifyRequest } from "fastify";
+import { DomainEmailInvalidException } from "./domain-email-invalid.exception";
 
 @Injectable()
 export class AuthService {
   constructor(private usersService: UsersService) {}
 
-  googleLogin(req: GoogleAuthenticatedRequest): GoogleUser | undefined {
-    if (!req.user) return;
+  async googleLogin(req: FastifyRequest): Promise<GoogleUser | undefined> {
+    const user = req.session.grant.response?.profile;
+    if (!user) return;
 
-    return req.user;
+    if (!user.email.endsWith("@hwdsb.on.ca")) throw new DomainEmailInvalidException();
+
+    const storedUser = await this.usersService.getOrCreateOne(user.email, false, {
+      email: user.email,
+      avatar: user.picture,
+      name: `${user.firstName} ${user.lastName}`,
+    });
+    return storedUser as unknown as GoogleUser;
   }
 
   async validateUser(username: string, password: string): Promise<StoredUser | undefined> {

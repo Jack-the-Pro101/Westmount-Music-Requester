@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, ForbiddenException, Get, Param, Patch, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
@@ -6,7 +6,6 @@ import { UsersService } from "src/users/users.service";
 
 import { StoredUser } from "src/types";
 import { validateAllParams } from "src/utils";
-import { Response } from "express";
 
 import * as bcrypt from "bcrypt";
 
@@ -29,23 +28,20 @@ export class AdminController {
   @Get("users/:limit")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async getUsers(@Res() res: Response, @Query("page") page: number, @Param("limit") limit: number) {
-    if (limit > 200) return res.sendStatus(400);
-    return res.json(await this.usersService.getUsers(limit, page || 0));
+  async getUsers(@Req() req: Request, @Query("page") page: number, @Param("limit") limit: number) {
+    return await this.usersService.getUsers(limit, page || 0);
   }
 
   @Post("users")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async createUser(@Body() data: Partial<StoredUser>, @Res() res: Response) {
-    if (!data.type) return res.sendStatus(400);
+    if (!data.type) throw new BadRequestException();
     if (data.type === "INTERNAL") {
-      if (!validateAllParams([data.username, data.permissions, data.password])) return res.sendStatus(400);
-
-      // @ts-expect-error
-      data.password = await bcrypt.hash(data.password, 10);
+      if (!validateAllParams([data.username, data.permissions, data.password])) throw new BadRequestException();
+      data.password = await bcrypt.hash(data.password!, 10);
     } else {
-      if (!validateAllParams([data.email, data.permissions, data.avatar])) return res.sendStatus(400);
+      if (!validateAllParams([data.email, data.permissions, data.avatar])) throw new BadRequestException();
     }
 
     for (const key in data) {
@@ -54,17 +50,15 @@ export class AdminController {
       }
     }
 
-    return res.json(await this.usersService.create(data));
+    return await this.usersService.create(data);
   }
 
   @Patch("users/:userId")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async updateUser(@Param("userId") userId: string, @Body() data: Partial<StoredUser>, @Res() res: Response) {
-    if (!validateAllParams([userId, data])) return res.sendStatus(400);
-
-    if (data.type === "INTERNAL" && data.username == process.env.SYS_ADMIN_USERNAME) return res.sendStatus(403);
-
-    return res.json(await this.usersService.updateUser({ _id: userId }, data));
+    if (!validateAllParams([userId, data])) throw new BadRequestException();
+    if (data.type === "INTERNAL" && data.username == process.env.SYS_ADMIN_USERNAME) throw new ForbiddenException;
+    return await this.usersService.updateUser({ _id: userId }, data);
   }
 }

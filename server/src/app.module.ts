@@ -4,7 +4,7 @@ import { MusicModule } from "./music/music.module";
 import { AuthModule } from "./auth/auth.module";
 import { RequestModule } from "./request/request.module";
 import { APP_GUARD } from "@nestjs/core";
-import { AdminModule } from "./admin/Admin.module";
+import { AdminModule } from "./admin/admin.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { join } from "path";
