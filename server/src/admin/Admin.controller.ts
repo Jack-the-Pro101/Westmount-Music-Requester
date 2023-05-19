@@ -29,8 +29,9 @@ export class AdminController {
   @Get("users/:limit")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async getUsers(@Req() req: Request, @Query("page") page: number, @Param("limit") limit: number) {
-    return await this.usersService.getUsers(limit, page || 0);
+  async getUsers(@Res() res: Response, @Query("page") page: number, @Param("limit") limit: number) {
+    if (limit > 200) return res.sendStatus(400);
+    return res.json(await this.usersService.getUsers(limit, page || 0));
   }
 
   @Post("users")
@@ -60,8 +61,9 @@ export class AdminController {
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async updateUser(@Param("userId") userId: string, @Body() data: Partial<StoredUser>, @Res() res: Response) {
-    if (!userId) return res.sendStatus(400);
-    if (!data) return res.sendStatus(400);
+    if (!validateAllParams([userId, data])) return res.sendStatus(400);
+
+    if (data.type === "INTERNAL" && data.username == process.env.SYS_ADMIN_USERNAME) return res.sendStatus(403);
 
     return res.json(await this.usersService.updateUser({ _id: userId }, data));
   }

@@ -132,6 +132,15 @@
   border: 1px solid hsl(var(--clr-neutral-300));
   border-radius: 100vmax;
   padding: 0.5em 0.75em;
+  margin-bottom: 0.5em;
+}
+
+.admin__action input:focus {
+  outline: 1px solid hsl(var(--clr-primary-500));
+}
+
+.admin__action label {
+  margin-bottom: 0.2em;
 }
 
 .admin__form button {

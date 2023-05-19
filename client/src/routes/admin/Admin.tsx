@@ -109,7 +109,7 @@ export function Admin() {
     });
 
     if (request.ok) {
-      const newUser = await request.json();
+      const newUser = (await request.json()) as StoredUser;
       setUsers(
         users.map((user) => {
           if (user._id !== userId) return user;
@@ -117,7 +117,7 @@ export function Admin() {
         })
       );
 
-      (e.target as HTMLFormElement).reset();
+      setEditingUser(newUser);
     } else {
       alert("Failed to create user");
     }

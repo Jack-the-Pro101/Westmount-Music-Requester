@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Header, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Header, Post, Query, Res, UseGuards } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
 import { MusicService } from "./music.service";
+
+import { Response } from "express";
 
 @Controller("/api/music")
 export class MusicController {
@@ -21,10 +23,12 @@ export class MusicController {
   @Get("/source")
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async getSource(@Query("id") id: string) {
+  async getSource(@Query("id") id: string, @Res() res: Response) {
     const source = await this.musicService.getYtSource(id);
 
-    return source;
+    if (!source) return res.sendStatus(500);
+
+    return res.json(source);
   }
 
   @Throttle(4, 5)
