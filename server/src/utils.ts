@@ -60,38 +60,6 @@ export async function getAccessToken(clientId: string, clientSecret: string, cod
   } catch {}
 }
 
-interface GoogleRawProfileOld {
-  resourceName: string;
-  names: {
-    metadata: unknown;
-    displayName: string;
-    familyName: string;
-    givenName: string;
-  }[];
-  emailAddresses: {
-    metadata: unknown;
-    value: string;
-  }[];
-  photos: {
-    metadata: unknown;
-    url: string;
-  }[];
-}
-
-export async function getUserProfileOld(accessToken: string): Promise<GoogleRawProfileOld | undefined> {
-  try {
-    const response = await fetch("https://people.googleapis.com/v1/people/me?peopleFields=names,emailAddresses,photos", {
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    const json: GoogleRawProfileOld = await response.json();
-    return json;
-  } catch {}
-}
-
 interface GoogleRawProfile {
   sub: string;
   name: string;

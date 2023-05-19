@@ -27,13 +27,6 @@ export class AuthService {
     console.log(rawUser)
     if (!rawUser) return;
 
-    // const user: StoredUser = {
-    //   type: "GOOGLE",
-    //   email: rawUser.emailAddresses[0].value,
-    //   avatar: rawUser.photos[0].url,
-    //   name: rawUser.names[0].displayName,
-    //   permissions: 2,
-    // };
     const user: StoredUser = {
       type: "GOOGLE",
       email: rawUser.email,
