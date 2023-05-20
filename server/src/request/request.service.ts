@@ -192,15 +192,19 @@ export class RequestService {
   }
 
   async getRequests() {
-    const requests = (await requestSchema
+    const requestsDb = await requestSchema
       .find({})
       .populate({
         path: "user",
         select: "-password -username",
       })
       .populate("track")
-      .lean()) as RequestType[];
-
+      .lean();
+    const requests = await Promise.all(requestsDb.map(async (request) => ({
+      ...request,
+      user: await userSchema.findOne({ _id: request.user }) as StoredUser,
+    }))) as unknown as RequestType[];
+    
     const popularityMap = new Map();
 
     for (let i = 0, n = requests.length; i < n; ++i) {
