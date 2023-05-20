@@ -1,5 +1,8 @@
 import { NestFactory } from "@nestjs/core";
-import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from "@nestjs/platform-fastify";
 import { AppModule } from "./app.module";
 import downloader from "./downloader/downloader";
 
@@ -21,33 +24,26 @@ process.on("unhandledRejection", (reason, promise) => {
 async function connectDatabase() {
   const connection = mongoose.connection;
   connection.on("error", (error) => {
-    console.error("FATAL ERROR: FAILED TO CONNECT TO MONGODB DATABASE! APPLICATION CANNOT CONTINUE.");
+    console.error(
+      "FATAL ERROR: FAILED TO CONNECT TO MONGODB DATABASE! APPLICATION CANNOT CONTINUE."
+    );
     throw error;
   });
-  connection.on("disconnected", () => console.log("Disconnected from MongoDB database"));
+  connection.on("disconnected", () =>
+    console.log("Disconnected from MongoDB database")
+  );
   connection.once("open", () => {
     console.log("Connected to MongoDB database");
     connection.on("open", () => console.log("Reconnected to MongoDB database"));
   });
   connection.on("connection", () => console.log("Connection established"));
-  // mongoose.set("toJSON", {
-  //   transform: (doc, converted) => {
-  //     delete converted.__v;
-
-  //     const { _id, id } = converted;
-
-  //     if (_id && !id) {
-  //       converted.id = _id.toString();
-  //       delete converted._id;
-  //     }
-  //   }
-  // });
-  // mongoose.Schema.prototype.pre("")
   await mongoose.connect(process.env.MONGODB_URI!, {});
 }
 
 async function initTasks() {
-  const user = await Users.findOne({ username: process.env.SYS_ADMIN_USERNAME });
+  const user = await Users.findOne({
+    username: process.env.SYS_ADMIN_USERNAME,
+  });
 
   if (user == null) {
     await Users.create({
@@ -61,33 +57,29 @@ async function initTasks() {
 }
 
 async function bootstrap() {
-  console.log("Running in", process.env.NODE_ENV === "production" ? "production" : "dev environment");
+  console.log(
+    "Running in",
+    process.env.NODE_ENV === "production" ? "production" : "dev environment"
+  );
 
   if (process.env.NODE_ENV === "production") {
-    if (!process.env.MONGODB_URI) throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
-    if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD) throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
+    if (!process.env.MONGODB_URI)
+      throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
+    if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD)
+      throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
   }
 
   await downloader.initialize();
   await connectDatabase();
   await initTasks();
 
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter()
+  );
   app.register(fastifyCookie, {
     secret: process.env.JWT_SECRET!,
   });
-  // app.register(grant.fastify({
-  //   defaults: {
-  //     origin: "http://localhost:3000",
-  //     transport: "state"
-  //   },
-  //   google: {
-  //     key: process.env.GOOGLE_CLIENT_ID,
-  //     secret: process.env.GOOGLE_CLIENT_SECRET,
-  //     callback: process.env.NODE_ENV === "production" ? process.env.GOOGLE_CALLBACK : "http://localhost:3000/api/auth/google-redirect",
-  //     scope: ["email", "profile"]
-  //   }
-  // }))
 
   app.useGlobalFilters(new DomainEmailInvalidExceptionFilter());
 

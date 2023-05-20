@@ -6,7 +6,7 @@ import {
 import { StoredUser, WithId } from "../types";
 import { UsersService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyRequest } from "fastify";
 import { DomainEmailInvalidException } from "./domain-email-invalid.exception";
 import { verify } from "jsonwebtoken";
 import { getAccessToken, getUserProfile } from "src/utils";
@@ -40,7 +40,7 @@ export class AuthService {
       process.env.GOOGLE_CLIENT_ID!,
       process.env.GOOGLE_CLIENT_SECRET!,
       code,
-      "http://localhost:3000/api/auth/google-redirect"
+      process.env.NODE_ENV === "production" ? process.env.GOOGLE_REDIRECT_URI! : "http://localhost:3000/api/auth/google-redirect"
     );
     console.log(code, stateToken);
     if (!token) throw new UnauthorizedException();

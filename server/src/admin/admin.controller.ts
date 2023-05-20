@@ -8,8 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
-  Res,
   UseGuards,
 } from "@nestjs/common";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
@@ -81,8 +79,7 @@ export class AdminController {
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async updateUser(
     @Param("userId") userId: string,
-    @Body() data: Partial<StoredUser>,
-    @Res() res: Response
+    @Body() data: Partial<StoredUser>
   ) {
     if (!validateAllParams([userId, data])) throw new BadRequestException();
     if (
