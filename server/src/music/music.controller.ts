@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
   Post,
   Query,
-  Res,
   UseGuards,
 } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";

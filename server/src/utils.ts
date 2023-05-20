@@ -45,7 +45,7 @@ export function getCurrentOauthUrl() {
   );
   return getOauthUrl(
     process.env.GOOGLE_CLIENT_ID!,
-    "http://localhost:3000/api/auth/google-redirect",
+    process.env.NODE_ENV === "production" ? process.env.GOOGLE_REDIRECT_URI! : "http://localhost:3000/api/auth/google-redirect",
     ["email", "profile"],
     token
   );
