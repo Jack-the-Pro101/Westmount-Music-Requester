@@ -22,14 +22,19 @@ export function PlayRange({
   editable: boolean;
 }) {
   const accuracyConstant = 2;
-  const songMaxPlayDurationSeconds = config.songMaxPlayDurationSeconds * accuracyConstant;
+  const songMaxPlayDurationSeconds =
+    config.songMaxPlayDurationSeconds * accuracyConstant;
 
   if (min) min *= accuracyConstant;
   if (max) max *= accuracyConstant;
 
   const [playbackPos, setPlaybackPos] = useState(0);
-  const storedVolume = localStorage.getItem("volume") ? parseFloat(localStorage.getItem("volume") as string) : 1;
-  const [volume, setVolume] = useState(Number.isNaN(storedVolume) ? 1 : storedVolume);
+  const storedVolume = localStorage.getItem("volume")
+    ? parseFloat(localStorage.getItem("volume") as string)
+    : 1;
+  const [volume, setVolume] = useState(
+    Number.isNaN(storedVolume) ? 1 : storedVolume
+  );
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [buffered, setBuffered] = useState(0);
@@ -39,7 +44,8 @@ export function PlayRange({
     localStorage.setItem("volume", volume.toString());
   }, [volume]);
 
-  if (!setSelectionRange) setDisplaySelectionRange(selectionRange * accuracyConstant);
+  if (!setSelectionRange)
+    setDisplaySelectionRange(selectionRange * accuracyConstant);
 
   const audioElemRef = useRef<HTMLAudioElement>(null);
   const rangeRef = useRef<HTMLInputElement>(null);
@@ -54,16 +60,23 @@ export function PlayRange({
       updatePlaybackPosRange(max + 1);
       return setPlaybackPos(max);
     }
-    setPlaybackPos((event.target as HTMLAudioElement).currentTime * accuracyConstant);
+    setPlaybackPos(
+      (event.target as HTMLAudioElement).currentTime * accuracyConstant
+    );
   }
 
-  function updatePlaybackPosRange(event: TargetedEvent<HTMLInputElement, Event>): void;
+  function updatePlaybackPosRange(
+    event: TargetedEvent<HTMLInputElement, Event>
+  ): void;
   function updatePlaybackPosRange(time: number): void;
-  function updatePlaybackPosRange(input: TargetedEvent<HTMLInputElement, Event> | number) {
+  function updatePlaybackPosRange(
+    input: TargetedEvent<HTMLInputElement, Event> | number
+  ) {
     if (typeof input === "number") {
       audioElemRef.current!.currentTime = input / accuracyConstant;
     } else {
-      audioElemRef.current!.currentTime = Number((input.target as HTMLInputElement).value) / accuracyConstant;
+      audioElemRef.current!.currentTime =
+        Number((input.target as HTMLInputElement).value) / accuracyConstant;
     }
   }
 
@@ -71,7 +84,9 @@ export function PlayRange({
     // if (rangeRef) rangeRef.current!.value = (time + (time / duration) * songMaxPlayDurationSeconds * (-0.0029 * duration + 2.3)).toString();
     // C = AB - A
 
-    setSelectionRange?.(selectionRange * (songMaxPlayDurationSeconds / duration) - selectionRange);
+    setSelectionRange?.(
+      selectionRange * (songMaxPlayDurationSeconds / duration) - selectionRange
+    );
   }
 
   useEffect(() => {
@@ -94,13 +109,18 @@ export function PlayRange({
     setBuffered(0);
     setPlaybackPos(0);
     setDuration(0);
-    if (audioElemRef.current) isPlaying ? audioElemRef.current.pause() : audioElemRef.current.play();
+    if (audioElemRef.current)
+      isPlaying ? audioElemRef.current.pause() : audioElemRef.current.play();
   }, [songPreview]);
 
   useEffect(() => {
     const handler = () => {
       if (songPreview == null) return;
-      setDuration(audioElemRef.current ? audioElemRef.current.duration * accuracyConstant : 0);
+      setDuration(
+        audioElemRef.current
+          ? audioElemRef.current.duration * accuracyConstant
+          : 0
+      );
     };
     if (audioElemRef.current) {
       audioElemRef.current.addEventListener("loadedmetadata", handler);
@@ -128,21 +148,41 @@ export function PlayRange({
   return (
     <div className={styles["requests__play-range"]}>
       {songPreview && (
-        <div className={`${styles.requests__loading} ${buffered > 0 ? styles["requests__loading--done"] : ""}`}>
-          <img src="/images/loading3.svg" alt="Loading" className={styles["requests__loading-image"]} />
+        <div
+          className={`${styles.requests__loading} ${
+            buffered > 0 ? styles["requests__loading--done"] : ""
+          }`}
+        >
+          <img
+            src="/images/loading3.svg"
+            alt="Loading"
+            className={styles["requests__loading-image"]}
+          />
         </div>
       )}
 
       {songPreview && (
-        <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPlaying(true)} ref={audioElemRef} volume={volume}>
+        <audio
+          src={songPreview.url}
+          onTimeUpdate={updatePlaybackPos}
+          onEnded={() => setIsPlaying(true)}
+          ref={audioElemRef}
+          volume={volume}
+        >
           <source src={songPreview.url} type={songPreview.mime_type} />
         </audio>
       )}
 
-      <label htmlFor="range" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
+      <label
+        htmlFor="range"
+        style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;"
+      >
         Scrub playback
       </label>
-      <label htmlFor="track-scrubber" style="position: absolute; opacity: 0; pointer-events: none;width: 1px; height: 1px;">
+      <label
+        htmlFor="track-scrubber"
+        style="position: absolute; opacity: 0; pointer-events: none;width: 1px; height: 1px;"
+      >
         Change play range
       </label>
 
@@ -160,8 +200,11 @@ export function PlayRange({
         type="range"
         name="range"
         id="range"
-        className={`${styles["requests__play-range-input"]} ${styles["requests__play-range-input--duration"]} ${
-          playbackPos >= selectionDisplayRange && playbackPos <= selectionDisplayRange + songMaxPlayDurationSeconds
+        className={`${styles["requests__play-range-input"]} ${
+          styles["requests__play-range-input--duration"]
+        } ${
+          playbackPos >= selectionDisplayRange &&
+          playbackPos <= selectionDisplayRange + songMaxPlayDurationSeconds
             ? styles["requests__play-range-input--duration--active"]
             : ""
         }`}
@@ -173,20 +216,32 @@ export function PlayRange({
           if (!editable) return e.preventDefault();
           const currentSel = Number((e.target as HTMLInputElement).value);
 
-          const displayRange = Math.round((currentSel - (currentSel / duration) * songMaxPlayDurationSeconds) * 100) / 100;
+          const displayRange =
+            Math.round(
+              (currentSel -
+                (currentSel / duration) * songMaxPlayDurationSeconds) *
+                100
+            ) / 100;
           setDisplaySelectionRange(displayRange);
           setSelectionRange?.(displayRange / accuracyConstant);
         }}
-        style={`--thumb-width: ${Math.min((songMaxPlayDurationSeconds / duration) * 100, 100)}%; --buffer-percentage: ${buffered}`}
+        style={`--thumb-width: ${Math.min(
+          (songMaxPlayDurationSeconds / duration) * 100,
+          100
+        )}%; --buffer-percentage: ${buffered}`}
       />
 
-      <div className={`${styles["requests__play-controller"]} ${styles["requests__play-btns"]}`}>
+      <div
+        className={`${styles["requests__play-controller"]} ${styles["requests__play-btns"]}`}
+      >
         <div className={styles["requests__play-btns-group"]}>
           <button
             type="button"
             className={styles["requests__play-btn"]}
             title="Toggle playback"
-            onClick={() => setIsPlaying((isPlaying) => (isPlaying ? false : true))}
+            onClick={() =>
+              setIsPlaying((isPlaying) => (isPlaying ? false : true))
+            }
           >
             <i class={"fa-regular fa-" + (isPlaying ? "play" : "pause")}></i>
           </button>
@@ -203,7 +258,11 @@ export function PlayRange({
           <button
             type="button"
             className={styles["requests__play-btn"]}
-            onClick={() => updatePlaybackPosRange(selectionDisplayRange + songMaxPlayDurationSeconds)}
+            onClick={() =>
+              updatePlaybackPosRange(
+                selectionDisplayRange + songMaxPlayDurationSeconds
+              )
+            }
             title="Jump to end of selected range"
           >
             <i class="fa-light fa-arrow-right-long-to-line"></i>
@@ -226,7 +285,9 @@ export function PlayRange({
           </button> */}
         </div>
       </div>
-      <div className={`${styles["requests__play-controller"]} ${styles["requests__play-volume"]}`}>
+      <div
+        className={`${styles["requests__play-controller"]} ${styles["requests__play-volume"]}`}
+      >
         <i className="fa-regular fa-volume"></i>
         <label htmlFor="volume">Volume</label>
         <input
@@ -236,16 +297,28 @@ export function PlayRange({
           min={0}
           max={100}
           value={volume * 100}
-          onChange={(e) => setVolume((e.target as HTMLInputElement).valueAsNumber / 100)}
+          onChange={(e) =>
+            setVolume((e.target as HTMLInputElement).valueAsNumber / 100)
+          }
         />
       </div>
-      <div className={`${styles["requests__play-controller"]} ${styles["requests__play-time"]}`}>
+      <div
+        className={`${styles["requests__play-controller"]} ${styles["requests__play-time"]}`}
+      >
         <p className={styles["requests__play-text"]}>
-          {secondsToHumanReadableString(playbackPos / accuracyConstant)} / {secondsToHumanReadableString(duration / accuracyConstant)}
+          {secondsToHumanReadableString(playbackPos / accuracyConstant)} /{" "}
+          {secondsToHumanReadableString(duration / accuracyConstant)}
         </p>
         <p className={styles["requests__play-text"]}>
-          Selection range: {secondsToHumanReadableString(selectionDisplayRange / accuracyConstant)}-
-          {secondsToHumanReadableString((selectionDisplayRange + songMaxPlayDurationSeconds) / accuracyConstant)}
+          Selection range:{" "}
+          {secondsToHumanReadableString(
+            selectionDisplayRange / accuracyConstant
+          )}
+          -
+          {secondsToHumanReadableString(
+            (selectionDisplayRange + songMaxPlayDurationSeconds) /
+              accuracyConstant
+          )}
         </p>
       </div>
     </div>

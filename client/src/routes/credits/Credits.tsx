@@ -13,11 +13,19 @@ export function Credits() {
             <hr />
           </header>
           <ul className={styles.credits__list}>
-            <li className={styles.credits__item}>Primary Developer - Jack Huang</li>
-            <li className={styles.credits__item}>Production Engineer - Michael Pfaff</li>
+            <li className={styles.credits__item}>
+              Primary Developer - Jack Huang
+            </li>
+            <li className={styles.credits__item}>
+              Production Engineer - Michael Pfaff
+            </li>
             <li className={styles.credits__item}>
               Developer -{" "}
-              <a href="https://github.com/infiniwave" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://github.com/infiniwave"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 @infiniwave
               </a>
             </li>
@@ -29,10 +37,16 @@ export function Credits() {
             <hr />
           </header>
           <ul className={styles.credits__list}>
-            <li className={styles.credits__item}>UI Design - Tanushri Sendhil Kumar</li>
+            <li className={styles.credits__item}>
+              UI Design - Tanushri Sendhil Kumar
+            </li>
             <li className={styles.credits__item}>UI Ideas - Riley Jervis</li>
-            <li className={styles.credits__item}>Logo - [Artist] Lee Mainprize</li>
-            <li className={styles.credits__item}>Problem Solving - [Developer] Dawson Katerberg</li>
+            <li className={styles.credits__item}>
+              Logo - [Artist] Lee Mainprize
+            </li>
+            <li className={styles.credits__item}>
+              Problem Solving - [Developer] Dawson Katerberg
+            </li>
             <li className={styles.credits__item}>Math - Nathan Martin</li>
           </ul>
         </section>
@@ -42,9 +56,15 @@ export function Credits() {
             <hr />
           </header>
           <ul className={styles.credits__list}>
-            <li className={styles.credits__item}>Friend - [Vice President] George Zeng</li>
-            <li className={styles.credits__item}>Insider - [Teacher] Mr. Timofejew</li>
-            <li className={styles.credits__item}>Hosting - [Teacher] Mr. Trink</li>
+            <li className={styles.credits__item}>
+              Friend - [Vice President] George Zeng
+            </li>
+            <li className={styles.credits__item}>
+              Insider - [Teacher] Mr. Timofejew
+            </li>
+            <li className={styles.credits__item}>
+              Hosting - [Teacher] Mr. Trink
+            </li>
           </ul>
         </section>
       </main>

@@ -212,7 +212,8 @@
 .requests__popup--active .requests__popup-box {
   transform: scale(1);
   opacity: 1;
-  transition: transform 0.2s cubic-bezier(0.67, 0.42, 0.5, 1.49), opacity 0.2s ease, visibility 0s 0s linear;
+  transition: transform 0.2s cubic-bezier(0.67, 0.42, 0.5, 1.49),
+    opacity 0.2s ease, visibility 0s 0s linear;
 }
 
 @media screen AND (max-width: 500px) {

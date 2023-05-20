@@ -23,7 +23,11 @@ export function SignIn() {
     if (user) {
       window.location.replace("/");
     } else {
-      setErrorMsg(`Username or password invalid. ${errorCount > 0 ? `(${errorCount})` : ""}`);
+      setErrorMsg(
+        `Username or password invalid. ${
+          errorCount > 0 ? `(${errorCount})` : ""
+        }`
+      );
       setErrorCount((count) => count + 1);
     }
   }
@@ -48,16 +52,33 @@ export function SignIn() {
             </button>
           </a>
         </fieldset>
-        <p className={styles.signin__description}>Use your HWDSB account to sign in with Google.</p>
+        <p className={styles.signin__description}>
+          Use your HWDSB account to sign in with Google.
+        </p>
 
         <div style="display: flex; flex-direction: column">
           <fieldset className={styles.signin__fieldset} style="order: 2">
-            <div className={styles["signin__fieldset-section"]} style={{ marginBottom: 0 }}>
+            <div
+              className={styles["signin__fieldset-section"]}
+              style={{ marginBottom: 0 }}
+            >
               <label htmlFor="is-admin">Admin sign in?</label>
-              <input type="checkbox" name="is-admin" id="is-admin" onChange={() => setAdminSigninShown(!adminSigninShown)} checked={adminSigninShown} />
+              <input
+                type="checkbox"
+                name="is-admin"
+                id="is-admin"
+                onChange={() => setAdminSigninShown(!adminSigninShown)}
+                checked={adminSigninShown}
+              />
             </div>
           </fieldset>
-          <fieldset className={styles.signin__fieldset + ` ${adminSigninShown ? "" : styles.hidden}`} style="order: 1">
+          <fieldset
+            className={
+              styles.signin__fieldset +
+              ` ${adminSigninShown ? "" : styles.hidden}`
+            }
+            style="order: 1"
+          >
             <hr />
 
             <h2 className={styles.signin__subheading}>Admin Sign In</h2>
@@ -68,7 +89,9 @@ export function SignIn() {
               name="username"
               id="username"
               value={username}
-              onChange={(e) => setUsername((e.target as HTMLInputElement).value)}
+              onChange={(e) =>
+                setUsername((e.target as HTMLInputElement).value)
+              }
               maxLength={100}
               required
               placeholder="Enter username"
@@ -79,7 +102,9 @@ export function SignIn() {
               name="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword((e.target as HTMLInputElement).value)}
+              onChange={(e) =>
+                setPassword((e.target as HTMLInputElement).value)
+              }
               maxLength={200}
               required
               placeholder="Enter password"
