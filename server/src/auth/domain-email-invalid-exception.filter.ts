@@ -8,6 +8,10 @@ export class DomainEmailInvalidExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response: FastifyReply = ctx.getResponse();
 
-    response.redirect(process.env.NODE_ENV! === "production" ? `${process.env.ROOT_DOMAIN!}/error?code=auth` : "http://localhost:5173/error?code=auth");
+    response.redirect(
+      process.env.NODE_ENV! === "production"
+        ? `${process.env.ROOT_DOMAIN!}/error?code=auth`
+        : "http://localhost:5173/error?code=auth"
+    );
   }
 }

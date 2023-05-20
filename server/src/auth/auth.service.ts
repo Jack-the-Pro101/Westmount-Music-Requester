@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { StoredUser, WithId } from "../types";
 import { UsersService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
@@ -13,19 +17,35 @@ export class AuthService {
 
   async googleLogin(req: FastifyRequest): Promise<StoredUser | undefined> {
     const code = Object.getOwnPropertyDescriptor(req.query, "code")?.value;
-    const stateToken = Object.getOwnPropertyDescriptor(req.query, "state")?.value;
-    if (!code || !stateToken || typeof code !== "string" || typeof stateToken !== "string") throw new BadRequestException();
+    const stateToken = Object.getOwnPropertyDescriptor(
+      req.query,
+      "state"
+    )?.value;
+    if (
+      !code ||
+      !stateToken ||
+      typeof code !== "string" ||
+      typeof stateToken !== "string"
+    )
+      throw new BadRequestException();
     try {
-      const result = verify(stateToken, process.env.JWT_SECRET!) as { expires: number; };
+      const result = verify(stateToken, process.env.JWT_SECRET!) as {
+        expires: number;
+      };
       if (Date.now() > result.expires) throw new BadRequestException();
     } catch {
       throw new BadRequestException();
     }
-    const token = await getAccessToken(process.env.GOOGLE_CLIENT_ID!, process.env.GOOGLE_CLIENT_SECRET!, code, "http://localhost:3000/api/auth/google-redirect");
+    const token = await getAccessToken(
+      process.env.GOOGLE_CLIENT_ID!,
+      process.env.GOOGLE_CLIENT_SECRET!,
+      code,
+      "http://localhost:3000/api/auth/google-redirect"
+    );
     console.log(code, stateToken);
     if (!token) throw new UnauthorizedException();
     const rawUser = await getUserProfile(token);
-    console.log(rawUser)
+    console.log(rawUser);
     if (!rawUser) return;
 
     const user: StoredUser = {
@@ -41,7 +61,10 @@ export class AuthService {
     return storedUser as StoredUser;
   }
 
-  async validateUser(username: string, password: string): Promise<WithId<StoredUser> | undefined> {
+  async validateUser(
+    username: string,
+    password: string
+  ): Promise<WithId<StoredUser> | undefined> {
     const user = await this.usersService.findOne(username, true);
 
     if (!user || user.type !== "INTERNAL") return;

@@ -1,5 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { SpotifySearch, SpotifyTrack, TrackSourceInfo, YouTubeSong } from "../types";
+import {
+  SpotifySearch,
+  SpotifyTrack,
+  TrackSourceInfo,
+  YouTubeSong,
+} from "../types";
 
 import downloader from "../downloader/downloader";
 
@@ -10,7 +15,10 @@ export class MusicService {
 
   private async refreshSpotifyToken() {
     this.spotifyTokenRefreshing = true;
-    const payload = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_SECRET}`, "utf-8").toString("base64");
+    const payload = Buffer.from(
+      `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_SECRET}`,
+      "utf-8"
+    ).toString("base64");
 
     const request = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
@@ -31,13 +39,19 @@ export class MusicService {
   }
   async searchSpotify(query: string): Promise<SpotifyTrack[]> {
     try {
-      if (!this.spotifyToken && !this.spotifyTokenRefreshing) await this.refreshSpotifyToken();
+      if (!this.spotifyToken && !this.spotifyTokenRefreshing)
+        await this.refreshSpotifyToken();
 
-      const request = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track`, {
-        headers: {
-          Authorization: "Bearer " + this.spotifyToken,
-        },
-      });
+      const request = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+          query
+        )}&type=track`,
+        {
+          headers: {
+            Authorization: "Bearer " + this.spotifyToken,
+          },
+        }
+      );
 
       if (!request.ok) {
         const response = await request.json();
@@ -62,13 +76,17 @@ export class MusicService {
   }
 
   async getSpotifyTrack(spotifyTrackId: string): Promise<SpotifyTrack> {
-    if (!this.spotifyToken && !this.spotifyTokenRefreshing) await this.refreshSpotifyToken();
+    if (!this.spotifyToken && !this.spotifyTokenRefreshing)
+      await this.refreshSpotifyToken();
 
-    const request = await fetch("https://api.spotify.com/v1/tracks/" + spotifyTrackId, {
-      headers: {
-        Authorization: "Bearer " + this.spotifyToken,
-      },
-    });
+    const request = await fetch(
+      "https://api.spotify.com/v1/tracks/" + spotifyTrackId,
+      {
+        headers: {
+          Authorization: "Bearer " + this.spotifyToken,
+        },
+      }
+    );
 
     if (!request.ok) {
       const response = await request.json();

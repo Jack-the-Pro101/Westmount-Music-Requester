@@ -1,4 +1,17 @@
-import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  InternalServerErrorException,
+  Param,
+  Patch,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
 
 import { RequestData } from "../types";
 
@@ -29,28 +42,51 @@ export class RequestController {
   @Post()
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async createReq(@Body() info: RequestData, @Req() req: FastifyRequest, @Res() res: FastifyReply) {
+  async createReq(
+    @Body() info: RequestData,
+    @Req() req: FastifyRequest,
+    @Res() res: FastifyReply
+  ) {
     const { spotifyId, youtubeId, playRange } = info;
 
-    if (!validateAllParams([spotifyId, youtubeId, playRange])) throw new BadRequestException();
+    if (!validateAllParams([spotifyId, youtubeId, playRange]))
+      throw new BadRequestException();
 
     try {
-      if (!(await this.requestService.validateRequest(info, req.user))) throw new BadRequestException();
+      if (!(await this.requestService.validateRequest(info, req.user)))
+        throw new BadRequestException();
 
       const trackId = await this.requestService.getTrackId(youtubeId);
       if (trackId == null) return;
 
-      if (await this.requestService.checkExistingRequest(spotifyId, trackId, req.user._id)) throw new BadRequestException();
+      if (
+        await this.requestService.checkExistingRequest(
+          spotifyId,
+          trackId,
+          req.user._id
+        )
+      )
+        throw new BadRequestException();
 
-      
       if (!(await this.requestService.createRequest(info, req.user, trackId)))
-      return console.error(`Failed to create request for ${req.user._id}, requesting song ${spotifyId} at ${youtubeId}`);
-      const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
-      
+        return console.error(
+          `Failed to create request for ${req.user._id}, requesting song ${spotifyId} at ${youtubeId}`
+        );
+      const scanResult = await this.requestService.scanLyrics(
+        youtubeId,
+        trackId
+      );
+
       if (scanResult === false) {
-        await this.requestService.updateRequest({ track: trackId, status: "AWAITING" }, { status: "AUTO_REJECTED" });
+        await this.requestService.updateRequest(
+          { track: trackId, status: "AWAITING" },
+          { status: "AUTO_REJECTED" }
+        );
       } else {
-        await this.requestService.updateRequest({ track: trackId, status: "AWAITING" }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
+        await this.requestService.updateRequest(
+          { track: trackId, status: "AWAITING" },
+          { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" }
+        );
       }
       res.status(202).send();
     } catch (err) {
@@ -76,14 +112,25 @@ export class RequestController {
   @Patch(":trackId")
   @Roles("ACCEPT_REQUESTS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async acceptRequest(@Param("trackId") trackId: string, @Body() info: { evaluation: boolean }, @Res() res: FastifyReply) {
+  async acceptRequest(
+    @Param("trackId") trackId: string,
+    @Body() info: { evaluation: boolean },
+    @Res() res: FastifyReply
+  ) {
     const { evaluation } = info;
     if (!validateAllParams([evaluation])) throw new BadRequestException();
 
-    if (!mongoose.Types.ObjectId.isValid(trackId) || new mongoose.Types.ObjectId(trackId).toString() !== trackId) throw new BadRequestException();
+    if (
+      !mongoose.Types.ObjectId.isValid(trackId) ||
+      new mongoose.Types.ObjectId(trackId).toString() !== trackId
+    )
+      throw new BadRequestException();
 
     if (!evaluation) {
-      await this.requestService.updateManyRequests({ track: trackId }, { status: "REJECTED" });
+      await this.requestService.updateManyRequests(
+        { track: trackId },
+        { status: "REJECTED" }
+      );
       return;
     }
 
@@ -104,6 +151,8 @@ export class RequestController {
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async getPersonalRequests(@Req() req: FastifyRequest) {
     console.log(req.user);
-    return await this.requestService.getPersonalRequests(req.user._id.toString());
+    return await this.requestService.getPersonalRequests(
+      req.user._id.toString()
+    );
   }
 }

@@ -11,14 +11,14 @@ import { join } from "path";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(), 
+    ConfigModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "..", "..", "client/dist"),
     }),
     ThrottlerModule.forRoot(),
-    MusicModule, 
-    AuthModule, 
-    RequestModule, 
+    MusicModule,
+    AuthModule,
+    RequestModule,
     AdminModule,
   ],
   controllers: [],

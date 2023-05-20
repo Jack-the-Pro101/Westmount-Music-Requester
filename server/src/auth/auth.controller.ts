@@ -1,4 +1,14 @@
-import { ConflictException, Controller, Delete, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import {
+  ConflictException,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 
 import { AuthenticatedGuard } from "./authenticated.guard";
@@ -36,7 +46,9 @@ export class AuthController {
   @Get("session")
   @UseGuards(AuthenticatedGuard)
   getSession(@Req() req: FastifyRequest) {
-    let user = Object.assign({}, req.user) as StoredUser & { password?: string };
+    let user = Object.assign({}, req.user) as StoredUser & {
+      password?: string;
+    };
     delete user.password;
     return user;
   }
@@ -49,7 +61,9 @@ export class AuthController {
     const { username, password } = request.body as FastifyUser;
     const storedUser = await this.authService.validateUser(username, password);
     if (!storedUser) throw new UnauthorizedException();
-    let user = Object.assign({}, storedUser) as StoredUser & { password?: string };
+    let user = Object.assign({}, storedUser) as StoredUser & {
+      password?: string;
+    };
     delete user.password;
     const token = sign(user, process.env.JWT_SECRET!);
     response.setCookie("WMR_SID", token, { path: "/" });
@@ -58,7 +72,10 @@ export class AuthController {
 
   @Throttle(4, 6)
   @Get("google-redirect")
-  async googleAuthRedirect(@Req() req: FastifyRequest, @Res({ passthrough: true}) res: FastifyReply) {
+  async googleAuthRedirect(
+    @Req() req: FastifyRequest,
+    @Res({ passthrough: true }) res: FastifyReply
+  ) {
     const user = await this.authService.googleLogin(req);
     if (user) {
       const token = sign(user, process.env.JWT_SECRET!);

@@ -7,7 +7,7 @@ const users = mongoose.model(
       _id: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
       },
       email: {
         type: String,
