@@ -15,32 +15,23 @@ export interface YouTubeSong {
   duration: number;
 }
 
-// export interface StoredUser {
-//   _id: string;
-//   email: string;
-//   username: string;
-//   password: string;
-//   avatar: string;
-//   type: "GOOGLE" | "INTERNAL";
-//   permissions: number;
-//   name: string;
-// }
+export type StoredUser =
+  | {
+      type: "GOOGLE";
+      email: string;
+      avatar: string;
+      name: string;
+      permissions: number;
+    }
+  | {
+      type: "INTERNAL";
+      username: string;
+      password: string;
+      name: string;
+      permissions: number;
+    };
 
-export type StoredUser = {
-  type: "GOOGLE";
-  email: string;
-  avatar: string;
-  name: string;
-  permissions: number;
-} | {
-  type: "INTERNAL",
-  username: string;
-  password: string;
-  name: string;
-  permissions: number;
-};
-
-export type WithId<T> = T & { _id: string; };
+export type WithId<T> = T & { _id: string };
 
 export interface TrackSourceInfo {
   url: string;
@@ -63,7 +54,13 @@ export interface Request {
   user: StoredUser;
   createdAt: string;
   updatedAt: string;
-  status: "AWAITING" | "PENDING" | "PENDING_MANUAL" | "AUTO_REJECTED" | "REJECTED" | "ACCEPTED";
+  status:
+    | "AWAITING"
+    | "PENDING"
+    | "PENDING_MANUAL"
+    | "AUTO_REJECTED"
+    | "REJECTED"
+    | "ACCEPTED";
 
   popularity: number;
 }
