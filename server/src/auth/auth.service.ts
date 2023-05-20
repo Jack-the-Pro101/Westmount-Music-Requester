@@ -46,6 +46,6 @@ export class AuthService {
 
     if (!user || user.type !== "INTERNAL") return;
     if (!(await bcrypt.compare(password, user.password!))) return;
-    return user as WithId<StoredUser>;
+    return user;
   }
 }
