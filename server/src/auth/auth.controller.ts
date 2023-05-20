@@ -27,6 +27,7 @@ export class AuthController {
   @Delete("logout")
   @UseGuards(AuthenticatedGuard)
   logout(@Res() res: FastifyReply) {
+    // TODO: token whitelist & expiry
     res.clearCookie("WMR_SID");
     res.send();
   }
@@ -46,26 +47,13 @@ export class AuthController {
     // const token = request.cookies["WMR_SID"];
     // if (token) throw new ConflictException();
     const { username, password } = request.body as FastifyUser;
-    const user = await this.authService.validateUser(username, password);
-  
-    if (!user) throw new UnauthorizedException();
-    const token = sign({
-      type: "LOCAL",
-      _id: user._id,
-      email: null,
-      name: user.name,
-      avatar: null,
-      permissions: user.permissions,
-    }, process.env.JWT_SECRET!);
+    const storedUser = await this.authService.validateUser(username, password);
+    if (!storedUser) throw new UnauthorizedException();
+    let user = Object.assign({}, storedUser) as StoredUser & { password?: string };
+    delete user.password;
+    const token = sign(user, process.env.JWT_SECRET!);
     response.setCookie("WMR_SID", token, { path: "/" });
-    response.send({
-      _id: user._id,
-      email: null,
-      name: user.name,
-      avatar: null,
-      type: user.type,
-      permissions: user.permissions,
-    });
+    response.send(user);
   }
 
   @Throttle(4, 6)
