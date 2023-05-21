@@ -5,7 +5,6 @@ import { AuthenticatedGuard } from "./authenticated.guard";
 import { Throttle } from "@nestjs/throttler";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { sign } from "jsonwebtoken";
-import { getCurrentOauthUrl } from "../utils";
 import { StoredUser } from "../types";
 
 interface FastifyUser {
@@ -20,7 +19,7 @@ export class AuthController {
   @Throttle(4, 6)
   @Get()
   googleAuth(@Res() res: FastifyReply) {
-    res.redirect(302, getCurrentOauthUrl());
+    res.redirect(302, this.authService.getCurrentOauthUrl());
   }
 
   @Throttle(2, 5)
