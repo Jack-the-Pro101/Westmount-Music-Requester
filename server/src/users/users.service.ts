@@ -33,19 +33,11 @@ export class UsersService {
     });
   }
 
-  async findOne(
-    usernameOrEmail: string,
-    internal = false
-  ): Promise<WithId<StoredUser> | undefined> {
+  async findOne(usernameOrEmail: string, internal = false): Promise<WithId<StoredUser> | undefined> {
     try {
       return (
-        (
-          await Users.findOne(
-            internal
-              ? { username: usernameOrEmail }
-              : { email: usernameOrEmail }
-          )
-        )?.toObject() ?? undefined
+        (await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail }))?.toObject() ??
+        undefined
       );
     } catch (err) {
       console.error(err);
@@ -82,34 +74,21 @@ export class UsersService {
     }
   }
 
-  async createOrUpdateOne(
-    user: StoredUser
-  ): Promise<WithId<StoredUser> | undefined> {
+  async createOrUpdateOne(user: StoredUser): Promise<WithId<StoredUser> | undefined> {
     try {
       if (user.type === "GOOGLE") {
-        const dbUser: WithId<StoredUser> | undefined =
-          (await Users.findOne({ email: user.email })) ?? undefined;
-        if (!dbUser)
-          return (
-            await Users.create({ ...user, _id: ulid() })
-          ).toObject() as WithId<StoredUser>;
+        const dbUser: WithId<StoredUser> | undefined = (await Users.findOne({ email: user.email })) ?? undefined;
+        if (!dbUser) return (await Users.create({ ...user, _id: ulid() })).toObject() as WithId<StoredUser>;
         // TODO: What if Google user's email changes?
         // TODO: What if user's OAuth session is invalidated?
         return (
           (
-            await Users.findOneAndUpdate(
-              { _id: dbUser._id },
-              { avatar: user.avatar, name: user.name },
-              { new: true }
-            )
+            await Users.findOneAndUpdate({ _id: dbUser._id }, { avatar: user.avatar, name: user.name }, { new: true })
           )?.toObject() ?? undefined
         );
       } else {
         const dbUser = await Users.findOne({ username: user.username });
-        if (!dbUser)
-          return (
-            await Users.create({ ...user, _id: ulid() })
-          ).toObject() as WithId<StoredUser>;
+        if (!dbUser) return (await Users.create({ ...user, _id: ulid() })).toObject() as WithId<StoredUser>;
         return dbUser.toObject() as WithId<StoredUser>;
       }
     } catch (err) {

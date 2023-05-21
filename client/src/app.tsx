@@ -1,10 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import {
-  BrowserRouter,
-  NavigateFunction,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter, NavigateFunction, Route, Routes } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { Home } from "./routes/home/Home";
@@ -24,10 +19,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 
 interface AuthContextProps {
   user?: StoredUser | null;
-  login: (
-    username: string,
-    password: string
-  ) => Promise<StoredUser | undefined>;
+  login: (username: string, password: string) => Promise<StoredUser | undefined>;
   logout: (navigate: NavigateFunction) => Promise<void>;
 }
 
@@ -40,9 +32,7 @@ async function logout(navigate: NavigateFunction) {
     // navigate("/sign-in"); Change to remove user from navbar, then can use
     window.location.href = "/sign-in";
   } else {
-    alert(
-      `Failed to logout\nError ${logoutRequest.status}: ${logoutRequest.statusText}`
-    );
+    alert(`Failed to logout\nError ${logoutRequest.status}: ${logoutRequest.statusText}`);
   }
 }
 
@@ -114,9 +104,7 @@ const exemptedRedirectPaths = ["sign-in", "credits", "error"];
 export function App() {
   const [user, setUser] = useState<StoredUser | null>();
 
-  const redirectExempted = exemptedRedirectPaths.some((path) =>
-    window.location.pathname.includes(path)
-  );
+  const redirectExempted = exemptedRedirectPaths.some((path) => window.location.pathname.includes(path));
 
   useEffect(() => {
     (async () => {
@@ -126,8 +114,7 @@ export function App() {
         const response = (await request.json()) as StoredUser;
 
         if (response) {
-          if (!check(["USE_REQUESTER"], response.permissions))
-            return window.location.replace("/error?code=banned");
+          if (!check(["USE_REQUESTER"], response.permissions)) return window.location.replace("/error?code=banned");
           setUser(response);
 
           return;
@@ -147,10 +134,7 @@ export function App() {
         <AuthContext.Provider value={{ user, login, logout }}>
           <div
             className={
-              "load-block" +
-              (user !== undefined && (user !== null || redirectExempted)
-                ? " loading-block--loaded"
-                : "")
+              "load-block" + (user !== undefined && (user !== null || redirectExempted) ? " loading-block--loaded" : "")
             }
           >
             <img src="/images/loading2.svg" alt="Loading image" />
@@ -171,8 +155,7 @@ export function App() {
             </Routes>
             <Routes>
               {routeMap.map((route) =>
-                route.permissions.length === 0 ||
-                (user != null && check(route.permissions, user.permissions)) ? (
+                route.permissions.length === 0 || (user != null && check(route.permissions, user.permissions)) ? (
                   <Route path={route.path} element={route.element} />
                 ) : null
               )}
