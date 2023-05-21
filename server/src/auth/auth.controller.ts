@@ -35,7 +35,7 @@ export class AuthController {
   @Get("session")
   @UseGuards(AuthenticatedGuard)
   getSession(@Req() req: FastifyRequest) {
-    let user = Object.assign({}, req.user) as StoredUser & {
+    const user = Object.assign({}, req.user) as StoredUser & {
       password?: string;
     };
     delete user.password;
