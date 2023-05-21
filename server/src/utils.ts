@@ -17,3 +17,5 @@ export function sanitizeFilename(input: string, replacement: string) {
     .replace(windowsTrailingRe, replacement);
   return sanitized.slice(0, 255);
 }
+
+export const COOKIE = "WMR_SID" as const;

@@ -6,6 +6,7 @@ import { Throttle } from "@nestjs/throttler";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { sign } from "jsonwebtoken";
 import { StoredUser } from "../types";
+import { COOKIE } from "src/utils";
 
 interface FastifyUser {
   username: string;
@@ -27,7 +28,7 @@ export class AuthController {
   @UseGuards(AuthenticatedGuard)
   logout(@Res() res: FastifyReply) {
     // TODO: token whitelist & expiry
-    res.clearCookie("WMR_SID");
+    res.clearCookie(COOKIE);
     res.send();
   }
 
@@ -45,7 +46,7 @@ export class AuthController {
   @Throttle(4, 6)
   @Post("login")
   async login(@Req() request: FastifyRequest, @Res() response: FastifyReply) {
-    // const token = request.cookies["WMR_SID"];
+    // const token = request.cookies[COOKIE];
     // if (token) throw new ConflictException();
     const { username, password } = request.body as FastifyUser;
     const storedUser = await this.authService.validateUser(username, password);
@@ -55,7 +56,7 @@ export class AuthController {
     };
     delete user.password;
     const token = sign(user, process.env.JWT_SECRET!);
-    response.setCookie("WMR_SID", token, { path: "/" });
+    response.setCookie(COOKIE, token, { path: "/" });
     response.send(user);
   }
 
@@ -65,7 +66,7 @@ export class AuthController {
     const user = await this.authService.googleLogin(req);
     if (user) {
       const token = sign(user, process.env.JWT_SECRET!);
-      res.setCookie("WMR_SID", token, { path: "/" });
+      res.setCookie(COOKIE, token, { path: "/" });
       if (process.env.NODE_ENV !== "production") {
         res.status(302).redirect("http://localhost:5173");
       } else {
