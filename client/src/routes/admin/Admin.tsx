@@ -52,13 +52,11 @@ export function Admin() {
 
     const internal = createUserInternalRef.current?.checked;
 
-    const permissionsCheckboxes: NodeListOf<HTMLInputElement> =
-      document.querySelectorAll(".new-user-permissions-checkbox");
+    const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(
+      ".new-user-permissions-checkbox"
+    );
     permissionsCheckboxes.forEach((checkbox) =>
-      checkbox.checked
-        ? (permissions +=
-            FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS])
-        : 0
+      checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0
     );
 
     const request = await fetch("/api/admin/users/", {
@@ -97,13 +95,11 @@ export function Admin() {
 
     const internal = editUserInternalRef.current?.checked;
 
-    const permissionsCheckboxes: NodeListOf<HTMLInputElement> =
-      document.querySelectorAll(".edit-user-permissions-checkbox");
+    const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(
+      ".edit-user-permissions-checkbox"
+    );
     permissionsCheckboxes.forEach((checkbox) =>
-      checkbox.checked
-        ? (permissions +=
-            FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS])
-        : 0
+      checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0
     );
 
     const userId = editingUser!._id;
@@ -140,9 +136,7 @@ export function Admin() {
 
   async function searchUsers(e: Event) {
     e.preventDefault();
-    const request = await fetch(
-      "/api/admin/users/search?query=" + searchUsersQuery
-    );
+    const request = await fetch("/api/admin/users/search?query=" + searchUsersQuery);
 
     if (request.ok) {
       setUsers((await request.json()) as StoredUser[]);
@@ -183,31 +177,13 @@ export function Admin() {
                   <li className={styles.admin__action}>
                     <h4>Create User</h4>
 
-                    <form
-                      action="#"
-                      className={styles.admin__form}
-                      onSubmit={createUser}
-                    >
+                    <form action="#" className={styles.admin__form} onSubmit={createUser}>
                       <fieldset className={styles.admin__fieldset}>
                         <label htmlFor="new-name">Name</label>
-                        <input
-                          type="text"
-                          name="new-name"
-                          id="new-name"
-                          maxLength={320}
-                          ref={createUserNameRef}
-                        />
+                        <input type="text" name="new-name" id="new-name" maxLength={320} ref={createUserNameRef} />
                         <label htmlFor="new-email">Email or Username</label>
-                        <input
-                          type="text"
-                          name="new-email"
-                          id="new-email"
-                          maxLength={320}
-                          ref={createUserInputRef}
-                        />
-                        <label htmlFor="new-email">
-                          Password (only internal)
-                        </label>
+                        <input type="text" name="new-email" id="new-email" maxLength={320} ref={createUserInputRef} />
+                        <label htmlFor="new-email">Password (only internal)</label>
                         <input
                           type="text"
                           name="new-password"
@@ -224,32 +200,19 @@ export function Admin() {
                               <li
                                 style={
                                   "display: flex; justify-content: space-between;" +
-                                  (flag.startsWith("BLANK")
-                                    ? "display: none"
-                                    : "")
+                                  (flag.startsWith("BLANK") ? "display: none" : "")
                                 }
                               >
-                                <label
-                                  htmlFor={flag.toLowerCase() + "_new-checkbox"}
-                                >
-                                  {flag}
-                                </label>
+                                <label htmlFor={flag.toLowerCase() + "_new-checkbox"}>{flag}</label>
                                 <input
                                   type="checkbox"
                                   name={flag.toLowerCase()}
                                   className="new-user-permissions-checkbox"
                                   id={flag.toLowerCase() + "_new-checkbox"}
                                   data-flag-name={flag}
-                                  checked={DEFAULT_CHECKED_FLAGS.includes(
-                                    FLAGS[flag as keyof typeof FLAGS]
-                                  )}
+                                  checked={DEFAULT_CHECKED_FLAGS.includes(FLAGS[flag as keyof typeof FLAGS])}
                                   disabled={
-                                    flag === "ADMINISTRATOR"
-                                      ? !check(
-                                          ["ADMINISTRATOR"],
-                                          user.permissions
-                                        )
-                                      : false
+                                    flag === "ADMINISTRATOR" ? !check(["ADMINISTRATOR"], user.permissions) : false
                                   }
                                 />
                               </li>
@@ -272,16 +235,10 @@ export function Admin() {
                   </li>
                   <li className={styles.admin__action}>
                     <h4>Edit User</h4>
-                    <p style="text-align: center; color: hsl(var(--clr-neutral-700))">
-                      {editingUser?.name}
-                    </p>
+                    <p style="text-align: center; color: hsl(var(--clr-neutral-700))">{editingUser?.name}</p>
 
                     {editingUser != null && (
-                      <form
-                        action="#"
-                        className={styles.admin__form}
-                        onSubmit={editUser}
-                      >
+                      <form action="#" className={styles.admin__form} onSubmit={editUser}>
                         <fieldset className={styles.admin__fieldset}>
                           <label htmlFor="new-name">Name</label>
                           <input
@@ -301,9 +258,7 @@ export function Admin() {
                             value={editingUser.email || editingUser.username}
                             ref={editUserInputRef}
                           />
-                          <label htmlFor="new-email">
-                            Password (only internal, leave blank to not update)
-                          </label>
+                          <label htmlFor="new-email">Password (only internal, leave blank to not update)</label>
                           <input
                             type="text"
                             name="new-password"
@@ -320,35 +275,19 @@ export function Admin() {
                                 <li
                                   style={
                                     "display: flex; justify-content: space-between;" +
-                                    (flag.startsWith("BLANK")
-                                      ? "display: none"
-                                      : "")
+                                    (flag.startsWith("BLANK") ? "display: none" : "")
                                   }
                                 >
-                                  <label
-                                    htmlFor={
-                                      flag.toLowerCase() + "_edit-checkbox"
-                                    }
-                                  >
-                                    {flag}
-                                  </label>
+                                  <label htmlFor={flag.toLowerCase() + "_edit-checkbox"}>{flag}</label>
                                   <input
                                     type="checkbox"
                                     name={flag.toLowerCase()}
                                     id={flag.toLowerCase() + "_edit-checkbox"}
-                                    checked={check(
-                                      [flag],
-                                      editingUser.permissions
-                                    )}
+                                    checked={check([flag], editingUser.permissions)}
                                     className="edit-user-permissions-checkbox"
                                     data-flag-name={flag}
                                     disabled={
-                                      flag === "ADMINISTRATOR"
-                                        ? !check(
-                                            ["ADMINISTRATOR"],
-                                            user.permissions
-                                          )
-                                        : false
+                                      flag === "ADMINISTRATOR" ? !check(["ADMINISTRATOR"], user.permissions) : false
                                     }
                                   />
                                 </li>
@@ -369,10 +308,7 @@ export function Admin() {
                         </fieldset>
 
                         <div style="display: flex; gap: 1em;">
-                          <button
-                            type="cancel"
-                            onClick={() => setEditingUser(null)}
-                          >
+                          <button type="cancel" onClick={() => setEditingUser(null)}>
                             Cancel
                           </button>
                           <button type="submit">Edit</button>
@@ -391,9 +327,7 @@ export function Admin() {
                     type="text"
                     name="user-search"
                     id="user-search"
-                    onChange={(e: Event) =>
-                      setSearchUsersQuery((e.target as HTMLInputElement).value)
-                    }
+                    onChange={(e: Event) => setSearchUsersQuery((e.target as HTMLInputElement).value)}
                   />
                   <button type="submit" onClick={(e) => searchUsers(e)}>
                     Search
@@ -406,9 +340,7 @@ export function Admin() {
                     name="user-search-filter-text"
                     id="user-search-filter-text"
                     value={matchUsers}
-                    onChange={(e) =>
-                      setMatchUsers((e.target as HTMLInputElement).value)
-                    }
+                    onChange={(e) => setMatchUsers((e.target as HTMLInputElement).value)}
                   />
                 </fieldset>
               </form>
@@ -427,11 +359,7 @@ export function Admin() {
                     Name
                     <i
                       class="fa-solid fa-caret-down"
-                      style={
-                        columnUsersSort.type === "name" && columnUsersSort.asc
-                          ? "transform: rotate(180deg)"
-                          : ""
-                      }
+                      style={columnUsersSort.type === "name" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}
                     ></i>
                   </button>
                   <button
@@ -447,10 +375,7 @@ export function Admin() {
                     <i
                       class="fa-solid fa-caret-down"
                       style={
-                        columnUsersSort.type === "username" &&
-                        columnUsersSort.asc
-                          ? "transform: rotate(180deg)"
-                          : ""
+                        columnUsersSort.type === "username" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""
                       }
                     ></i>
                   </button>
@@ -466,23 +391,14 @@ export function Admin() {
                     Type
                     <i
                       class="fa-solid fa-caret-down"
-                      style={
-                        columnUsersSort.type === "type" && columnUsersSort.asc
-                          ? "transform: rotate(180deg)"
-                          : ""
-                      }
+                      style={columnUsersSort.type === "type" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}
                     ></i>
                   </button>
                   <button>Permissions</button>
                   <button>Actions</button>
                 </li>
                 {users
-                  .filter((user) =>
-                    anyStringIncludes(
-                      [user.name, user.email || user.username],
-                      matchUsers
-                    )
-                  )
+                  .filter((user) => anyStringIncludes([user.name, user.email || user.username], matchUsers))
                   .sort((a, b) => {
                     let x =
                       a[
@@ -559,10 +475,7 @@ export function Admin() {
               <h3 className={styles["admin__danger-heading"]}>Re-cycle</h3>
 
               <div className={styles["admin__danger-recycle"]}>
-                <button
-                  className={styles["admin__danger-recycle-btn"]}
-                  onClick={dangerRecycle}
-                >
+                <button className={styles["admin__danger-recycle-btn"]} onClick={dangerRecycle}>
                   RE-CYCLE
                 </button>
               </div>

@@ -35,18 +35,11 @@ export class AdminController {
   @Get("users/search")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async searchUsers(
-    @Query("page") page: number,
-    @Query("limit") limit: number,
-    @Query("query") query: string
-  ) {
+  async searchUsers(@Query("page") page: number, @Query("limit") limit: number, @Query("query") query: string) {
     if (query == null) query = "";
     return await this.usersService.searchUsers(
       {
-        $or: [
-          { username: { $regex: query, $options: "i" } },
-          { email: { $regex: query, $options: "i" } },
-        ],
+        $or: [{ username: { $regex: query, $options: "i" } }, { email: { $regex: query, $options: "i" } }],
       },
       limit || 100,
       page || 0
@@ -64,8 +57,7 @@ export class AdminController {
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async createUser(@Body() data: CreateUser) {
-    if (!validateAllParams([data.username, data.permissions, data.password]))
-      throw new BadRequestException();
+    if (!validateAllParams([data.username, data.permissions, data.password])) throw new BadRequestException();
     const hash = await bcrypt.hash(data.password, 10);
     return await this.usersService.create({
       username: data.username,
@@ -77,16 +69,9 @@ export class AdminController {
   @Patch("users/:userId")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async updateUser(
-    @Param("userId") userId: string,
-    @Body() data: Partial<StoredUser>
-  ) {
+  async updateUser(@Param("userId") userId: string, @Body() data: Partial<StoredUser>) {
     if (!validateAllParams([userId, data])) throw new BadRequestException();
-    if (
-      data.type === "INTERNAL" &&
-      data.username == process.env.SYS_ADMIN_USERNAME
-    )
-      throw new ForbiddenException();
+    if (data.type === "INTERNAL" && data.username == process.env.SYS_ADMIN_USERNAME) throw new ForbiddenException();
     return await this.usersService.updateUser({ _id: userId }, data);
   }
 }

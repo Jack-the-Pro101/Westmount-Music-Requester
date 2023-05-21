@@ -20,12 +20,7 @@ export function sanitizeFilename(input: string, replacement: string) {
   return sanitized.slice(0, 255);
 }
 
-export function getOauthUrl(
-  clientId: string,
-  redirectUri: string,
-  scopes: string[],
-  state: string
-) {
+export function getOauthUrl(clientId: string, redirectUri: string, scopes: string[], state: string) {
   const base = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   base.searchParams.set("client_id", clientId);
   base.searchParams.set("redirect_uri", redirectUri);
@@ -39,13 +34,12 @@ export function getOauthUrl(
 
 // Gets an OAuth url from current env and parameters.
 export function getCurrentOauthUrl() {
-  const token = sign(
-    { expires: Date.now() + 3600000 },
-    process.env.JWT_SECRET!
-  );
+  const token = sign({ expires: Date.now() + 3600000 }, process.env.JWT_SECRET!);
   return getOauthUrl(
     process.env.GOOGLE_CLIENT_ID!,
-    process.env.NODE_ENV === "production" ? process.env.GOOGLE_REDIRECT_URI! : "http://localhost:3000/api/auth/google-redirect",
+    process.env.NODE_ENV === "production"
+      ? process.env.GOOGLE_REDIRECT_URI!
+      : "http://localhost:3000/api/auth/google-redirect",
     ["email", "profile"],
     token
   );
@@ -88,19 +82,14 @@ interface GoogleRawProfile {
   locale: string;
 }
 
-export async function getUserProfile(
-  accessToken: string
-): Promise<GoogleRawProfile | undefined> {
+export async function getUserProfile(accessToken: string): Promise<GoogleRawProfile | undefined> {
   try {
-    const response = await fetch(
-      "https://www.googleapis.com/oauth2/v3/userinfo",
-      {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const response = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     const json: GoogleRawProfile = await response.json();
     return json;
   } catch {}

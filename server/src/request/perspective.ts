@@ -1,7 +1,6 @@
 import striptags from "striptags";
 
-const COMMENT_ANALYZER_URL =
-  "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
+const COMMENT_ANALYZER_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
 const MAX_LENGTH = 20480;
 
 export class PerspectiveAPIClientError extends Error {
@@ -55,13 +54,7 @@ interface AnalyzeOptions {
   attributes?: Attribute[] | RequestedAttributes;
 }
 
-type Attribute =
-  | "TOXICITY"
-  | "SEVERE_TOXICITY"
-  | "IDENTITY_ATTACK"
-  | "INSULT"
-  | "PROFANITY"
-  | "THREAT";
+type Attribute = "TOXICITY" | "SEVERE_TOXICITY" | "IDENTITY_ATTACK" | "INSULT" | "PROFANITY" | "THREAT";
 
 type RequestedAttributes = {
   [key in Attribute]?: {
@@ -127,12 +120,7 @@ class Perspective {
               if (response.ok) {
                 resolve(json as PerspectiveResponse);
               } else {
-                reject(
-                  new ResponseError(
-                    (json as ErrorResponse).error.message,
-                    response
-                  )
-                );
+                reject(new ResponseError((json as ErrorResponse).error.message, response));
               }
             })
             .catch((error) => {
@@ -145,14 +133,10 @@ class Perspective {
     }) as Promise<PerspectiveResponse>;
   }
 
-  getAnalyzeCommentPayload(
-    text: string | Resource,
-    options: AnalyzeOptions = {}
-  ): Resource {
+  getAnalyzeCommentPayload(text: string | Resource, options: AnalyzeOptions = {}): Resource {
     const stripHTML = options.stripHTML == undefined ? true : options.stripHTML;
     const truncate = options.truncate == undefined ? false : options.truncate;
-    const doNotStore =
-      options.doNotStore == undefined ? true : options.doNotStore;
+    const doNotStore = options.doNotStore == undefined ? true : options.doNotStore;
     const validate = options.validate == undefined ? true : options.validate;
     const processText = (str: string) => {
       const ret = stripHTML ? striptags(str) : str;
@@ -164,11 +148,10 @@ class Perspective {
       }
       return truncate ? ret.substring(0, MAX_LENGTH) : ret;
     };
-    let resource: Resource =
-      typeof text === "object" ? text : { comment: { text } };
+    let resource: Resource = typeof text === "object" ? text : { comment: { text } };
     resource.comment.text = processText(resource.comment.text);
-    let attributes: Attribute[] | RequestedAttributes =
-      resource.requestedAttributes || options.attributes || { TOXICITY: {} };
+    let attributes: Attribute[] | RequestedAttributes = resource.requestedAttributes ||
+      options.attributes || { TOXICITY: {} };
     let attributesFinal: RequestedAttributes = Array.isArray(attributes)
       ? attributes.reduce((acc, attr) => ({ ...acc, [attr]: {} }), {})
       : attributes;

@@ -16,8 +16,7 @@ export function Error() {
       break;
     case "banned":
       errorTitle = "You Are Banned";
-      errorMsg =
-        "Your permissions to use the Westmount Music Requester have been revoked.";
+      errorMsg = "Your permissions to use the Westmount Music Requester have been revoked.";
       break;
     default:
       if (errorType == null) {
@@ -25,8 +24,7 @@ export function Error() {
         errorMsg = "The page you are trying to access does not exist.";
       } else {
         errorTitle = "Unexpected Error";
-        errorMsg =
-          "An unexpected error has occured. Apologies for any inconveiences.";
+        errorMsg = "An unexpected error has occured. Apologies for any inconveiences.";
       }
   }
 

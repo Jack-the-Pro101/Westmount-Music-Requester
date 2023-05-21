@@ -21,8 +21,7 @@ export function Requests() {
   const [socketConnected, setSocketConnected] = useState(false);
   const [socketLastPong, setSocketLastPong] = useState<Date | null>(null);
 
-  const [selectedTrackSource, setSelectedTrackSource] =
-    useState<TrackSourceInfo>();
+  const [selectedTrackSource, setSelectedTrackSource] = useState<TrackSourceInfo>();
 
   const [filterQuery, setFilterQuery] = useState("");
 
@@ -63,8 +62,7 @@ export function Requests() {
         }
 
         for (let i = 0; i < newRequests.length; i++) {
-          newRequests[i].popularity =
-            requestPages[newRequests[i].track._id].length;
+          newRequests[i].popularity = requestPages[newRequests[i].track._id].length;
         }
 
         setRequests(newRequests);
@@ -83,13 +81,9 @@ export function Requests() {
       const aborter = new AbortController();
 
       (async () => {
-        const request = await fetchRetry(
-          5,
-          BASE_URL + "/api/music/source?id=" + selectedTrack.track.youtubeId,
-          {
-            signal: aborter.signal,
-          }
-        );
+        const request = await fetchRetry(5, BASE_URL + "/api/music/source?id=" + selectedTrack.track.youtubeId, {
+          signal: aborter.signal,
+        });
 
         if (request && request.ok) {
           setSelectedTrackSource(await request.json());
@@ -101,18 +95,15 @@ export function Requests() {
   }, [selectedTrack]);
 
   async function submitRequest(request: Request, accepted: boolean) {
-    const submission = await fetch(
-      BASE_URL + "/api/requests/" + request.track._id,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          evaluation: accepted,
-        }),
-      }
-    );
+    const submission = await fetch(BASE_URL + "/api/requests/" + request.track._id, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        evaluation: accepted,
+      }),
+    });
 
     if (submission.ok) {
       alert(`Successfully ${accepted ? "accepted" : "rejected"}.`);
@@ -141,14 +132,10 @@ export function Requests() {
         return a.popularity - b.popularity;
 
       case "new":
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 
       case "old":
-        return (
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       default:
         return 0;
     }
@@ -165,20 +152,12 @@ export function Requests() {
             name="filter"
             id="filter"
             value={filterQuery}
-            onChange={(e: Event) =>
-              setFilterQuery((e.target as HTMLInputElement).value)
-            }
+            onChange={(e: Event) => setFilterQuery((e.target as HTMLInputElement).value)}
           />
         </fieldset>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="sort">Sort By</label>
-          <select
-            name="sort"
-            id="sort"
-            onChange={(e: Event) =>
-              setSortBy((e.target as HTMLSelectElement).value)
-            }
-          >
+          <select name="sort" id="sort" onChange={(e: Event) => setSortBy((e.target as HTMLSelectElement).value)}>
             <option value="popular">Most Requested</option>
             <option value="unpopular">Least Requested</option>
             <option value="new">Newest</option>
@@ -190,9 +169,7 @@ export function Requests() {
           <select
             name="type-sort"
             id="type-sort"
-            onChange={(e: Event) =>
-              setSortFilter((e.target as HTMLSelectElement).value)
-            }
+            onChange={(e: Event) => setSortFilter((e.target as HTMLSelectElement).value)}
           >
             <option value="none">No Filter</option>
             <option value="pending">Pending</option>
@@ -208,9 +185,7 @@ export function Requests() {
           .sort(sortFunction)
           .filter(
             (request) =>
-              (sortFilter === "none" ||
-                (request.status === sortFilter.toUpperCase() &&
-                  request.track)) &&
+              (sortFilter === "none" || (request.status === sortFilter.toUpperCase() && request.track)) &&
               // validateTrackShouldAdd(request.track._id) &&
               anyStringIncludes(
                 [
@@ -218,38 +193,23 @@ export function Requests() {
                   request.track.artist,
                   request.user.name,
                   request.track.title + request.track.artist,
-                  request.track.title +
-                    request.track.artist +
-                    request.user.name,
+                  request.track.title + request.track.artist + request.user.name,
                 ],
                 filterQuery
               )
           )
           .map((request) => (
-            <RequestElement
-              request={request}
-              key={request._id}
-              setActive={setSelectedTrack}
-            />
+            <RequestElement request={request} key={request._id} setActive={setSelectedTrack} />
           ))}
       </ol>
 
-      <div
-        className={
-          styles["requests__popup"] +
-          (selectedTrack ? " " + styles["requests__popup--active"] : "")
-        }
-      >
+      <div className={styles["requests__popup"] + (selectedTrack ? " " + styles["requests__popup--active"] : "")}>
         <div className={styles["requests__popup-box"]}>
           {selectedTrack && (
             <>
               <div className={styles["requests__popup-header"]}>
-                <h3 className={styles["requests__popup-heading"]}>
-                  {selectedTrack.track.title}
-                </h3>
-                <p className={styles["requests__popup-subtitle"]}>
-                  {selectedTrack.track.artist}
-                </p>
+                <h3 className={styles["requests__popup-heading"]}>{selectedTrack.track.title}</h3>
+                <p className={styles["requests__popup-subtitle"]}>{selectedTrack.track.artist}</p>
 
                 <button
                   className={styles["requests__popup-close-btn"]}
@@ -265,37 +225,27 @@ export function Requests() {
               <div className={styles["requests__popup-content"]}>
                 <ul className={styles["requests__popup-list"]}>
                   <li className={styles["requests__popup-item"]}>
-                    Requested by: {selectedTrack.user.name} (
-                    {selectedTrack.user?.email || "Internal account"})
+                    Requested by: {selectedTrack.user.name} ({selectedTrack.user?.email || "Internal account"})
                   </li>
+                  <li className={styles["requests__popup-item"]}>Status: {selectedTrack.status}</li>
                   <li className={styles["requests__popup-item"]}>
-                    Status: {selectedTrack.status}
-                  </li>
-                  <li className={styles["requests__popup-item"]}>
-                    Popularity: {requestPages[selectedTrack.track._id].length}{" "}
-                    person(s)
+                    Popularity: {requestPages[selectedTrack.track._id].length} person(s)
                   </li>
                   {selectedTrack.status === "PENDING_MANUAL" && (
                     <li
                       className={styles["requests__popup-item"]}
                       style="margin-top: 0.25em; color: hsl(var(--clr-neutral-700))"
                     >
-                      <i
-                        class="fa-regular fa-circle-exclamation"
-                        style="margin-right: 0.5em"
-                      ></i>
-                      This track may be an instrumental or contains unknown
-                      lyrics. View Spotify page and listen to track to check
-                      lyrics.
+                      <i class="fa-regular fa-circle-exclamation" style="margin-right: 0.5em"></i>
+                      This track may be an instrumental or contains unknown lyrics. View Spotify page and listen to
+                      track to check lyrics.
                     </li>
                   )}
                 </ul>
 
                 <div
                   className={styles["requests__popup-spotify"]}
-                  href={
-                    "https://open.spotify.com/track/" + selectedTrack.spotifyId
-                  }
+                  href={"https://open.spotify.com/track/" + selectedTrack.spotifyId}
                 >
                   <div className={styles["requests__popup-spotify-image"]}>
                     <img
@@ -308,16 +258,12 @@ export function Requests() {
 
                   <a
                     className={styles["requests__popup-spotify-link"]}
-                    href={
-                      "https://open.spotify.com/track/" +
-                      selectedTrack.spotifyId
-                    }
+                    href={"https://open.spotify.com/track/" + selectedTrack.spotifyId}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <button>
-                      Spotify{" "}
-                      <i class="fa-regular fa-arrow-up-right-from-square"></i>
+                      Spotify <i class="fa-regular fa-arrow-up-right-from-square"></i>
                     </button>
                   </a>
                 </div>
@@ -332,11 +278,7 @@ export function Requests() {
               </div>
               <div className={styles["requests__popup-footer"]}>
                 <button
-                  className={
-                    styles["requests__popup-footer-btn"] +
-                    " " +
-                    styles["requests__popup-reject-btn"]
-                  }
+                  className={styles["requests__popup-footer-btn"] + " " + styles["requests__popup-reject-btn"]}
                   disabled={selectedTrack.status === "REJECTED"}
                   onClick={() => {
                     setSelectedTrackSource(undefined);
@@ -347,11 +289,7 @@ export function Requests() {
                   Reject
                 </button>
                 <button
-                  className={
-                    styles["requests__popup-footer-btn"] +
-                    " " +
-                    styles["requests__popup-accent-btn"]
-                  }
+                  className={styles["requests__popup-footer-btn"] + " " + styles["requests__popup-accent-btn"]}
                   disabled={selectedTrack.status === "ACCEPTED"}
                   onClick={() => {
                     setSelectedTrackSource(undefined);

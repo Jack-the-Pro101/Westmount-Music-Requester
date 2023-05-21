@@ -127,11 +127,7 @@ button:disabled {
   content: "";
   position: absolute;
   z-index: -1;
-  background-image: linear-gradient(
-    18deg,
-    hsl(var(--clr-primary-400)) 40%,
-    hsl(var(--clr-primary-700))
-  );
+  background-image: linear-gradient(18deg, hsl(var(--clr-primary-400)) 40%, hsl(var(--clr-primary-700)));
   width: 69rem;
   height: 58rem;
   bottom: 1em;
@@ -144,11 +140,7 @@ button:disabled {
   content: "";
   position: absolute;
   z-index: -1;
-  background-image: linear-gradient(
-    18deg,
-    hsl(var(--clr-accent-400)) 40%,
-    hsl(var(--clr-accent-700))
-  );
+  background-image: linear-gradient(18deg, hsl(var(--clr-accent-400)) 40%, hsl(var(--clr-accent-700)));
   width: 56rem;
   height: 42rem;
   right: 1em;

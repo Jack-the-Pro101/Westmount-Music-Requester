@@ -29,14 +29,7 @@ const requests = mongoose.model(
 
       status: {
         type: String,
-        enum: [
-          "AWAITING",
-          "PENDING",
-          "PENDING_MANUAL",
-          "AUTO_REJECTED",
-          "REJECTED",
-          "ACCEPTED",
-        ],
+        enum: ["AWAITING", "PENDING", "PENDING_MANUAL", "AUTO_REJECTED", "REJECTED", "ACCEPTED"],
         default: "AWAITING",
       },
     },
@@ -47,8 +40,6 @@ const requests = mongoose.model(
   )
 );
 
-export type Request = typeof requests extends mongoose.Model<infer T>
-  ? T
-  : unknown;
+export type Request = typeof requests extends mongoose.Model<infer T> ? T : unknown;
 
 export default requests;

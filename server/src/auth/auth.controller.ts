@@ -72,10 +72,7 @@ export class AuthController {
 
   @Throttle(4, 6)
   @Get("google-redirect")
-  async googleAuthRedirect(
-    @Req() req: FastifyRequest,
-    @Res({ passthrough: true }) res: FastifyReply
-  ) {
+  async googleAuthRedirect(@Req() req: FastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
     const user = await this.authService.googleLogin(req);
     if (user) {
       const token = sign(user, process.env.JWT_SECRET!);

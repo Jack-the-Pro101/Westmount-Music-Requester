@@ -21,8 +21,8 @@ const ErrorBoundary = ({ children }: { children: ComponentChildren }) => {
     >
       <h1>Something went wrong</h1>
       <p>
-        Unfortunately, the app unexpectedly crashed. Try reloading the page; if
-        this doesn't work, try clearing your cookies.
+        Unfortunately, the app unexpectedly crashed. Try reloading the page; if this doesn't work, try clearing your
+        cookies.
       </p>
       <button onClick={reload}>Reload</button>
     </div>

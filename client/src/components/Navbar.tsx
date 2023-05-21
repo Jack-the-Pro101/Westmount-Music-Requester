@@ -12,10 +12,7 @@ export function Navbar({ spacer }: { spacer: boolean }) {
 
   function toggleTheme() {
     document.querySelector("html")!.classList.toggle("light");
-    localStorage.setItem(
-      "theme",
-      localStorage.getItem("theme") === "light" ? "dark" : "light"
-    );
+    localStorage.setItem("theme", localStorage.getItem("theme") === "light" ? "dark" : "light");
   }
 
   return (
@@ -24,25 +21,15 @@ export function Navbar({ spacer }: { spacer: boolean }) {
         <ul className="navbar__list">
           <li className="navbar__item navbar__item--logo">
             <a href="/">
-              <img
-                src="/images/logo/logo256.webp"
-                alt="Westmount Music Requester logo"
-              />
+              <img src="/images/logo/logo256.webp" alt="Westmount Music Requester logo" />
             </a>
           </li>
           <li className="navbar__item navbar__item-dropdown-container">
             {user ? (
-              <button
-                className="navbar__profile"
-                onClick={() => setDropdownDropped(!dropdownDropped)}
-              >
+              <button className="navbar__profile" onClick={() => setDropdownDropped(!dropdownDropped)}>
                 <div className="navbar__icon">
                   <img
-                    src={
-                      user.type === "GOOGLE"
-                        ? user.avatar
-                        : "/images/userprofile.svg"
-                    }
+                    src={user.type === "GOOGLE" ? user.avatar : "/images/userprofile.svg"}
                     referrerpolicy="no-referrer"
                     alt={user.name + "'s avatar"}
                     className="navbar__icon-img"
@@ -51,27 +38,16 @@ export function Navbar({ spacer }: { spacer: boolean }) {
                 <p className="navbar__name">{user.name}</p>
                 <i
                   class="fa-solid fa-caret-down"
-                  style={
-                    "margin-left: 1.5rem;" +
-                    (dropdownDropped ? "transform: rotate(180deg)" : "")
-                  }
+                  style={"margin-left: 1.5rem;" + (dropdownDropped ? "transform: rotate(180deg)" : "")}
                 ></i>
               </button>
             ) : (
-              <a
-                href={"/sign-in"}
-                className={`${user === undefined ? "loading" : ""}`}
-              >
+              <a href={"/sign-in"} className={`${user === undefined ? "loading" : ""}`}>
                 Sign In
               </a>
             )}
 
-            <ul
-              className={
-                "navbar__dropdown" +
-                (dropdownDropped ? " navbar__dropdown--active" : "")
-              }
-            >
+            <ul className={"navbar__dropdown" + (dropdownDropped ? " navbar__dropdown--active" : "")}>
               <li className="navbar__dropdown-item">
                 <a href="/my-requests">
                   <i class="fa-regular fa-ballot"></i> Your Requests
@@ -93,19 +69,13 @@ export function Navbar({ spacer }: { spacer: boolean }) {
               )}
               <li className="navbar__dropdown-breaker"></li>
               <li className="navbar__dropdown-item">
-                <button
-                  className="navbar__dropdown-btn"
-                  onClick={() => toggleTheme()}
-                >
+                <button className="navbar__dropdown-btn" onClick={() => toggleTheme()}>
                   <i class="fa-regular fa-circle-half-stroke"></i> Toggle Theme
                 </button>
               </li>
               <li className="navbar__dropdown-breaker"></li>
               <li className="navbar__dropdown-item">
-                <button
-                  className="navbar__dropdown-btn"
-                  onClick={() => logout(navigate)}
-                >
+                <button className="navbar__dropdown-btn" onClick={() => logout(navigate)}>
                   <i class="fa-regular fa-right-from-bracket"></i> Sign Out
                 </button>
               </li>
@@ -115,10 +85,7 @@ export function Navbar({ spacer }: { spacer: boolean }) {
       </nav>
 
       <div
-        className={
-          "navbar__dropdown-blur-area" +
-          (dropdownDropped ? " navbar__dropdown-blur-area--active" : "")
-        }
+        className={"navbar__dropdown-blur-area" + (dropdownDropped ? " navbar__dropdown-blur-area--active" : "")}
         onClick={() => setDropdownDropped(false)}
       ></div>
 

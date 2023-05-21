@@ -15,9 +15,7 @@ export function SearchDropdown({ songs, onSelect, isLoading, isEmpty }: Props) {
         isLoading ? (
           <li className={styles["search__dropdown-loading"]}>Finding music</li>
         ) : isEmpty ? (
-          <li className={styles["search__dropdown-error"]}>
-            No results found.
-          </li>
+          <li className={styles["search__dropdown-error"]}>No results found.</li>
         ) : null
       ) : (
         songs
@@ -25,30 +23,15 @@ export function SearchDropdown({ songs, onSelect, isLoading, isEmpty }: Props) {
           .map((song: SpotifyTrack) => (
             <li className={styles["search__dropdown-item"]} key={song.id}>
               <div className={styles["search__dropdown-img-container"]}>
-                <a
-                  href={song.external_urls.spotify}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img
-                    src={song.album.images[0].url}
-                    alt={song.name + "'s cover image"}
-                  />
+                <a href={song.external_urls.spotify} target="_blank" rel="noopener noreferrer">
+                  <img src={song.album.images[0].url} alt={song.name + "'s cover image"} />
                 </a>
               </div>
               <div className={styles["search__dropdown-text"]}>
-                <a
-                  href={song.external_urls.spotify}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <h4 className={styles["search__dropdown-title"]}>
-                    {song.name}
-                  </h4>
+                <a href={song.external_urls.spotify} target="_blank" rel="noopener noreferrer">
+                  <h4 className={styles["search__dropdown-title"]}>{song.name}</h4>
                 </a>
-                <p className={styles["search__dropdown-artist"]}>
-                  {song.artists[0].name}
-                </p>
+                <p className={styles["search__dropdown-artist"]}>{song.artists[0].name}</p>
               </div>
               <button
                 className={styles["search__dropdown-select-btn"]}

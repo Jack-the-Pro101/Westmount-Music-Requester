@@ -38,9 +38,7 @@ export function Home() {
 
   function setSelectedCoreSongRelay(coreSong: CoreSong) {
     if (currentRequests.some((request) => request.spotifyId === coreSong.id))
-      return alert(
-        "You have already requested this track and cannot request it again this cycle."
-      );
+      return alert("You have already requested this track and cannot request it again this cycle.");
 
     setSelectedCoreSong(coreSong);
     requestsRef.current!.scrollIntoView();
@@ -50,9 +48,7 @@ export function Home() {
     <>
       <main
         className={styles.main}
-        style={`--cover-img: ${
-          selectedCoreSong != null ? `url("${selectedCoreSong.coverUrl}")` : ""
-        }`}
+        style={`--cover-img: ${selectedCoreSong != null ? `url("${selectedCoreSong.coverUrl}")` : ""}`}
       >
         <div className={styles.main__searcher}>
           <header className={styles.header}>

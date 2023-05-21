@@ -34,23 +34,15 @@ const FLAGS: {
   }
 );
 
-export function generateBitfield(
-  permissions: Permission | "EVERYTHING" | Permission[],
-  inherit = false
-) {
+export function generateBitfield(permissions: Permission | "EVERYTHING" | Permission[], inherit = false) {
   if (typeof permissions === "string" && !inherit) {
     switch (permissions) {
       case "EVERYTHING": {
-        return Object.keys(FLAGS).reduce(
-          (prev, key) => prev + (FLAGS as { [key: string]: number })[key],
-          0
-        );
+        return Object.keys(FLAGS).reduce((prev, key) => prev + (FLAGS as { [key: string]: number })[key], 0);
       }
 
       default: {
-        console.warn(
-          `WARNING: Permission ${permissions} does not exist! Typo?`
-        );
+        console.warn(`WARNING: Permission ${permissions} does not exist! Typo?`);
         return 0;
       }
     }
@@ -65,10 +57,7 @@ export function generateBitfield(
 
       const flagBits = FLAGS[permissions];
 
-      if (flagBits == null)
-        console.warn(
-          `WARNING: Permission ${permissions} does not exist! Typo?`
-        );
+      if (flagBits == null) console.warn(`WARNING: Permission ${permissions} does not exist! Typo?`);
 
       if (bitfield === flagBits) break;
     }
@@ -97,8 +86,7 @@ export function bitfieldToArray(bits: number): string[] {
 export function check(permissions: string[], bits: number): boolean {
   return permissions.every((permission) => {
     const flagBits = (FLAGS as { [key: string]: number })[permission];
-    if (flagBits == null)
-      console.warn(`WARNING: Permission ${permission} does not exist! Typo?`);
+    if (flagBits == null) console.warn(`WARNING: Permission ${permission} does not exist! Typo?`);
     return (bits & flagBits) !== 0;
   });
 }

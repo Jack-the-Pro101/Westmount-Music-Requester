@@ -369,8 +369,7 @@
   width: 100%;
   max-width: 600px;
   box-shadow: 0 0 16px -2px rgba(0, 0, 0, 0.7);
-  transition: transform 0.2s cubic-bezier(0.67, 0.42, 0.5, 1.49),
-    opacity 0.3s ease;
+  transition: transform 0.2s cubic-bezier(0.67, 0.42, 0.5, 1.49), opacity 0.3s ease;
   transform: scale(0.9);
   opacity: 0;
 }
@@ -475,12 +474,7 @@
 }
 
 .requests__btn[type="submit"] {
-  background-image: linear-gradient(
-    36deg,
-    hsl(var(--clr-primary-400)),
-    45%,
-    hsl(var(--clr-primary-600))
-  );
+  background-image: linear-gradient(36deg, hsl(var(--clr-primary-400)), 45%, hsl(var(--clr-primary-600)));
 }
 
 .requests__confirm {
@@ -495,8 +489,7 @@
   justify-content: center;
   z-index: 3;
   visibility: hidden;
-  transition: background-color 0.5s ease, background-filter 0.5s ease,
-    visibility 0s 0.5s linear;
+  transition: background-color 0.5s ease, background-filter 0.5s ease, visibility 0s 0.5s linear;
   pointer-events: none;
 }
 
@@ -504,8 +497,7 @@
   visibility: visible;
   background-color: rgba(0, 0, 0, 0.7);
   pointer-events: unset;
-  transition: background-color 0.5s ease, background-filter 0.5s ease,
-    visibility 0s 0s linear;
+  transition: background-color 0.5s ease, background-filter 0.5s ease, visibility 0s 0s linear;
 }
 
 @supports (backdrop-filter: blur(8px)) {
@@ -628,17 +620,9 @@
 }
 
 .requests__confirm-btn {
-  background-image: linear-gradient(
-    36deg,
-    hsl(var(--clr-primary-400)) 45%,
-    hsl(var(--clr-primary-700))
-  );
+  background-image: linear-gradient(36deg, hsl(var(--clr-primary-400)) 45%, hsl(var(--clr-primary-700)));
 }
 
 .requests__back-btn {
-  background-image: linear-gradient(
-    36deg,
-    hsl(var(--clr-accent-400)) 45%,
-    hsl(var(--clr-accent-700))
-  );
+  background-image: linear-gradient(36deg, hsl(var(--clr-accent-400)) 45%, hsl(var(--clr-accent-700)));
 }

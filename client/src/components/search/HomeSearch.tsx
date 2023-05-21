@@ -15,11 +15,7 @@ function statusCodeToMessage(code: number) {
   }
 }
 
-export default function HomeSearch({
-  setSelectedCoreSong,
-}: {
-  setSelectedCoreSong: (value: CoreSong) => void;
-}) {
+export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSong: (value: CoreSong) => void }) {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [songs, setSongs] = useState<SpotifyTrack[]>([]);
@@ -56,11 +52,7 @@ export default function HomeSearch({
     } else {
       setIsEmpty(true);
 
-      alert(
-        `Request failed: code ${request.status}\n\n${statusCodeToMessage(
-          request.status
-        )}`
-      );
+      alert(`Request failed: code ${request.status}\n\n${statusCodeToMessage(request.status)}`);
     }
 
     setIsLoading(false);
@@ -78,10 +70,7 @@ export default function HomeSearch({
       <form action="#" className={styles.search__form} onSubmit={handleSubmit}>
         <div
           className={
-            styles.search__container +
-            (songs.length === 0
-              ? ""
-              : `${" " + styles["search__container--active"]}`)
+            styles.search__container + (songs.length === 0 ? "" : `${" " + styles["search__container--active"]}`)
           }
         >
           <div className={styles.search__bar}>
@@ -93,9 +82,7 @@ export default function HomeSearch({
               required
               value={search}
               maxLength={100}
-              onChange={(e) =>
-                updateSearch((e.target as HTMLInputElement).value)
-              }
+              onChange={(e) => updateSearch((e.target as HTMLInputElement).value)}
             />
             <label htmlFor="search-music" className={styles.search__label}>
               Search music
@@ -106,12 +93,7 @@ export default function HomeSearch({
             <i class="fa-regular fa-magnifying-glass"></i>
           </button>
         </div>
-        <SearchDropdown
-          songs={songs}
-          onSelect={songSelected}
-          isLoading={isLoading}
-          isEmpty={isEmpty}
-        />
+        <SearchDropdown songs={songs} onSelect={songSelected} isLoading={isLoading} isEmpty={isEmpty} />
         {/* <div className={styles["search__dropdown-filler"]}></div> */}
       </form>
     </div>

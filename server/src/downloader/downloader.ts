@@ -21,9 +21,7 @@ class Downloader {
 
   verifyDependencies(): Promise<void> {
     if (!process.env.DOWNLOADS)
-      throw new Error(
-        "Downloads directory not defined in env vars. Application cannot continue."
-      );
+      throw new Error("Downloads directory not defined in env vars. Application cannot continue.");
 
     return Promise.race([
       new Promise<void>((resolve, reject) => {
@@ -42,12 +40,7 @@ class Downloader {
           }
         });
       }),
-      new Promise((_, reject) =>
-        setTimeout(
-          () => reject(new Error("FFMPEG installation check timed out!")),
-          10000
-        )
-      ),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("FFMPEG installation check timed out!")), 10000)),
     ]) as Promise<void>;
   }
 
@@ -96,16 +89,12 @@ class Downloader {
     try {
       const trackInfo = await this.yt!.music.getInfo(id);
 
-      if (!trackInfo.streaming_data)
-        throw new Error("No streaming data found!");
+      if (!trackInfo.streaming_data) throw new Error("No streaming data found!");
 
-      const adaptiveAudioFormats =
-        trackInfo.streaming_data.adaptive_formats.filter(
-          (format) => format.has_audio && !format.has_video
-        );
-      const audioFormats = trackInfo.streaming_data.formats.filter(
+      const adaptiveAudioFormats = trackInfo.streaming_data.adaptive_formats.filter(
         (format) => format.has_audio && !format.has_video
       );
+      const audioFormats = trackInfo.streaming_data.formats.filter((format) => format.has_audio && !format.has_video);
 
       const bestAudioFormat = [...adaptiveAudioFormats, ...audioFormats].sort(
         (a, b) => b.average_bitrate! - a.average_bitrate!
@@ -122,11 +111,7 @@ class Downloader {
     }
   }
 
-  async download(
-    id: string,
-    filename: string,
-    ffmpegArgs: FfmpegPostProcessOptions
-  ) {
+  async download(id: string, filename: string, ffmpegArgs: FfmpegPostProcessOptions) {
     await this.checkReady();
 
     const format = await this.yt!.getStreamingData(id, {
@@ -141,9 +126,7 @@ class Downloader {
 
     const tempFilepath = path.join(
       process.env.DOWNLOADS!,
-      `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${
-        format.mime_type.split(";")[0].split("/")[1]
-      }`
+      `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`
     );
 
     await new Promise(async (resolve) => {

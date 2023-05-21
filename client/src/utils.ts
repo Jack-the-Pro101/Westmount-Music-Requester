@@ -1,8 +1,4 @@
-export async function fetchRetry(
-  retryAmount: number,
-  input: RequestInfo | URL,
-  init: RequestInit | undefined
-) {
+export async function fetchRetry(retryAmount: number, input: RequestInfo | URL, init: RequestInit | undefined) {
   for (let i = 0; i < retryAmount; i++) {
     const request = await fetch(input, init).catch(() => {});
     if (!request || !request.ok) continue;
@@ -22,9 +18,6 @@ export function secondsToHumanReadableString(seconds: number) {
 export function anyStringIncludes(strings: string[], filter: string) {
   if (!filter) return true;
   return strings.some((string) =>
-    string
-      .replace(/ /g, "")
-      .toLowerCase()
-      .includes(filter.toLowerCase().replace(/ /g, ""))
+    string.replace(/ /g, "").toLowerCase().includes(filter.toLowerCase().replace(/ /g, ""))
   );
 }

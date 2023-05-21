@@ -27,11 +27,7 @@ export function MyRequests() {
   }, []);
 
   async function cancelRequest(request: Request) {
-    if (
-      !confirm(
-        `Are you sure you want to cancel your request for: ${request.track.title} - ${request.track.artist}?`
-      )
-    )
+    if (!confirm(`Are you sure you want to cancel your request for: ${request.track.title} - ${request.track.artist}?`))
       return;
 
     const requestId = request._id;
@@ -41,13 +37,9 @@ export function MyRequests() {
     });
 
     if (cancel.ok) {
-      setRequests((requests) =>
-        requests.filter((request) => request._id !== requestId)
-      );
+      setRequests((requests) => requests.filter((request) => request._id !== requestId));
 
-      alert(
-        `Cancelled request for: ${request.track.title} - ${request.track.artist}`
-      );
+      alert(`Cancelled request for: ${request.track.title} - ${request.track.artist}`);
     } else {
       alert(`Failed to cancel request, error ${cancel.status}`);
     }
@@ -58,8 +50,7 @@ export function MyRequests() {
       <header className={styles.myrequests__header}>
         <h1 className={styles.myrequests__heading}>Your Requests</h1>
         <p className={styles.myrequests__subtitle}>
-          You have used {requests.length} of max {config.maxSongsPerCycle}{" "}
-          requests this cycle.
+          You have used {requests.length} of max {config.maxSongsPerCycle} requests this cycle.
         </p>
       </header>
       <ul className={styles.myrequests__list}>
@@ -67,11 +58,7 @@ export function MyRequests() {
           <li className={styles.myrequests__info}>You have no requests yet.</li>
         ) : (
           requests
-            .sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-            )
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             .map((request) => (
               <li className={styles.myrequests__item}>
                 <div className={styles["myrequests__item-image"]}>
@@ -102,10 +89,7 @@ export function MyRequests() {
                       {request?.track?.artist ||
                         ("Spotify " && (
                           <a
-                            href={
-                              "https://open.spotify.com/track/" +
-                              request.spotifyId
-                            }
+                            href={"https://open.spotify.com/track/" + request.spotifyId}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -113,10 +97,7 @@ export function MyRequests() {
                           </a>
                         ))}
                     </p>
-                    <p>
-                      Requested on{" "}
-                      {dateFormatter.format(new Date(request.createdAt))}
-                    </p>
+                    <p>Requested on {dateFormatter.format(new Date(request.createdAt))}</p>
                   </div>
                   <div className={styles["myrequests__item-status"]}>
                     {request.status.toLowerCase().replace(/_/g, " ")}{" "}
