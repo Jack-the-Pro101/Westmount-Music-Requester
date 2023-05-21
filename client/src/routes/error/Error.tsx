@@ -11,8 +11,7 @@ export function Error() {
   switch (errorType) {
     case "auth":
       errorTitle = "Invalid Email";
-      errorMsg =
-        "You attempted to login using a non-school email. Please retry with the appropriate email (ending in @hwdsb.on.ca)";
+      errorMsg = "You attempted to login using a non-school email. Please retry with the appropriate email (ending in @hwdsb.on.ca)";
       break;
     case "banned":
       errorTitle = "You Are Banned";

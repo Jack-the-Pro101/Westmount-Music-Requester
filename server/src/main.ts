@@ -54,8 +54,7 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV === "production") {
     if (!process.env.MONGODB_URI) throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
-    if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD)
-      throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
+    if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD) throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
   }
 
   await downloader.initialize();

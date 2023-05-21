@@ -14,8 +14,7 @@ export class AuthService {
   async googleLogin(req: FastifyRequest): Promise<StoredUser | undefined> {
     const code = Object.getOwnPropertyDescriptor(req.query, "code")?.value;
     const stateToken = Object.getOwnPropertyDescriptor(req.query, "state")?.value;
-    if (!code || !stateToken || typeof code !== "string" || typeof stateToken !== "string")
-      throw new BadRequestException();
+    if (!code || !stateToken || typeof code !== "string" || typeof stateToken !== "string") throw new BadRequestException();
     try {
       const result = verify(stateToken, process.env.JWT_SECRET!) as {
         expires: number;
@@ -28,9 +27,7 @@ export class AuthService {
       process.env.GOOGLE_CLIENT_ID!,
       process.env.GOOGLE_CLIENT_SECRET!,
       code,
-      process.env.NODE_ENV === "production"
-        ? process.env.GOOGLE_REDIRECT_URI!
-        : "http://localhost:3000/api/auth/google-redirect"
+      process.env.NODE_ENV === "production" ? process.env.GOOGLE_REDIRECT_URI! : "http://localhost:3000/api/auth/google-redirect"
     );
     console.log(code, stateToken);
     if (!token) throw new UnauthorizedException();

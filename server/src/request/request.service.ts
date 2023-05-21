@@ -131,10 +131,7 @@ export class RequestService {
 
         const response = await client.analyze(analysisData);
 
-        if (
-          response.attributeScores.TOXICITY!.summaryScore.value > 0.7 ||
-          response.attributeScores.PROFANITY!.summaryScore.value > 0.7
-        ) {
+        if (response.attributeScores.TOXICITY!.summaryScore.value > 0.7 || response.attributeScores.PROFANITY!.summaryScore.value > 0.7) {
           isProfane = true;
           break;
         }
@@ -257,9 +254,7 @@ export class RequestService {
 
   async createRequest(info: RequestData, user: StoredUser, trackId: mongoose.Types.ObjectId): Promise<boolean> {
     try {
-      const userDoc = await userSchema.findOne(
-        user.type === "GOOGLE" ? { email: user.email } : { username: user.username }
-      );
+      const userDoc = await userSchema.findOne(user.type === "GOOGLE" ? { email: user.email } : { username: user.username });
 
       if (userDoc == null) return false;
 
@@ -333,9 +328,7 @@ export class RequestService {
     const request = await requestSchema.findOne({ track: trackId }); // This could use the average start time of all requests
     const requestTrack = await trackSchema.findOne({ _id: trackId });
 
-    const filename =
-      sanitizeFilename(`${requestTrack!.youtubeId} ${requestTrack!.title} - ${requestTrack!.artist}`, "_") +
-      `.${config.downloadExt}`;
+    const filename = sanitizeFilename(`${requestTrack!.youtubeId} ${requestTrack!.title} - ${requestTrack!.artist}`, "_") + `.${config.downloadExt}`;
 
     if ((await downloadedTracksSchema.findOne({ filename })) != null) {
       console.log(filename, "already downloaded. Stopping re-download.");

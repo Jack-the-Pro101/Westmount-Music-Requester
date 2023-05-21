@@ -147,13 +147,7 @@ export function Requests() {
       <form action="#" className={styles.requests__filter}>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="filter">Search</label>
-          <input
-            type="text"
-            name="filter"
-            id="filter"
-            value={filterQuery}
-            onChange={(e: Event) => setFilterQuery((e.target as HTMLInputElement).value)}
-          />
+          <input type="text" name="filter" id="filter" value={filterQuery} onChange={(e: Event) => setFilterQuery((e.target as HTMLInputElement).value)} />
         </fieldset>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="sort">Sort By</label>
@@ -166,11 +160,7 @@ export function Requests() {
         </fieldset>
         <fieldset className={styles.requests__fieldset}>
           <label htmlFor="type-sort">Filter By Type</label>
-          <select
-            name="type-sort"
-            id="type-sort"
-            onChange={(e: Event) => setSortFilter((e.target as HTMLSelectElement).value)}
-          >
+          <select name="type-sort" id="type-sort" onChange={(e: Event) => setSortFilter((e.target as HTMLSelectElement).value)}>
             <option value="none">No Filter</option>
             <option value="pending">Pending</option>
             <option value="pending_manual">Pending Manual</option>
@@ -188,13 +178,7 @@ export function Requests() {
               (sortFilter === "none" || (request.status === sortFilter.toUpperCase() && request.track)) &&
               // validateTrackShouldAdd(request.track._id) &&
               anyStringIncludes(
-                [
-                  request.track.title,
-                  request.track.artist,
-                  request.user.name,
-                  request.track.title + request.track.artist,
-                  request.track.title + request.track.artist + request.user.name,
-                ],
+                [request.track.title, request.track.artist, request.user.name, request.track.title + request.track.artist, request.track.title + request.track.artist + request.user.name],
                 filterQuery
               )
           )
@@ -228,40 +212,21 @@ export function Requests() {
                     Requested by: {selectedTrack.user.name} ({selectedTrack.user?.email || "Internal account"})
                   </li>
                   <li className={styles["requests__popup-item"]}>Status: {selectedTrack.status}</li>
-                  <li className={styles["requests__popup-item"]}>
-                    Popularity: {requestPages[selectedTrack.track._id].length} person(s)
-                  </li>
+                  <li className={styles["requests__popup-item"]}>Popularity: {requestPages[selectedTrack.track._id].length} person(s)</li>
                   {selectedTrack.status === "PENDING_MANUAL" && (
-                    <li
-                      className={styles["requests__popup-item"]}
-                      style="margin-top: 0.25em; color: hsl(var(--clr-neutral-700))"
-                    >
+                    <li className={styles["requests__popup-item"]} style="margin-top: 0.25em; color: hsl(var(--clr-neutral-700))">
                       <i class="fa-regular fa-circle-exclamation" style="margin-right: 0.5em"></i>
-                      This track may be an instrumental or contains unknown lyrics. View Spotify page and listen to
-                      track to check lyrics.
+                      This track may be an instrumental or contains unknown lyrics. View Spotify page and listen to track to check lyrics.
                     </li>
                   )}
                 </ul>
 
-                <div
-                  className={styles["requests__popup-spotify"]}
-                  href={"https://open.spotify.com/track/" + selectedTrack.spotifyId}
-                >
+                <div className={styles["requests__popup-spotify"]} href={"https://open.spotify.com/track/" + selectedTrack.spotifyId}>
                   <div className={styles["requests__popup-spotify-image"]}>
-                    <img
-                      src={selectedTrack.track.cover}
-                      alt={`${selectedTrack.track.title}'s cover`}
-                      referrerpolicy="no-referrer"
-                      className={styles["requests__popup-spotify-img"]}
-                    />
+                    <img src={selectedTrack.track.cover} alt={`${selectedTrack.track.title}'s cover`} referrerpolicy="no-referrer" className={styles["requests__popup-spotify-img"]} />
                   </div>
 
-                  <a
-                    className={styles["requests__popup-spotify-link"]}
-                    href={"https://open.spotify.com/track/" + selectedTrack.spotifyId}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a className={styles["requests__popup-spotify-link"]} href={"https://open.spotify.com/track/" + selectedTrack.spotifyId} target="_blank" rel="noopener noreferrer">
                     <button>
                       Spotify <i class="fa-regular fa-arrow-up-right-from-square"></i>
                     </button>

@@ -17,7 +17,5 @@ export function secondsToHumanReadableString(seconds: number) {
 
 export function anyStringIncludes(strings: string[], filter: string) {
   if (!filter) return true;
-  return strings.some((string) =>
-    string.replace(/ /g, "").toLowerCase().includes(filter.toLowerCase().replace(/ /g, ""))
-  );
+  return strings.some((string) => string.replace(/ /g, "").toLowerCase().includes(filter.toLowerCase().replace(/ /g, "")));
 }

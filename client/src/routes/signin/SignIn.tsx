@@ -54,13 +54,7 @@ export function SignIn() {
           <fieldset className={styles.signin__fieldset} style="order: 2">
             <div className={styles["signin__fieldset-section"]} style={{ marginBottom: 0 }}>
               <label htmlFor="is-admin">Admin sign in?</label>
-              <input
-                type="checkbox"
-                name="is-admin"
-                id="is-admin"
-                onChange={() => setAdminSigninShown(!adminSigninShown)}
-                checked={adminSigninShown}
-              />
+              <input type="checkbox" name="is-admin" id="is-admin" onChange={() => setAdminSigninShown(!adminSigninShown)} checked={adminSigninShown} />
             </div>
           </fieldset>
           <fieldset className={styles.signin__fieldset + ` ${adminSigninShown ? "" : styles.hidden}`} style="order: 1">

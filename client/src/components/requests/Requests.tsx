@@ -52,8 +52,7 @@ export function Requests({
 
     const aborter = new AbortController();
 
-    if (currentRequests.some((request) => request.track.youtubeId === selectedTrack.id))
-      return alert("You have already requested this track and cannot request it again this cycle.");
+    if (currentRequests.some((request) => request.track.youtubeId === selectedTrack.id)) return alert("You have already requested this track and cannot request it again this cycle.");
 
     (async () => {
       const request = await fetchRetry(5, BASE_URL + "/api/music/source?id=" + selectedTrack.id, {
@@ -71,13 +70,9 @@ export function Requests({
     const urlParams = new URLSearchParams();
     urlParams.append("songId", selectedCoreSong!.id.toString());
 
-    const request = await fetchRetry(
-      5,
-      BASE_URL + "/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title,
-      {
-        signal: aborter.signal,
-      }
-    );
+    const request = await fetchRetry(5, BASE_URL + "/api/music/info?song=" + selectedCoreSong!.artist + " " + selectedCoreSong!.title, {
+      signal: aborter.signal,
+    });
 
     if (!request) return alert("Failed to fetch songs from YouTube");
 
@@ -130,14 +125,7 @@ export function Requests({
             ) : (
               <>
                 Found {trackResults.length} results for "{selectedCoreSong?.artist} - {selectedCoreSong?.title}" from{" "}
-                <a
-                  href={
-                    "https://music.youtube.com/search?q=" +
-                    `${selectedCoreSong?.artist} ${selectedCoreSong?.title}`.replace(/ /g, "+")
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href={"https://music.youtube.com/search?q=" + `${selectedCoreSong?.artist} ${selectedCoreSong?.title}`.replace(/ /g, "+")} target="_blank" rel="noopener noreferrer">
                   YouTube Music
                 </a>
               </>
@@ -145,32 +133,15 @@ export function Requests({
           </p>
         )}
 
-        <button
-          className={styles["requests__dropdown-btn"]}
-          disabled={selectedTrack == null}
-          onClick={() => setModalShown(true)}
-          type="button"
-          title="Show music sources modal"
-        >
+        <button className={styles["requests__dropdown-btn"]} disabled={selectedTrack == null} onClick={() => setModalShown(true)} type="button" title="Show music sources modal">
           {(!selectedCoreSong || isLoading) && (
-            <div className={styles.requests__load}>
-              {!isLoading ? (
-                <p>No track selected from search</p>
-              ) : (
-                <img src="/images/loading.svg" alt="Loading" className={styles["requests__load-img"]} />
-              )}
-            </div>
+            <div className={styles.requests__load}>{!isLoading ? <p>No track selected from search</p> : <img src="/images/loading.svg" alt="Loading" className={styles["requests__load-img"]} />}</div>
           )}
           {selectedTrack && !isLoading && (
             <>
               <div className={styles.requests__thumbnail}>
                 <a href={selectedTrack.url} target="_blank" rel="noopener noreferrer">
-                  <img
-                    src={selectedTrack.thumbnail}
-                    alt={selectedTrack.title + "'s thumbnail"}
-                    referrerpolicy="no-referrer"
-                    className={styles["requests__thumbnail-image"]}
-                  />
+                  <img src={selectedTrack.thumbnail} alt={selectedTrack.title + "'s thumbnail"} referrerpolicy="no-referrer" className={styles["requests__thumbnail-image"]} />
                 </a>
               </div>
               <div className={styles["requests__dropdown-info"]}>
@@ -187,12 +158,7 @@ export function Requests({
         <div className={styles.requests__modal + (modalShown ? " " + styles["requests__modal--shown"] : "")}>
           <div className={styles["requests__modal-popup"]}>
             <h3 className={styles["requests__modal-title"]}>Select source</h3>
-            <button
-              className={styles["requests__modal-close"]}
-              title="Close modal"
-              type="button"
-              onClick={() => setModalShown(false)}
-            >
+            <button className={styles["requests__modal-close"]} title="Close modal" type="button" onClick={() => setModalShown(false)}>
               <i class="fa-regular fa-xmark"></i>
             </button>
             <ul className={styles.requests__list}>
@@ -202,12 +168,7 @@ export function Requests({
                   <li className={styles.requests__item} key={track.id}>
                     <div className={styles.requests__thumbnail}>
                       <a href={track.url} target="_blank" rel="noopener noreferrer">
-                        <img
-                          src={track.thumbnail}
-                          alt={track.title + "'s thumbnail"}
-                          referrerpolicy="no-referrer"
-                          className={styles["requests__thumbnail-image"]}
-                        />
+                        <img src={track.thumbnail} alt={track.title + "'s thumbnail"} referrerpolicy="no-referrer" className={styles["requests__thumbnail-image"]} />
                       </a>
                     </div>
                     <div className={styles.requests__info}>
@@ -219,8 +180,7 @@ export function Requests({
                       className={styles["requests__select-btn"]}
                       title="Select source"
                       onClick={() => {
-                        if (currentRequests.some((request) => request.track.youtubeId === track.id))
-                          return alert("You have already requested this track and cannot request it again this cycle.");
+                        if (currentRequests.some((request) => request.track.youtubeId === track.id)) return alert("You have already requested this track and cannot request it again this cycle.");
 
                         setSelectedTrack(track);
                         setModalShown(false);
@@ -236,24 +196,15 @@ export function Requests({
           </div>
         </div>
 
-        <fieldset
-          className={`${styles.requests__fieldset} ${styles["requests__fieldset-play-range"]}`}
-          disabled={selectedTrackSource == null}
-        >
+        <fieldset className={`${styles.requests__fieldset} ${styles["requests__fieldset-play-range"]}`} disabled={selectedTrackSource == null}>
           <h2 className={styles.requests__heading}>Select play range</h2>
-          <PlayRange
-            songPreview={selectedTrackSource}
-            selectionRange={selectionRange}
-            setSelectionRange={setSelectionRange}
-            editable={true}
-          />
+          <PlayRange songPreview={selectedTrackSource} selectionRange={selectionRange} setSelectionRange={setSelectionRange} editable={true} />
         </fieldset>
 
         {!canRequest && (
           <p className={styles.requests__msg}>
-            <i class="fa-solid fa-circle-info"></i> <strong>Note</strong>: You have requested the max amount of tracks
-            this cycle and will not be able to request more. However, this panel will remain operational for preview
-            purposes only.
+            <i class="fa-solid fa-circle-info"></i> <strong>Note</strong>: You have requested the max amount of tracks this cycle and will not be able to request more. However, this panel will remain
+            operational for preview purposes only.
           </p>
         )}
 
@@ -271,27 +222,15 @@ export function Requests({
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={!canRequest || !selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false}
-            className={styles.requests__btn}
-          >
+          <button type="submit" disabled={!canRequest || !selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
             Request
           </button>
         </div>
       </form>
 
       <div className={`${styles.requests__confirm} ${confirmModalShown && styles["requests__confirm--active"]}`}>
-        <div
-          className={`${styles["requests__confirm-container"]} ${
-            isSubmitting ? styles["requests__confirm-container--loading"] : ""
-          }`}
-        >
-          <div
-            className={`${styles["requests__confirm-content"]} ${
-              isSubmitting ? styles["requests__confirm-content--submitting"] : ""
-            }`}
-          >
+        <div className={`${styles["requests__confirm-container"]} ${isSubmitting ? styles["requests__confirm-container--loading"] : ""}`}>
+          <div className={`${styles["requests__confirm-content"]} ${isSubmitting ? styles["requests__confirm-content--submitting"] : ""}`}>
             <div className={styles["requests__confirm-info"]}>
               <h2>Confirm request</h2>
 
@@ -302,15 +241,11 @@ export function Requests({
                   {selectedTrack?.channel} - {selectedTrack?.title}
                 </li>
                 <li>
-                  Will play from <b>{secondsToHumanReadableString(selectionRange)}</b> to{" "}
-                  <b>{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}</b>
+                  Will play from <b>{secondsToHumanReadableString(selectionRange)}</b> to <b>{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}</b>
                 </li>
               </ul>
 
-              <p>
-                You have limited requests per cycle, so ensure you use them correctly. Does the above information look
-                good?
-              </p>
+              <p>You have limited requests per cycle, so ensure you use them correctly. Does the above information look good?</p>
             </div>
 
             <div className={styles["requests__confirm-btns"]}>

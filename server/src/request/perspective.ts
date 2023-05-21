@@ -150,11 +150,8 @@ class Perspective {
     };
     let resource: Resource = typeof text === "object" ? text : { comment: { text } };
     resource.comment.text = processText(resource.comment.text);
-    let attributes: Attribute[] | RequestedAttributes = resource.requestedAttributes ||
-      options.attributes || { TOXICITY: {} };
-    let attributesFinal: RequestedAttributes = Array.isArray(attributes)
-      ? attributes.reduce((acc, attr) => ({ ...acc, [attr]: {} }), {})
-      : attributes;
+    let attributes: Attribute[] | RequestedAttributes = resource.requestedAttributes || options.attributes || { TOXICITY: {} };
+    let attributesFinal: RequestedAttributes = Array.isArray(attributes) ? attributes.reduce((acc, attr) => ({ ...acc, [attr]: {} }), {}) : attributes;
     return Object.assign({}, resource, {
       requestedAttributes: attributesFinal,
       doNotStore,

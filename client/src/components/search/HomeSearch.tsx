@@ -68,11 +68,7 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
   return (
     <div className={styles.search}>
       <form action="#" className={styles.search__form} onSubmit={handleSubmit}>
-        <div
-          className={
-            styles.search__container + (songs.length === 0 ? "" : `${" " + styles["search__container--active"]}`)
-          }
-        >
+        <div className={styles.search__container + (songs.length === 0 ? "" : `${" " + styles["search__container--active"]}`)}>
           <div className={styles.search__bar}>
             <input
               type="text"

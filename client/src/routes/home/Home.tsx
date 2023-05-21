@@ -37,8 +37,7 @@ export function Home() {
   }, []);
 
   function setSelectedCoreSongRelay(coreSong: CoreSong) {
-    if (currentRequests.some((request) => request.spotifyId === coreSong.id))
-      return alert("You have already requested this track and cannot request it again this cycle.");
+    if (currentRequests.some((request) => request.spotifyId === coreSong.id)) return alert("You have already requested this track and cannot request it again this cycle.");
 
     setSelectedCoreSong(coreSong);
     requestsRef.current!.scrollIntoView();
@@ -46,10 +45,7 @@ export function Home() {
 
   return (
     <>
-      <main
-        className={styles.main}
-        style={`--cover-img: ${selectedCoreSong != null ? `url("${selectedCoreSong.coverUrl}")` : ""}`}
-      >
+      <main className={styles.main} style={`--cover-img: ${selectedCoreSong != null ? `url("${selectedCoreSong.coverUrl}")` : ""}`}>
         <div className={styles.main__searcher}>
           <header className={styles.header}>
             <h1 className={styles.header__title}>
@@ -63,12 +59,7 @@ export function Home() {
           <HomeSearch setSelectedCoreSong={setSelectedCoreSongRelay} />
         </div>
         <div className={styles.main__requester} ref={requestsRef}>
-          <Requests
-            selectedCoreSong={selectedCoreSong}
-            setSelectedCoreSong={setSelectedCoreSong}
-            currentRequests={currentRequests}
-            canRequest={canRequest}
-          />
+          <Requests selectedCoreSong={selectedCoreSong} setSelectedCoreSong={setSelectedCoreSong} currentRequests={currentRequests} canRequest={canRequest} />
         </div>
       </main>
     </>

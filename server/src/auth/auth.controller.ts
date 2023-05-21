@@ -1,14 +1,4 @@
-import {
-  ConflictException,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  Req,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-} from "@nestjs/common";
+import { ConflictException, Controller, Delete, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 
 import { AuthenticatedGuard } from "./authenticated.guard";

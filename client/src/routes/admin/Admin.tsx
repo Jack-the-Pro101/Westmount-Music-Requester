@@ -52,12 +52,8 @@ export function Admin() {
 
     const internal = createUserInternalRef.current?.checked;
 
-    const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(
-      ".new-user-permissions-checkbox"
-    );
-    permissionsCheckboxes.forEach((checkbox) =>
-      checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0
-    );
+    const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(".new-user-permissions-checkbox");
+    permissionsCheckboxes.forEach((checkbox) => (checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0));
 
     const request = await fetch("/api/admin/users/", {
       method: "POST",
@@ -95,12 +91,8 @@ export function Admin() {
 
     const internal = editUserInternalRef.current?.checked;
 
-    const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(
-      ".edit-user-permissions-checkbox"
-    );
-    permissionsCheckboxes.forEach((checkbox) =>
-      checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0
-    );
+    const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(".edit-user-permissions-checkbox");
+    permissionsCheckboxes.forEach((checkbox) => (checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0));
 
     const userId = editingUser!._id;
 
@@ -146,12 +138,7 @@ export function Admin() {
   }
 
   async function dangerRecycle() {
-    if (
-      !confirm(
-        "RE-CYCLE CONFIRMATION:\nYOU ARE ABOUT TO RE-CYCLE THE REQUESTS SYSTEM. THIS ACTION IS IRREVERSIBLE. ARE YOU SURE YOU WANT TO CONTINUE?"
-      )
-    )
-      return;
+    if (!confirm("RE-CYCLE CONFIRMATION:\nYOU ARE ABOUT TO RE-CYCLE THE REQUESTS SYSTEM. THIS ACTION IS IRREVERSIBLE. ARE YOU SURE YOU WANT TO CONTINUE?")) return;
 
     const recycleRequest = await fetch("/api/requests", {
       method: "DELETE",
@@ -184,25 +171,14 @@ export function Admin() {
                         <label htmlFor="new-email">Email or Username</label>
                         <input type="text" name="new-email" id="new-email" maxLength={320} ref={createUserInputRef} />
                         <label htmlFor="new-email">Password (only internal)</label>
-                        <input
-                          type="text"
-                          name="new-password"
-                          id="new-password"
-                          maxLength={320}
-                          ref={createUserPasswordRef}
-                        />
+                        <input type="text" name="new-password" id="new-password" maxLength={320} ref={createUserPasswordRef} />
                       </fieldset>
                       <fieldset className={styles.admin__fieldset}>
                         <h5>Permissions</h5>
                         <ul className={styles["admin__permissions-list"]}>
                           {Object.keys(FLAGS).map((flag) => {
                             return (
-                              <li
-                                style={
-                                  "display: flex; justify-content: space-between;" +
-                                  (flag.startsWith("BLANK") ? "display: none" : "")
-                                }
-                              >
+                              <li style={"display: flex; justify-content: space-between;" + (flag.startsWith("BLANK") ? "display: none" : "")}>
                                 <label htmlFor={flag.toLowerCase() + "_new-checkbox"}>{flag}</label>
                                 <input
                                   type="checkbox"
@@ -211,9 +187,7 @@ export function Admin() {
                                   id={flag.toLowerCase() + "_new-checkbox"}
                                   data-flag-name={flag}
                                   checked={DEFAULT_CHECKED_FLAGS.includes(FLAGS[flag as keyof typeof FLAGS])}
-                                  disabled={
-                                    flag === "ADMINISTRATOR" ? !check(["ADMINISTRATOR"], user.permissions) : false
-                                  }
+                                  disabled={flag === "ADMINISTRATOR" ? !check(["ADMINISTRATOR"], user.permissions) : false}
                                 />
                               </li>
                             );
@@ -222,12 +196,7 @@ export function Admin() {
                       </fieldset>
                       <fieldset className={styles.admin__fieldset}>
                         <label htmlFor="new-is-internal">Internal</label>
-                        <input
-                          type="checkbox"
-                          name="new-is-internal"
-                          id="new-is-internal"
-                          ref={createUserInternalRef}
-                        />
+                        <input type="checkbox" name="new-is-internal" id="new-is-internal" ref={createUserInternalRef} />
                       </fieldset>
 
                       <button type="submit">Create</button>
@@ -241,43 +210,18 @@ export function Admin() {
                       <form action="#" className={styles.admin__form} onSubmit={editUser}>
                         <fieldset className={styles.admin__fieldset}>
                           <label htmlFor="new-name">Name</label>
-                          <input
-                            type="text"
-                            name="new-name"
-                            id="new-name"
-                            maxLength={320}
-                            ref={editUserNameRef}
-                            value={editingUser.name}
-                          />
+                          <input type="text" name="new-name" id="new-name" maxLength={320} ref={editUserNameRef} value={editingUser.name} />
                           <label htmlFor="edit-email">Email or Username</label>
-                          <input
-                            type="text"
-                            name="edit-email"
-                            id="edit-email"
-                            maxLength={320}
-                            value={editingUser.email || editingUser.username}
-                            ref={editUserInputRef}
-                          />
+                          <input type="text" name="edit-email" id="edit-email" maxLength={320} value={editingUser.email || editingUser.username} ref={editUserInputRef} />
                           <label htmlFor="new-email">Password (only internal, leave blank to not update)</label>
-                          <input
-                            type="text"
-                            name="new-password"
-                            id="new-password"
-                            maxLength={320}
-                            ref={editUserPasswordRef}
-                          />
+                          <input type="text" name="new-password" id="new-password" maxLength={320} ref={editUserPasswordRef} />
                         </fieldset>
                         <fieldset className={styles.admin__fieldset}>
                           <h5>Permissions</h5>
                           <ul className={styles["admin__permissions-list"]}>
                             {Object.keys(FLAGS).map((flag) => {
                               return (
-                                <li
-                                  style={
-                                    "display: flex; justify-content: space-between;" +
-                                    (flag.startsWith("BLANK") ? "display: none" : "")
-                                  }
-                                >
+                                <li style={"display: flex; justify-content: space-between;" + (flag.startsWith("BLANK") ? "display: none" : "")}>
                                   <label htmlFor={flag.toLowerCase() + "_edit-checkbox"}>{flag}</label>
                                   <input
                                     type="checkbox"
@@ -286,9 +230,7 @@ export function Admin() {
                                     checked={check([flag], editingUser.permissions)}
                                     className="edit-user-permissions-checkbox"
                                     data-flag-name={flag}
-                                    disabled={
-                                      flag === "ADMINISTRATOR" ? !check(["ADMINISTRATOR"], user.permissions) : false
-                                    }
+                                    disabled={flag === "ADMINISTRATOR" ? !check(["ADMINISTRATOR"], user.permissions) : false}
                                   />
                                 </li>
                               );
@@ -297,14 +239,7 @@ export function Admin() {
                         </fieldset>
                         <fieldset className={styles.admin__fieldset}>
                           <label htmlFor="edit-is-internal">Internal</label>
-                          <input
-                            type="checkbox"
-                            name="edit-is-internal"
-                            id="edit-is-internal"
-                            checked={editingUser.type === "INTERNAL"}
-                            disabled
-                            ref={editUserInternalRef}
-                          />
+                          <input type="checkbox" name="edit-is-internal" id="edit-is-internal" checked={editingUser.type === "INTERNAL"} disabled ref={editUserInternalRef} />
                         </fieldset>
 
                         <div style="display: flex; gap: 1em;">
@@ -323,76 +258,30 @@ export function Admin() {
               <form action="#" className={styles["admin__users-search"]}>
                 <fieldset>
                   <label htmlFor="user-search">Search Users</label>
-                  <input
-                    type="text"
-                    name="user-search"
-                    id="user-search"
-                    onChange={(e: Event) => setSearchUsersQuery((e.target as HTMLInputElement).value)}
-                  />
+                  <input type="text" name="user-search" id="user-search" onChange={(e: Event) => setSearchUsersQuery((e.target as HTMLInputElement).value)} />
                   <button type="submit" onClick={(e) => searchUsers(e)}>
                     Search
                   </button>
                 </fieldset>
                 <fieldset>
                   <label htmlFor="user-search-filter-text">Match Query</label>
-                  <input
-                    type="text"
-                    name="user-search-filter-text"
-                    id="user-search-filter-text"
-                    value={matchUsers}
-                    onChange={(e) => setMatchUsers((e.target as HTMLInputElement).value)}
-                  />
+                  <input type="text" name="user-search-filter-text" id="user-search-filter-text" value={matchUsers} onChange={(e) => setMatchUsers((e.target as HTMLInputElement).value)} />
                 </fieldset>
               </form>
 
               <ul className={styles["admin__users-list"]}>
                 <li className={styles["admin__users-list-item"]}>
-                  <button
-                    onClick={() =>
-                      setUsersColumnSort(
-                        columnUsersSort.type === "name"
-                          ? { type: "name", asc: !columnUsersSort.asc }
-                          : { type: "name", asc: true }
-                      )
-                    }
-                  >
+                  <button onClick={() => setUsersColumnSort(columnUsersSort.type === "name" ? { type: "name", asc: !columnUsersSort.asc } : { type: "name", asc: true })}>
                     Name
-                    <i
-                      class="fa-solid fa-caret-down"
-                      style={columnUsersSort.type === "name" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}
-                    ></i>
+                    <i class="fa-solid fa-caret-down" style={columnUsersSort.type === "name" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}></i>
                   </button>
-                  <button
-                    onClick={() =>
-                      setUsersColumnSort(
-                        columnUsersSort.type === "username"
-                          ? { type: "username", asc: !columnUsersSort.asc }
-                          : { type: "username", asc: true }
-                      )
-                    }
-                  >
+                  <button onClick={() => setUsersColumnSort(columnUsersSort.type === "username" ? { type: "username", asc: !columnUsersSort.asc } : { type: "username", asc: true })}>
                     Username/Email
-                    <i
-                      class="fa-solid fa-caret-down"
-                      style={
-                        columnUsersSort.type === "username" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""
-                      }
-                    ></i>
+                    <i class="fa-solid fa-caret-down" style={columnUsersSort.type === "username" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}></i>
                   </button>
-                  <button
-                    onClick={() =>
-                      setUsersColumnSort(
-                        columnUsersSort.type === "type"
-                          ? { type: "type", asc: !columnUsersSort.asc }
-                          : { type: "type", asc: true }
-                      )
-                    }
-                  >
+                  <button onClick={() => setUsersColumnSort(columnUsersSort.type === "type" ? { type: "type", asc: !columnUsersSort.asc } : { type: "type", asc: true })}>
                     Type
-                    <i
-                      class="fa-solid fa-caret-down"
-                      style={columnUsersSort.type === "type" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}
-                    ></i>
+                    <i class="fa-solid fa-caret-down" style={columnUsersSort.type === "type" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}></i>
                   </button>
                   <button>Permissions</button>
                   <button>Actions</button>
@@ -400,22 +289,8 @@ export function Admin() {
                 {users
                   .filter((user) => anyStringIncludes([user.name, user.email || user.username], matchUsers))
                   .sort((a, b) => {
-                    let x =
-                      a[
-                        columnUsersSort.type === "username"
-                          ? a.email
-                            ? "email"
-                            : columnUsersSort.type
-                          : columnUsersSort.type
-                      ].toLowerCase();
-                    let y =
-                      b[
-                        columnUsersSort.type === "username"
-                          ? b.email
-                            ? "email"
-                            : columnUsersSort.type
-                          : columnUsersSort.type
-                      ].toLowerCase();
+                    let x = a[columnUsersSort.type === "username" ? (a.email ? "email" : columnUsersSort.type) : columnUsersSort.type].toLowerCase();
+                    let y = b[columnUsersSort.type === "username" ? (b.email ? "email" : columnUsersSort.type) : columnUsersSort.type].toLowerCase();
                     if (columnUsersSort.asc) {
                       if (x < y) {
                         return -1;
@@ -449,19 +324,10 @@ export function Admin() {
               <div className={styles["admin__page-btns"]}>
                 <span>Page {page + 1}</span>
                 <div>
-                  <button
-                    style="margin-right: 0.25em"
-                    title="Previous page"
-                    onClick={() => setPage(page - 1)}
-                    disabled={page <= 0}
-                  >
+                  <button style="margin-right: 0.25em" title="Previous page" onClick={() => setPage(page - 1)} disabled={page <= 0}>
                     <i class="fa-regular fa-arrow-left"></i>
                   </button>
-                  <button
-                    title="Next page"
-                    onClick={() => setPage(page + 1)}
-                    disabled={users.length === 0 || users.length !== 50}
-                  >
+                  <button title="Next page" onClick={() => setPage(page + 1)} disabled={users.length === 0 || users.length !== 50}>
                     <i class="fa-regular fa-arrow-right"></i>
                   </button>
                 </div>

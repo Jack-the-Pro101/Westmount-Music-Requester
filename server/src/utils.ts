@@ -37,20 +37,13 @@ export function getCurrentOauthUrl() {
   const token = sign({ expires: Date.now() + 3600000 }, process.env.JWT_SECRET!);
   return getOauthUrl(
     process.env.GOOGLE_CLIENT_ID!,
-    process.env.NODE_ENV === "production"
-      ? process.env.GOOGLE_REDIRECT_URI!
-      : "http://localhost:3000/api/auth/google-redirect",
+    process.env.NODE_ENV === "production" ? process.env.GOOGLE_REDIRECT_URI! : "http://localhost:3000/api/auth/google-redirect",
     ["email", "profile"],
     token
   );
 }
 
-export async function getAccessToken(
-  clientId: string,
-  clientSecret: string,
-  code: string,
-  redirectUri: string
-): Promise<string | undefined> {
+export async function getAccessToken(clientId: string, clientSecret: string, code: string, redirectUri: string): Promise<string | undefined> {
   try {
     const response = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",

@@ -9,13 +9,7 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   weekday: "short",
 });
 
-export function Request({
-  request,
-  setActive,
-}: {
-  request: RequestType;
-  setActive: StateUpdater<RequestType | undefined>;
-}) {
+export function Request({ request, setActive }: { request: RequestType; setActive: StateUpdater<RequestType | undefined> }) {
   return (
     <li className={styles["requests__item"]}>
       <button className={styles["requests__btn"]} onClick={() => setActive(request)}>
@@ -27,9 +21,7 @@ export function Request({
           <p>{request.user.name}</p>
         </div>
         <div className={styles["requests__item-col"]}>
-          <p style="color: hsl(var(--clr-neutral-700));">
-            Requested {dateFormatter.format(new Date(request.createdAt))}
-          </p>
+          <p style="color: hsl(var(--clr-neutral-700));">Requested {dateFormatter.format(new Date(request.createdAt))}</p>
         </div>
       </button>
     </li>

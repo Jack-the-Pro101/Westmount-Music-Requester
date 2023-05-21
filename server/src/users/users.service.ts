@@ -35,10 +35,7 @@ export class UsersService {
 
   async findOne(usernameOrEmail: string, internal = false): Promise<WithId<StoredUser> | undefined> {
     try {
-      return (
-        (await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail }))?.toObject() ??
-        undefined
-      );
+      return (await Users.findOne(internal ? { username: usernameOrEmail } : { email: usernameOrEmail }))?.toObject() ?? undefined;
     } catch (err) {
       console.error(err);
     }
@@ -81,11 +78,7 @@ export class UsersService {
         if (!dbUser) return (await Users.create({ ...user, _id: ulid() })).toObject() as WithId<StoredUser>;
         // TODO: What if Google user's email changes?
         // TODO: What if user's OAuth session is invalidated?
-        return (
-          (
-            await Users.findOneAndUpdate({ _id: dbUser._id }, { avatar: user.avatar, name: user.name }, { new: true })
-          )?.toObject() ?? undefined
-        );
+        return (await Users.findOneAndUpdate({ _id: dbUser._id }, { avatar: user.avatar, name: user.name }, { new: true }))?.toObject() ?? undefined;
       } else {
         const dbUser = await Users.findOne({ username: user.username });
         if (!dbUser) return (await Users.create({ ...user, _id: ulid() })).toObject() as WithId<StoredUser>;

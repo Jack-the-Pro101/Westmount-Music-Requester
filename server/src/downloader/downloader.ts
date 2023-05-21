@@ -20,8 +20,7 @@ class Downloader {
   }
 
   verifyDependencies(): Promise<void> {
-    if (!process.env.DOWNLOADS)
-      throw new Error("Downloads directory not defined in env vars. Application cannot continue.");
+    if (!process.env.DOWNLOADS) throw new Error("Downloads directory not defined in env vars. Application cannot continue.");
 
     return Promise.race([
       new Promise<void>((resolve, reject) => {
@@ -32,11 +31,7 @@ class Downloader {
           if (code === 0) {
             resolve();
           } else {
-            reject(
-              new Error(
-                `FFMPEG installation check failed with exit code ${code}! Process cannot continue without this core dependency.`
-              )
-            );
+            reject(new Error(`FFMPEG installation check failed with exit code ${code}! Process cannot continue without this core dependency.`));
           }
         });
       }),
@@ -91,14 +86,10 @@ class Downloader {
 
       if (!trackInfo.streaming_data) throw new Error("No streaming data found!");
 
-      const adaptiveAudioFormats = trackInfo.streaming_data.adaptive_formats.filter(
-        (format) => format.has_audio && !format.has_video
-      );
+      const adaptiveAudioFormats = trackInfo.streaming_data.adaptive_formats.filter((format) => format.has_audio && !format.has_video);
       const audioFormats = trackInfo.streaming_data.formats.filter((format) => format.has_audio && !format.has_video);
 
-      const bestAudioFormat = [...adaptiveAudioFormats, ...audioFormats].sort(
-        (a, b) => b.average_bitrate! - a.average_bitrate!
-      )[0];
+      const bestAudioFormat = [...adaptiveAudioFormats, ...audioFormats].sort((a, b) => b.average_bitrate! - a.average_bitrate!)[0];
 
       return {
         url: bestAudioFormat.decipher(this.yt!.session.player),
@@ -124,10 +115,7 @@ class Downloader {
       type: "audio",
     });
 
-    const tempFilepath = path.join(
-      process.env.DOWNLOADS!,
-      `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`
-    );
+    const tempFilepath = path.join(process.env.DOWNLOADS!, `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`);
 
     await new Promise(async (resolve) => {
       const writer = fs.createWriteStream(tempFilepath, {
@@ -155,12 +143,9 @@ class Downloader {
     });
 
     await new Promise((resolve, reject) => {
-      const worker = exec(
-        `ffmpeg -i "${tempFilepath}" -c:a ${ffmpegArgs.codec} -ss ${ffmpegArgs.start} -t ${ffmpegArgs.end} "${filename}"`,
-        {
-          cwd: process.env.DOWNLOADS!,
-        }
-      );
+      const worker = exec(`ffmpeg -i "${tempFilepath}" -c:a ${ffmpegArgs.codec} -ss ${ffmpegArgs.start} -t ${ffmpegArgs.end} "${filename}"`, {
+        cwd: process.env.DOWNLOADS!,
+      });
 
       worker.on("close", (code) => {
         if (code === 0) {
