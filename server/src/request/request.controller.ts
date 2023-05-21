@@ -42,7 +42,8 @@ export class RequestController {
 
       if (await this.requestService.checkExistingRequest(spotifyId, trackId, req.user._id)) throw new BadRequestException();
 
-      if (!(await this.requestService.createRequest(info, req.user, trackId))) return console.error(`Failed to create request for ${req.user._id}, requesting song ${spotifyId} at ${youtubeId}`);
+      if (!(await this.requestService.createRequest(info, req.user, trackId)))
+        return console.error(`Failed to create request for ${req.user._id}, requesting song ${spotifyId} at ${youtubeId}`);
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
 
       if (scanResult === false) {

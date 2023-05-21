@@ -28,7 +28,12 @@ export function Navbar({ spacer }: { spacer: boolean }) {
             {user ? (
               <button className="navbar__profile" onClick={() => setDropdownDropped(!dropdownDropped)}>
                 <div className="navbar__icon">
-                  <img src={user.type === "GOOGLE" ? user.avatar : "/images/userprofile.svg"} referrerpolicy="no-referrer" alt={user.name + "'s avatar"} className="navbar__icon-img" />
+                  <img
+                    src={user.type === "GOOGLE" ? user.avatar : "/images/userprofile.svg"}
+                    referrerpolicy="no-referrer"
+                    alt={user.name + "'s avatar"}
+                    className="navbar__icon-img"
+                  />
                 </div>
                 <p className="navbar__name">{user.name}</p>
                 <i class="fa-solid fa-caret-down" style={"margin-left: 1.5rem;" + (dropdownDropped ? "transform: rotate(180deg)" : "")}></i>
@@ -76,7 +81,10 @@ export function Navbar({ spacer }: { spacer: boolean }) {
         </ul>
       </nav>
 
-      <div className={"navbar__dropdown-blur-area" + (dropdownDropped ? " navbar__dropdown-blur-area--active" : "")} onClick={() => setDropdownDropped(false)}></div>
+      <div
+        className={"navbar__dropdown-blur-area" + (dropdownDropped ? " navbar__dropdown-blur-area--active" : "")}
+        onClick={() => setDropdownDropped(false)}
+      ></div>
 
       {spacer && (
         <div className="navbar-spacer" aria-hidden="true">

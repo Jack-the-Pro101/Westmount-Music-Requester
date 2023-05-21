@@ -37,7 +37,8 @@ export function Home() {
   }, []);
 
   function setSelectedCoreSongRelay(coreSong: CoreSong) {
-    if (currentRequests.some((request) => request.spotifyId === coreSong.id)) return alert("You have already requested this track and cannot request it again this cycle.");
+    if (currentRequests.some((request) => request.spotifyId === coreSong.id))
+      return alert("You have already requested this track and cannot request it again this cycle.");
 
     setSelectedCoreSong(coreSong);
     requestsRef.current!.scrollIntoView();

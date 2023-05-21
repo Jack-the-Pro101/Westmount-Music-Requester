@@ -115,7 +115,10 @@ class Downloader {
       type: "audio",
     });
 
-    const tempFilepath = path.join(process.env.DOWNLOADS!, `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`);
+    const tempFilepath = path.join(
+      process.env.DOWNLOADS!,
+      `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`
+    );
 
     await new Promise(async (resolve) => {
       const writer = fs.createWriteStream(tempFilepath, {

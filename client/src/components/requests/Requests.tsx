@@ -52,7 +52,8 @@ export function Requests({
 
     const aborter = new AbortController();
 
-    if (currentRequests.some((request) => request.track.youtubeId === selectedTrack.id)) return alert("You have already requested this track and cannot request it again this cycle.");
+    if (currentRequests.some((request) => request.track.youtubeId === selectedTrack.id))
+      return alert("You have already requested this track and cannot request it again this cycle.");
 
     (async () => {
       const request = await fetchRetry(5, BASE_URL + "/api/music/source?id=" + selectedTrack.id, {
@@ -125,7 +126,11 @@ export function Requests({
             ) : (
               <>
                 Found {trackResults.length} results for "{selectedCoreSong?.artist} - {selectedCoreSong?.title}" from{" "}
-                <a href={"https://music.youtube.com/search?q=" + `${selectedCoreSong?.artist} ${selectedCoreSong?.title}`.replace(/ /g, "+")} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={"https://music.youtube.com/search?q=" + `${selectedCoreSong?.artist} ${selectedCoreSong?.title}`.replace(/ /g, "+")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   YouTube Music
                 </a>
               </>
@@ -133,15 +138,28 @@ export function Requests({
           </p>
         )}
 
-        <button className={styles["requests__dropdown-btn"]} disabled={selectedTrack == null} onClick={() => setModalShown(true)} type="button" title="Show music sources modal">
+        <button
+          className={styles["requests__dropdown-btn"]}
+          disabled={selectedTrack == null}
+          onClick={() => setModalShown(true)}
+          type="button"
+          title="Show music sources modal"
+        >
           {(!selectedCoreSong || isLoading) && (
-            <div className={styles.requests__load}>{!isLoading ? <p>No track selected from search</p> : <img src="/images/loading.svg" alt="Loading" className={styles["requests__load-img"]} />}</div>
+            <div className={styles.requests__load}>
+              {!isLoading ? <p>No track selected from search</p> : <img src="/images/loading.svg" alt="Loading" className={styles["requests__load-img"]} />}
+            </div>
           )}
           {selectedTrack && !isLoading && (
             <>
               <div className={styles.requests__thumbnail}>
                 <a href={selectedTrack.url} target="_blank" rel="noopener noreferrer">
-                  <img src={selectedTrack.thumbnail} alt={selectedTrack.title + "'s thumbnail"} referrerpolicy="no-referrer" className={styles["requests__thumbnail-image"]} />
+                  <img
+                    src={selectedTrack.thumbnail}
+                    alt={selectedTrack.title + "'s thumbnail"}
+                    referrerpolicy="no-referrer"
+                    className={styles["requests__thumbnail-image"]}
+                  />
                 </a>
               </div>
               <div className={styles["requests__dropdown-info"]}>
@@ -168,7 +186,12 @@ export function Requests({
                   <li className={styles.requests__item} key={track.id}>
                     <div className={styles.requests__thumbnail}>
                       <a href={track.url} target="_blank" rel="noopener noreferrer">
-                        <img src={track.thumbnail} alt={track.title + "'s thumbnail"} referrerpolicy="no-referrer" className={styles["requests__thumbnail-image"]} />
+                        <img
+                          src={track.thumbnail}
+                          alt={track.title + "'s thumbnail"}
+                          referrerpolicy="no-referrer"
+                          className={styles["requests__thumbnail-image"]}
+                        />
                       </a>
                     </div>
                     <div className={styles.requests__info}>
@@ -180,7 +203,8 @@ export function Requests({
                       className={styles["requests__select-btn"]}
                       title="Select source"
                       onClick={() => {
-                        if (currentRequests.some((request) => request.track.youtubeId === track.id)) return alert("You have already requested this track and cannot request it again this cycle.");
+                        if (currentRequests.some((request) => request.track.youtubeId === track.id))
+                          return alert("You have already requested this track and cannot request it again this cycle.");
 
                         setSelectedTrack(track);
                         setModalShown(false);
@@ -203,8 +227,8 @@ export function Requests({
 
         {!canRequest && (
           <p className={styles.requests__msg}>
-            <i class="fa-solid fa-circle-info"></i> <strong>Note</strong>: You have requested the max amount of tracks this cycle and will not be able to request more. However, this panel will remain
-            operational for preview purposes only.
+            <i class="fa-solid fa-circle-info"></i> <strong>Note</strong>: You have requested the max amount of tracks this cycle and will not be able to
+            request more. However, this panel will remain operational for preview purposes only.
           </p>
         )}
 
@@ -222,7 +246,11 @@ export function Requests({
           >
             Cancel
           </button>
-          <button type="submit" disabled={!canRequest || !selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false} className={styles.requests__btn}>
+          <button
+            type="submit"
+            disabled={!canRequest || !selectedTrack || Object.keys(selectedTrack).length === 0 ? true : false}
+            className={styles.requests__btn}
+          >
             Request
           </button>
         </div>
@@ -241,7 +269,8 @@ export function Requests({
                   {selectedTrack?.channel} - {selectedTrack?.title}
                 </li>
                 <li>
-                  Will play from <b>{secondsToHumanReadableString(selectionRange)}</b> to <b>{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}</b>
+                  Will play from <b>{secondsToHumanReadableString(selectionRange)}</b> to{" "}
+                  <b>{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}</b>
                 </li>
               </ul>
 

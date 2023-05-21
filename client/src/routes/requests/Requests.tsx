@@ -178,7 +178,13 @@ export function Requests() {
               (sortFilter === "none" || (request.status === sortFilter.toUpperCase() && request.track)) &&
               // validateTrackShouldAdd(request.track._id) &&
               anyStringIncludes(
-                [request.track.title, request.track.artist, request.user.name, request.track.title + request.track.artist, request.track.title + request.track.artist + request.user.name],
+                [
+                  request.track.title,
+                  request.track.artist,
+                  request.user.name,
+                  request.track.title + request.track.artist,
+                  request.track.title + request.track.artist + request.user.name,
+                ],
                 filterQuery
               )
           )
@@ -223,10 +229,20 @@ export function Requests() {
 
                 <div className={styles["requests__popup-spotify"]} href={"https://open.spotify.com/track/" + selectedTrack.spotifyId}>
                   <div className={styles["requests__popup-spotify-image"]}>
-                    <img src={selectedTrack.track.cover} alt={`${selectedTrack.track.title}'s cover`} referrerpolicy="no-referrer" className={styles["requests__popup-spotify-img"]} />
+                    <img
+                      src={selectedTrack.track.cover}
+                      alt={`${selectedTrack.track.title}'s cover`}
+                      referrerpolicy="no-referrer"
+                      className={styles["requests__popup-spotify-img"]}
+                    />
                   </div>
 
-                  <a className={styles["requests__popup-spotify-link"]} href={"https://open.spotify.com/track/" + selectedTrack.spotifyId} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className={styles["requests__popup-spotify-link"]}
+                    href={"https://open.spotify.com/track/" + selectedTrack.spotifyId}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <button>
                       Spotify <i class="fa-regular fa-arrow-up-right-from-square"></i>
                     </button>

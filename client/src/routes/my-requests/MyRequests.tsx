@@ -61,7 +61,12 @@ export function MyRequests() {
             .map((request) => (
               <li className={styles.myrequests__item}>
                 <div className={styles["myrequests__item-image"]}>
-                  <img src={request?.track?.cover} alt={request?.track?.title || "[Awaiting]" + "'s thumbnail"} referrerpolicy="no-referrer" className={styles["myrequests__item-img"]} />
+                  <img
+                    src={request?.track?.cover}
+                    alt={request?.track?.title || "[Awaiting]" + "'s thumbnail"}
+                    referrerpolicy="no-referrer"
+                    className={styles["myrequests__item-img"]}
+                  />
                 </div>
                 <div className={styles["myrequests__item-content"]}>
                   {/* Request cancelling code, cannot be implemented yet */}

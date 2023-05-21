@@ -134,7 +134,9 @@ export function App() {
         <AuthContext.Provider value={{ user, login, logout }}>
           <div className={"load-block" + (user !== undefined && (user !== null || redirectExempted) ? " loading-block--loaded" : "")}>
             <img src="/images/loading2.svg" alt="Loading image" />
-            <p className="load-block__text">{user === undefined ? "Loading" : user === null ? (redirectExempted ? "Load complete" : "Redirecting...") : "Load complete"}</p>
+            <p className="load-block__text">
+              {user === undefined ? "Loading" : user === null ? (redirectExempted ? "Load complete" : "Redirecting...") : "Load complete"}
+            </p>
           </div>
           <BrowserRouter>
             <Routes>
@@ -142,7 +144,11 @@ export function App() {
               <Route path="/*" element={<Navbar spacer={true} />} />
             </Routes>
             <Routes>
-              {routeMap.map((route) => (route.permissions.length === 0 || (user != null && check(route.permissions, user.permissions)) ? <Route path={route.path} element={route.element} /> : null))}
+              {routeMap.map((route) =>
+                route.permissions.length === 0 || (user != null && check(route.permissions, user.permissions)) ? (
+                  <Route path={route.path} element={route.element} />
+                ) : null
+              )}
               <Route path="/*" element={<Error />} />
             </Routes>
           </BrowserRouter>

@@ -138,7 +138,8 @@ export function Admin() {
   }
 
   async function dangerRecycle() {
-    if (!confirm("RE-CYCLE CONFIRMATION:\nYOU ARE ABOUT TO RE-CYCLE THE REQUESTS SYSTEM. THIS ACTION IS IRREVERSIBLE. ARE YOU SURE YOU WANT TO CONTINUE?")) return;
+    if (!confirm("RE-CYCLE CONFIRMATION:\nYOU ARE ABOUT TO RE-CYCLE THE REQUESTS SYSTEM. THIS ACTION IS IRREVERSIBLE. ARE YOU SURE YOU WANT TO CONTINUE?"))
+      return;
 
     const recycleRequest = await fetch("/api/requests", {
       method: "DELETE",
@@ -212,7 +213,14 @@ export function Admin() {
                           <label htmlFor="new-name">Name</label>
                           <input type="text" name="new-name" id="new-name" maxLength={320} ref={editUserNameRef} value={editingUser.name} />
                           <label htmlFor="edit-email">Email or Username</label>
-                          <input type="text" name="edit-email" id="edit-email" maxLength={320} value={editingUser.email || editingUser.username} ref={editUserInputRef} />
+                          <input
+                            type="text"
+                            name="edit-email"
+                            id="edit-email"
+                            maxLength={320}
+                            value={editingUser.email || editingUser.username}
+                            ref={editUserInputRef}
+                          />
                           <label htmlFor="new-email">Password (only internal, leave blank to not update)</label>
                           <input type="text" name="new-password" id="new-password" maxLength={320} ref={editUserPasswordRef} />
                         </fieldset>
@@ -239,7 +247,14 @@ export function Admin() {
                         </fieldset>
                         <fieldset className={styles.admin__fieldset}>
                           <label htmlFor="edit-is-internal">Internal</label>
-                          <input type="checkbox" name="edit-is-internal" id="edit-is-internal" checked={editingUser.type === "INTERNAL"} disabled ref={editUserInternalRef} />
+                          <input
+                            type="checkbox"
+                            name="edit-is-internal"
+                            id="edit-is-internal"
+                            checked={editingUser.type === "INTERNAL"}
+                            disabled
+                            ref={editUserInternalRef}
+                          />
                         </fieldset>
 
                         <div style="display: flex; gap: 1em;">
@@ -265,21 +280,41 @@ export function Admin() {
                 </fieldset>
                 <fieldset>
                   <label htmlFor="user-search-filter-text">Match Query</label>
-                  <input type="text" name="user-search-filter-text" id="user-search-filter-text" value={matchUsers} onChange={(e) => setMatchUsers((e.target as HTMLInputElement).value)} />
+                  <input
+                    type="text"
+                    name="user-search-filter-text"
+                    id="user-search-filter-text"
+                    value={matchUsers}
+                    onChange={(e) => setMatchUsers((e.target as HTMLInputElement).value)}
+                  />
                 </fieldset>
               </form>
 
               <ul className={styles["admin__users-list"]}>
                 <li className={styles["admin__users-list-item"]}>
-                  <button onClick={() => setUsersColumnSort(columnUsersSort.type === "name" ? { type: "name", asc: !columnUsersSort.asc } : { type: "name", asc: true })}>
+                  <button
+                    onClick={() =>
+                      setUsersColumnSort(columnUsersSort.type === "name" ? { type: "name", asc: !columnUsersSort.asc } : { type: "name", asc: true })
+                    }
+                  >
                     Name
                     <i class="fa-solid fa-caret-down" style={columnUsersSort.type === "name" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}></i>
                   </button>
-                  <button onClick={() => setUsersColumnSort(columnUsersSort.type === "username" ? { type: "username", asc: !columnUsersSort.asc } : { type: "username", asc: true })}>
+                  <button
+                    onClick={() =>
+                      setUsersColumnSort(
+                        columnUsersSort.type === "username" ? { type: "username", asc: !columnUsersSort.asc } : { type: "username", asc: true }
+                      )
+                    }
+                  >
                     Username/Email
                     <i class="fa-solid fa-caret-down" style={columnUsersSort.type === "username" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}></i>
                   </button>
-                  <button onClick={() => setUsersColumnSort(columnUsersSort.type === "type" ? { type: "type", asc: !columnUsersSort.asc } : { type: "type", asc: true })}>
+                  <button
+                    onClick={() =>
+                      setUsersColumnSort(columnUsersSort.type === "type" ? { type: "type", asc: !columnUsersSort.asc } : { type: "type", asc: true })
+                    }
+                  >
                     Type
                     <i class="fa-solid fa-caret-down" style={columnUsersSort.type === "type" && columnUsersSort.asc ? "transform: rotate(180deg)" : ""}></i>
                   </button>

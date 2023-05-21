@@ -6,7 +6,10 @@ export function Help() {
       <section className={styles.help__section} id="beta">
         <h2 className={styles.help__heading}>Beta?</h2>
 
-        <p>The application is currently in its beta release, meaning bugs and glitches may appear. Please report any if you find them, as your help is appreciated!</p>
+        <p>
+          The application is currently in its beta release, meaning bugs and glitches may appear. Please report any if you find them, as your help is
+          appreciated!
+        </p>
       </section>
       <section className={styles.help__section} id="howitworks">
         <h2 className={styles.help__heading}>How Does It Work?</h2>
@@ -17,25 +20,32 @@ export function Help() {
           </li>
           <li className={styles["help__how-item"]}>
             <p>
-              Once a song is selected, YouTube Music is searched to retrieve a downloadable source instead of downloading from Spotify. This is due to Spotify placing strict copyright safeguards in
-              their system which prevents songs from being downloaded effectively. However, Spotify has a more suitable API (Application Programming Interface) for searching songs, which is why
-              Spotify is used to search.
+              Once a song is selected, YouTube Music is searched to retrieve a downloadable source instead of downloading from Spotify. This is due to Spotify
+              placing strict copyright safeguards in their system which prevents songs from being downloaded effectively. However, Spotify has a more suitable
+              API (Application Programming Interface) for searching songs, which is why Spotify is used to search.
             </p>
           </li>
           <li className={styles["help__how-item"]}>
-            <p>YouTube Music returns sources which can be previewed in the play range selector. The selector plays audio directly from the deciphered YouTube audio source.</p>
+            <p>
+              YouTube Music returns sources which can be previewed in the play range selector. The selector plays audio directly from the deciphered YouTube
+              audio source.
+            </p>
           </li>
           <li className={styles["help__how-item"]}>
             <p>
-              As soon as the "request" button is pressed, a request is made on the server database. Then, the server begins going through verification processes which include verifying request
-              information to prevent forged requests, scanning lyrics for potential profane lines in the song, and finally scanning the possible lines with AI.
+              As soon as the "request" button is pressed, a request is made on the server database. Then, the server begins going through verification processes
+              which include verifying request information to prevent forged requests, scanning lyrics for potential profane lines in the song, and finally
+              scanning the possible lines with AI.
             </p>
           </li>
           <li className={styles["help__how-item"]}>
             <p>If a song passes profanity checks, it awaits the final confirmation from a human. Otherwise, the song is automatically rejected.</p>
           </li>
           <li className={styles["help__how-item"]}>
-            <p>When a song is accepted by a human, the request is marked as accepted and then begins download of the song in preparation for playback on the PA system.</p>
+            <p>
+              When a song is accepted by a human, the request is marked as accepted and then begins download of the song in preparation for playback on the PA
+              system.
+            </p>
           </li>
         </ol>
       </section>
@@ -63,8 +73,9 @@ export function Help() {
           <li className={styles["help_statuses-item"]}>
             <p>Pending Manual</p>
             <p>
-              No lyrics could be found for the song, either because it is an instrumental or that YouTube Music does not have the lyrics. Usually, Spotify will have the lyrics if YouTube Music does
-              not, but lyrics from Spotify cannot be fetched automatically. Therefore, a manual human effort is being awaited to verify.
+              No lyrics could be found for the song, either because it is an instrumental or that YouTube Music does not have the lyrics. Usually, Spotify will
+              have the lyrics if YouTube Music does not, but lyrics from Spotify cannot be fetched automatically. Therefore, a manual human effort is being
+              awaited to verify.
             </p>
           </li>
           <li className={styles["help_statuses-item"]}>
