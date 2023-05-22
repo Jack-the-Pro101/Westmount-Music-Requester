@@ -13,7 +13,7 @@ export class AuthenticatedGuard implements CanActivate {
     if (!token) throw new UnauthorizedException();
     try {
       const { _id } = verify(token, process.env.JWT_SECRET!) as { _id: string };
-      const user = (await users.findOne({ _id })) as WithId<StoredUser> | undefined;
+      const user = (await users.findOne({ _id }))?.toObject() as WithId<StoredUser> | undefined;
       if (!user) throw new UnauthorizedException();
       request.user = user;
       return true;
