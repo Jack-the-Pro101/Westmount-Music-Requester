@@ -43,7 +43,7 @@ async function connectDatabase() {
         await usersSchema.findOneAndDelete(user.email ? { email: user.email } : { username: user.username });
         user._id = ulid(new mongoose.Types.ObjectId(user._id).getTimestamp().getTime());
         await usersSchema.create(user);
-      } 
+      }
     }
   } catch (e) {
     console.error("failed to migrate object ID: ", e);

@@ -1,11 +1,11 @@
 import { BadRequestException, Body, Controller, ForbiddenException, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
-import { AuthenticatedGuard } from "src/auth/authenticated.guard";
-import { Roles } from "src/auth/roles.decorator";
-import { RolesGuard } from "src/auth/roles.guard";
-import { UsersService } from "src/users/users.service";
+import { AuthenticatedGuard } from "../auth/authenticated.guard";
+import { Roles } from "../auth/roles.decorator";
+import { RolesGuard } from "../auth/roles.guard";
+import { UsersService } from "../users/users.service";
 
 import { StoredUser } from "../types";
-import { validateAllParams } from "src/utils";
+import { validateAllParams } from "../utils";
 
 import * as bcrypt from "bcrypt";
 

@@ -1,22 +1,22 @@
 import { Injectable } from "@nestjs/common";
 
 import trackSchema from "../models/Track";
-import requestSchema from "src/models/Request";
-import downloadedTracksSchema from "src/models/DownloadedTracks";
-import userSchema from "src/models/User";
+import requestSchema from "../models/Request";
+import downloadedTracksSchema from "../models/DownloadedTracks";
+import userSchema from "../models/User";
 
-import downloader from "src/downloader/downloader";
+import downloader from "../downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
 import { RequestData, Request as RequestType, StoredUser, WithId } from "../types";
 import mongoose from "mongoose";
 import Perspective from "./perspective";
-import { MusicService } from "src/music/music.service";
+import { MusicService } from "../music/music.service";
 
 import * as config from "../shared/config.json";
-import { sanitizeFilename } from "src/utils";
+import { sanitizeFilename } from "../utils";
 
-import { Request } from "src/models/Request";
+import { Request } from "../models/Request";
 
 class ScanBuffer {
   private texts: ((value?: unknown) => void)[] = [];

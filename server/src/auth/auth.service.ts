@@ -21,7 +21,7 @@ interface GoogleRawProfile {
 export class AuthService {
   constructor(private usersService: UsersService) {}
 
-  async googleLogin(req: FastifyRequest): Promise<StoredUser | undefined> {
+  async googleLogin(req: FastifyRequest): Promise<WithId<StoredUser> | undefined> {
     const code = Object.getOwnPropertyDescriptor(req.query, "code")?.value;
     const stateToken = Object.getOwnPropertyDescriptor(req.query, "state")?.value;
     if (!code || !stateToken || typeof code !== "string" || typeof stateToken !== "string") throw new BadRequestException();
@@ -55,7 +55,7 @@ export class AuthService {
     // if (!user.email.endsWith("@hwdsb.on.ca")) throw new DomainEmailInvalidException();
 
     const storedUser = await this.usersService.createOrUpdateOne(user);
-    return storedUser as StoredUser;
+    return storedUser as WithId<StoredUser>;
   }
 
   async validateUser(username: string, password: string): Promise<WithId<StoredUser> | undefined> {
