@@ -328,7 +328,7 @@ export class RequestService {
       console.log(filename, "already downloaded. Stopping re-download.");
       return;
     }
-    console.log("this executed");
+    console.error("this already executed");
 
     const downloadResult = await downloader.download(requestTrack!.youtubeId, filename, {
       format: config.downloadExt,

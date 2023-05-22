@@ -67,7 +67,7 @@ async function initTasks() {
 }
 
 async function bootstrap() {
-  console.log("Running in", process.env.NODE_ENV === "production" ? "production" : "dev environment");
+  console.log("Running in", process.env.NODE_ENV === "production" ? "production" : "development");
 
   if (process.env.NODE_ENV === "production") {
     if (!process.env.MONGODB_URI) throw new Error("NO DATABASE CONNECTION URI PROVIDED!");

@@ -102,7 +102,6 @@ export class RequestController {
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async getPersonalRequests(@Req() req: FastifyRequest) {
-    console.log(req.user);
     return await this.requestService.getPersonalRequests(req.user._id.toString());
   }
 }
