@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import mongoose from "mongoose";
 
-import Users, { User } from "src/models/User";
+import Users, { User } from "../models/User";
 
 import * as bcrypt from "bcrypt";
 import { StoredUser, WithId } from "../types";

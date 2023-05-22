@@ -5,8 +5,8 @@ import { AuthenticatedGuard } from "./authenticated.guard";
 import { Throttle } from "@nestjs/throttler";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { sign } from "jsonwebtoken";
-import { StoredUser } from "../types";
-import { COOKIE } from "src/utils";
+import { StoredUser, WithId } from "../types";
+import { COOKIE } from "../utils";
 
 interface FastifyUser {
   username: string;
@@ -51,11 +51,11 @@ export class AuthController {
     const { username, password } = request.body as FastifyUser;
     const storedUser = await this.authService.validateUser(username, password);
     if (!storedUser) throw new UnauthorizedException();
-    let user = Object.assign({}, storedUser) as StoredUser & {
+    let user = Object.assign({}, storedUser) as WithId<StoredUser> & {
       password?: string;
     };
     delete user.password;
-    const token = sign(user, process.env.JWT_SECRET!);
+    const token = sign({ _id: user._id }, process.env.JWT_SECRET!);
     response.setCookie(COOKIE, token, { path: "/" });
     response.send(user);
   }
@@ -65,7 +65,7 @@ export class AuthController {
   async googleAuthRedirect(@Req() req: FastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
     const user = await this.authService.googleLogin(req);
     if (user) {
-      const token = sign(user, process.env.JWT_SECRET!);
+      const token = sign({ _id: user._id }, process.env.JWT_SECRET!);
       res.setCookie(COOKIE, token, { path: "/" });
       if (process.env.NODE_ENV !== "production") {
         res.status(302).redirect("http://localhost:5173");

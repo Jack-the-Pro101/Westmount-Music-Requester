@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Header, InternalServerErrorException, Post, Query, UseGuards } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { AuthenticatedGuard } from "src/auth/authenticated.guard";
-import { Roles } from "src/auth/roles.decorator";
-import { RolesGuard } from "src/auth/roles.guard";
+import { AuthenticatedGuard } from "../auth/authenticated.guard";
+import { Roles } from "../auth/roles.decorator";
+import { RolesGuard } from "../auth/roles.guard";
 import { MusicService } from "./music.service";
 
 @Controller("/api/music")

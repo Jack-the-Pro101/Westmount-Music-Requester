@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { MusicService } from "src/music/music.service";
+import { MusicService } from "../music/music.service";
 import { RequestController } from "./request.controller";
 import { RequestGateway } from "./request.gateway";
 import { RequestService } from "./request.service";

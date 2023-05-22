@@ -2,7 +2,8 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { FastifyRequest } from "fastify";
 import { verify } from "jsonwebtoken";
 import { StoredUser, WithId } from "../types";
-import { COOKIE } from "src/utils";
+import { COOKIE } from "../utils";
+import users from "../models/User";
 
 @Injectable()
 export class AuthenticatedGuard implements CanActivate {
@@ -11,7 +12,9 @@ export class AuthenticatedGuard implements CanActivate {
     const token = request.cookies[COOKIE];
     if (!token) throw new UnauthorizedException();
     try {
-      const user = verify(token, process.env.JWT_SECRET!) as WithId<StoredUser>;
+      const { _id } = verify(token, process.env.JWT_SECRET!) as { _id: string };
+      const user = (await users.findOne({ _id })) as WithId<StoredUser> | undefined;
+      if (!user) throw new UnauthorizedException();
       request.user = user;
       return true;
     } catch (e) {
