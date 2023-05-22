@@ -4,6 +4,11 @@ const users = mongoose.model(
   "user",
   new mongoose.Schema(
     {
+      _id: {
+        type: String,
+        required: true,
+        unique: true,
+      },
       email: {
         type: String,
         required: false,
@@ -38,7 +43,7 @@ const users = mongoose.model(
       name: {
         type: String,
         required: false,
-        default: "default",
+        default: "User",
       },
     },
     {

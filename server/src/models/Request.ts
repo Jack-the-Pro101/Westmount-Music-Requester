@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const requests =  mongoose.model(
+const requests = mongoose.model(
   "request",
   new mongoose.Schema(
     {
@@ -22,15 +22,15 @@ const requests =  mongoose.model(
       },
 
       user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "user",
         required: true,
       },
 
       status: {
         type: String,
-        enum: ["PRE_PENDING", "PENDING", "PENDING_MANUAL", "AUTO_REJECTED", "REJECTED", "ACCEPTED"],
-        default: "PRE_PENDING",
+        enum: ["AWAITING", "PENDING", "PENDING_MANUAL", "AUTO_REJECTED", "REJECTED", "ACCEPTED"],
+        default: "AWAITING",
       },
     },
     {

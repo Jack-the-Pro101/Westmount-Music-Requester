@@ -1,3 +1,1 @@
-export class DomainEmailInvalidException {
-    constructor() {}
-}
+export class DomainEmailInvalidException {}

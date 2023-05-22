@@ -1,10 +1,10 @@
-import { Request } from "express";
-import { GoogleUser, StoredUser } from "./types";
+import { GrantSession } from "grant";
+import { StoredUser, WithId } from "./types";
 
-export interface StoredAuthenticatedRequest extends Request {
-  user: StoredUser;
-}
+import { FastifyRequest, FastifyReply } from "fastify";
 
-export interface GoogleAuthenticatedRequest extends Request {
-  user: GoogleUser;
-}
+declare module "fastify" {
+  interface FastifyRequest {
+    user: WithId<StoredUser>;
+  }
+} // query

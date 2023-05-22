@@ -8,7 +8,7 @@ import userSchema from "src/models/User";
 import downloader from "src/downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
-import { RequestData, Request as RequestType, StoredUser } from "src/types";
+import { RequestData, Request as RequestType, StoredUser, WithId } from "../types";
 import mongoose from "mongoose";
 import Perspective from "./perspective";
 import { MusicService } from "src/music/music.service";
@@ -91,7 +91,7 @@ export class RequestService {
           .catch((err) => {
             console.error(err);
           });
-          return;
+        return;
       }
 
       const possibleProfaneLines: string[] = [];
@@ -109,7 +109,9 @@ export class RequestService {
         }
       }
 
-      const client = new Perspective({ apiKey: process.env.PERSPECTIVE_API_KEY });
+      const client = new Perspective({
+        apiKey: process.env.PERSPECTIVE_API_KEY,
+      });
       let isProfane = false;
 
       for (let i = 0, n = possibleProfaneLines.length; i < n; ++i) {
@@ -154,7 +156,7 @@ export class RequestService {
     }
   }
 
-  async validateRequest(data: RequestData, user: StoredUser) {
+  async validateRequest(data: RequestData, user: WithId<StoredUser>) {
     const { playRange, spotifyId, youtubeId } = data;
 
     if ((await this.getPersonalRequests(user._id)).length >= config.maxSongsPerCycle) return false;
@@ -250,7 +252,10 @@ export class RequestService {
 
       if (userDoc == null) return false;
 
-      const existingAcceptedRequest = await requestSchema.findOne({ track: trackId, status: "ACCEPTED" });
+      const existingAcceptedRequest = await requestSchema.findOne({
+        track: trackId,
+        status: "ACCEPTED",
+      });
 
       if (existingAcceptedRequest != null) {
         await requestSchema.create({
@@ -279,14 +284,17 @@ export class RequestService {
   }
 
   async cancelRequest(requestId: string) {
-    const request = await requestSchema.findOneAndDelete({_id: requestId});
+    const request = await requestSchema.findOneAndDelete({ _id: requestId });
 
     if (request == null) return false;
     return true;
   }
 
   async checkExistingRequest(spotifyId: string, trackId: string, userId: string) {
-    const existingRequest = await requestSchema.findOne({ $or: [{ spotifyId: spotifyId }, { track: trackId }], user: userId });
+    const existingRequest = await requestSchema.findOne({
+      $or: [{ spotifyId: spotifyId }, { track: trackId }],
+      user: userId,
+    });
     if (existingRequest != null) return true;
     return false;
   }
@@ -320,6 +328,7 @@ export class RequestService {
       console.log(filename, "already downloaded. Stopping re-download.");
       return;
     }
+    console.log("this executed");
 
     const downloadResult = await downloader.download(requestTrack!.youtubeId, filename, {
       format: config.downloadExt,

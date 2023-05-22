@@ -20,7 +20,10 @@ export function Admin() {
     type: string;
     asc: boolean;
   }
-  const [columnUsersSort, setUsersColumnSort] = useState<ColumnUsersSortObj>({ type: "name", asc: true });
+  const [columnUsersSort, setUsersColumnSort] = useState<ColumnUsersSortObj>({
+    type: "name",
+    asc: true,
+  });
   const [matchUsers, setMatchUsers] = useState("");
 
   const [editingUser, setEditingUser] = useState<StoredUser | null>(null);

@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { FfmpegPostProcessOptions } from "src/types";
 import mongoose from "mongoose";
+import { YTNodes } from "youtubei.js";
 
 class Downloader {
   private yt?: Innertube;
@@ -55,7 +56,7 @@ class Downloader {
 
     const songs = await this.yt!.music.search(query, { type: "song" });
 
-    return songs.results;
+    return songs.contents?.firstOfType(YTNodes.MusicShelf)?.contents;
   }
 
   async getYtMusicInfo(id: string) {
@@ -114,7 +115,10 @@ class Downloader {
       type: "audio",
     });
 
-    const tempFilepath = path.join(process.env.DOWNLOADS!, `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`); 
+    const tempFilepath = path.join(
+      process.env.DOWNLOADS!,
+      `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`
+    );
 
     await new Promise(async (resolve) => {
       const writer = fs.createWriteStream(tempFilepath, {

@@ -15,7 +15,7 @@ const PERMISSIONS = [
   "MANAGE_USERS",
   "ADMINISTRATOR",
 ] as const;
-type Permission = typeof PERMISSIONS[number];
+type Permission = (typeof PERMISSIONS)[number];
 
 let bitOffset = 2;
 const FLAGS: {

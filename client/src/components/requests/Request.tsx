@@ -7,7 +7,7 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   month: "short",
   day: "numeric",
   weekday: "short",
-})
+});
 
 export function Request({ request, setActive }: { request: RequestType; setActive: StateUpdater<RequestType | undefined> }) {
   return (
@@ -21,10 +21,7 @@ export function Request({ request, setActive }: { request: RequestType; setActiv
           <p>{request.user.name}</p>
         </div>
         <div className={styles["requests__item-col"]}>
-          <p style="color: hsl(var(--clr-neutral-700));">
-            Requested{" "}
-            {dateFormatter.format(new Date(request.createdAt))}
-          </p>
+          <p style="color: hsl(var(--clr-neutral-700));">Requested {dateFormatter.format(new Date(request.createdAt))}</p>
         </div>
       </button>
     </li>

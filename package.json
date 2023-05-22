@@ -1,7 +1,10 @@
 {
-    "name": "westmount-music-requester",
-    "description": "Music request website for Westmount Secondary School. Logs in with school account and checks for cleanness of song and lyrics with AI.",
-    "scripts": {
-        "pnpmI": "pnpm i"
-    }
+  "name": "westmount-music-requester",
+  "description": "Music request website for Westmount Secondary School. Logs in with school account and checks for cleanness of song and lyrics with AI.",
+  "scripts": {
+    "pnpmI": "pnpm i"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  }
 }

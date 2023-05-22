@@ -260,36 +260,36 @@ export function Requests({
         <div className={`${styles["requests__confirm-container"]} ${isSubmitting ? styles["requests__confirm-container--loading"] : ""}`}>
           <div className={`${styles["requests__confirm-content"]} ${isSubmitting ? styles["requests__confirm-content--submitting"] : ""}`}>
             <div className={styles["requests__confirm-info"]}>
-            <h2>Confirm request</h2>
+              <h2>Confirm request</h2>
 
-            <p>You are requesting:</p>
+              <p>You are requesting:</p>
 
-            <ul>
-              <li>
-                {selectedTrack?.channel} - {selectedTrack?.title}
-              </li>
-              <li>
-                Will play from <b>{secondsToHumanReadableString(selectionRange)}</b> to{" "}
-                <b>{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}</b>
-              </li>
-            </ul>
+              <ul>
+                <li>
+                  {selectedTrack?.channel} - {selectedTrack?.title}
+                </li>
+                <li>
+                  Will play from <b>{secondsToHumanReadableString(selectionRange)}</b> to{" "}
+                  <b>{secondsToHumanReadableString(selectionRange + songMaxPlayDurationSeconds)}</b>
+                </li>
+              </ul>
 
-            <p>You have limited requests per cycle. Ensure you use them correctly. Does the above info. look good?</p>
-          </div>
+              <p>You have limited requests per cycle, so ensure you use them correctly. Does the above information look good?</p>
+            </div>
 
-          <div className={styles["requests__confirm-btns"]}>
-            <button className={styles["requests__back-btn"]} onClick={() => setConfirmModalShown(false)}>
-              Back
-            </button>
-            <button
-              className={styles["requests__confirm-btn"]}
-              onClick={() => {
-                submitRequest();
-              }}
-            >
-              Confirm
-            </button>
-          </div>
+            <div className={styles["requests__confirm-btns"]}>
+              <button className={styles["requests__back-btn"]} onClick={() => setConfirmModalShown(false)}>
+                Back
+              </button>
+              <button
+                className={styles["requests__confirm-btn"]}
+                onClick={() => {
+                  submitRequest();
+                }}
+              >
+                Confirm
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,12 +1,17 @@
-import { GoogleOAuthGuard } from "./google-oauth.guard";
-import { Controller, Delete, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { ConflictException, Controller, Delete, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 
-import { LocalAuthGuard } from "./local-auth.guard";
 import { AuthenticatedGuard } from "./authenticated.guard";
-import { Request, Response } from "express";
-import { GoogleAuthenticatedRequest, StoredAuthenticatedRequest } from "src/server";
 import { Throttle } from "@nestjs/throttler";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { sign } from "jsonwebtoken";
+import { StoredUser } from "../types";
+import { COOKIE } from "src/utils";
+
+interface FastifyUser {
+  username: string;
+  password: string;
+}
 
 @Controller("/api/auth")
 export class AuthController {
@@ -14,70 +19,64 @@ export class AuthController {
 
   @Throttle(4, 6)
   @Get()
-  @UseGuards(GoogleOAuthGuard)
-  async googleAuth() {}
+  googleAuth(@Res() res: FastifyReply) {
+    res.redirect(302, this.authService.getCurrentOauthUrl());
+  }
 
   @Throttle(2, 5)
   @Delete("logout")
   @UseGuards(AuthenticatedGuard)
-  logout(@Req() req: Request) {
-    req.logout(function (err) {
-      if (err) {
-        console.log(err);
-
-        return false;
-      }
-      return true;
-    });
+  logout(@Res() res: FastifyReply) {
+    // TODO: token whitelist & expiry
+    res.clearCookie(COOKIE);
+    res.send();
   }
 
   @Throttle(15, 5)
   @Get("session")
   @UseGuards(AuthenticatedGuard)
-  getSession(@Req() req: StoredAuthenticatedRequest) {
-    const isGoogleUser = req.user.type === "GOOGLE";
-
-    return {
-      id: req.user.id,
-      email: isGoogleUser ? req.user.email : null,
-      name: req.user.name,
-      avatar: isGoogleUser ? req.user.avatar : null,
-      type: req.user.type,
-      permissions: req.user.permissions,
+  getSession(@Req() req: FastifyRequest) {
+    const user = Object.assign({}, req.user) as StoredUser & {
+      password?: string;
     };
+    delete user.password;
+    return user;
   }
 
   @Throttle(4, 6)
   @Post("login")
-  @UseGuards(LocalAuthGuard)
-  login(@Req() req: StoredAuthenticatedRequest) {
-    return {
-      id: req.user.id,
-      email: null,
-      name: req.user.name,
-      avatar: null,
-      type: req.user.type,
-      permissions: req.user.permissions,
+  async login(@Req() request: FastifyRequest, @Res() response: FastifyReply) {
+    // const token = request.cookies[COOKIE];
+    // if (token) throw new ConflictException();
+    const { username, password } = request.body as FastifyUser;
+    const storedUser = await this.authService.validateUser(username, password);
+    if (!storedUser) throw new UnauthorizedException();
+    let user = Object.assign({}, storedUser) as StoredUser & {
+      password?: string;
     };
+    delete user.password;
+    const token = sign(user, process.env.JWT_SECRET!);
+    response.setCookie(COOKIE, token, { path: "/" });
+    response.send(user);
   }
 
   @Throttle(4, 6)
   @Get("google-redirect")
-  @UseGuards(GoogleOAuthGuard)
-  googleAuthRedirect(@Req() req: GoogleAuthenticatedRequest, @Res() res: Response) {
-    const user = this.authService.googleLogin(req);
-
+  async googleAuthRedirect(@Req() req: FastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
+    const user = await this.authService.googleLogin(req);
     if (user) {
+      const token = sign(user, process.env.JWT_SECRET!);
+      res.setCookie(COOKIE, token, { path: "/" });
       if (process.env.NODE_ENV !== "production") {
-        res.redirect("http://localhost:5173");
+        res.status(302).redirect("http://localhost:5173");
       } else {
-        res.redirect("/");
+        res.status(302).redirect("/");
       }
     } else {
       if (process.env.NODE_ENV !== "production") {
-        res.redirect("http://localhost:5173/error?code=auth");
+        res.status(302).redirect("http://localhost:5173/error?code=auth");
       } else {
-        res.redirect("/error?code=auth");
+        res.status(302).redirect("/error?code=auth");
       }
     }
   }

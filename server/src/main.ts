@@ -1,5 +1,5 @@
 import { NestFactory } from "@nestjs/core";
-import { NestExpressApplication } from "@nestjs/platform-express";
+import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { AppModule } from "./app.module";
 import downloader from "./downloader/downloader";
 
@@ -10,17 +10,11 @@ import Users from "./models/User";
 
 import * as bcrypt from "bcrypt";
 
-import * as passport from "passport";
-import * as session from "express-session";
-import * as connectMongodbSession from "connect-mongodb-session";
-const MongoDBStore = connectMongodbSession(session);
-const store = new MongoDBStore({
-  uri: process.env.MONGODB_URI!,
-  collection: "sessions",
-});
+import fastifyCookie from "@fastify/cookie";
 
-import * as cookieParser from "cookie-parser";
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
+import usersSchema from "./models/User";
+import { decodeTime, ulid } from "ulid";
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Critical error encountered at:", promise, "Reason:", reason);
@@ -39,10 +33,27 @@ async function connectDatabase() {
   });
   connection.on("connection", () => console.log("Connection established"));
   await mongoose.connect(process.env.MONGODB_URI!, {});
+  try {
+    const users = await usersSchema.find({});
+    for (let i = 0; i < users.length; i++) {
+      try {
+        decodeTime(users[i]._id);
+      } catch {
+        let user = users[i].toObject();
+        await usersSchema.findOneAndDelete(user.email ? { email: user.email } : { username: user.username });
+        user._id = ulid(new mongoose.Types.ObjectId(user._id).getTimestamp().getTime());
+        await usersSchema.create(user);
+      } 
+    }
+  } catch (e) {
+    console.error("failed to migrate object ID: ", e);
+  }
 }
 
 async function initTasks() {
-  const user = await Users.findOne({ username: process.env.SYS_ADMIN_USERNAME });
+  const user = await Users.findOne({
+    username: process.env.SYS_ADMIN_USERNAME,
+  });
 
   if (user == null) {
     await Users.create({
@@ -67,19 +78,10 @@ async function bootstrap() {
   await connectDatabase();
   await initTasks();
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.use(cookieParser());
-  app.use(
-    session({
-      store: store,
-      secret: process.env.JWT_SECRET!,
-      resave: false,
-      saveUninitialized: false,
-      name: "WMR_SID",
-    })
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+  app.register(fastifyCookie, {
+    secret: process.env.JWT_SECRET!,
+  });
 
   app.useGlobalFilters(new DomainEmailInvalidExceptionFilter());
 
