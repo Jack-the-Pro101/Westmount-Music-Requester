@@ -2,7 +2,7 @@ import { Innertube } from "youtubei.js";
 import { exec } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
-import { FfmpegPostProcessOptions } from "src/types";
+import { FfmpegPostProcessOptions } from "../types";
 import mongoose from "mongoose";
 import { YTNodes } from "youtubei.js";
 

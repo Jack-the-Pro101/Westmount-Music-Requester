@@ -39,10 +39,8 @@ export class AuthService {
       code,
       process.env.NODE_ENV === "production" ? process.env.GOOGLE_REDIRECT_URI! : "http://localhost:3000/api/auth/google-redirect"
     );
-    console.log(code, stateToken);
     if (!token) throw new UnauthorizedException();
     const rawUser = await this.getUserProfile(token);
-    console.log(rawUser);
     if (!rawUser) return;
 
     const user: StoredUser = {
@@ -52,7 +50,7 @@ export class AuthService {
       name: rawUser.name,
       permissions: 2,
     };
-    // if (!user.email.endsWith("@hwdsb.on.ca")) throw new DomainEmailInvalidException();
+    if (!user.email.endsWith("@hwdsb.on.ca")) throw new DomainEmailInvalidException();
 
     const storedUser = await this.usersService.createOrUpdateOne(user);
     return storedUser as WithId<StoredUser>;
