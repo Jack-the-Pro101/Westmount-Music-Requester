@@ -11,6 +11,14 @@ export function Help() {
           appreciated!
         </p>
       </section>
+      <section className={styles.help__section} id="search">
+        <h2 className={styles.help__heading}>Search Discrepancies</h2>
+
+        <p>
+          Can't find the track you selected from the search bar in sources? This is because the search uses Spotify's search API to find tracks, whilst the
+          sources search YouTube Music to find its tracks. See more information on why this is <a href="#howitworks">below</a>.
+        </p>
+      </section>
       <section className={styles.help__section} id="howitworks">
         <h2 className={styles.help__heading}>How Does It Work?</h2>
 
@@ -59,16 +67,12 @@ export function Help() {
 
         <ul className={styles["help__statuses-list"]}>
           <li className={styles["help_statuses-item"]}>
-            <p>Accepted</p>
-            <p>Song has been accepted by a human and is ready to play.</p>
+            <p>Awaiting</p>
+            <p>Song is awaiting automated profanity check before continuing.</p>
           </li>
           <li className={styles["help_statuses-item"]}>
             <p>Auto Rejected</p>
             <p>Song has confidently been detected to contain profanity and has been rejected by the AI.</p>
-          </li>
-          <li className={styles["help_statuses-item"]}>
-            <p>Rejected</p>
-            <p>A human verifier has rejected the song. This could be due to many reasons.</p>
           </li>
           <li className={styles["help_statuses-item"]}>
             <p>Pending Manual</p>
@@ -83,8 +87,12 @@ export function Help() {
             <p>Song has passed profanity check and is awaiting human verification.</p>
           </li>
           <li className={styles["help_statuses-item"]}>
-            <p>Awaiting</p>
-            <p>Song is awaiting automated profanity check before continuing.</p>
+            <p>Rejected</p>
+            <p>A human verifier has rejected the song. This could be due to many reasons.</p>
+          </li>
+          <li className={styles["help_statuses-item"]}>
+            <p>Accepted</p>
+            <p>Song has been accepted by a human and is ready to play.</p>
           </li>
         </ul>
       </section>
