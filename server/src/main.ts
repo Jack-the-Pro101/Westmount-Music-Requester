@@ -15,6 +15,7 @@ import fastifyCookie from "@fastify/cookie";
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
 import usersSchema from "./models/User";
 import { decodeTime, ulid } from "ulid";
+import { validateAllParams } from "./utils";
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Critical error encountered at:", promise, "Reason:", reason);
@@ -72,6 +73,16 @@ async function bootstrap() {
   if (process.env.NODE_ENV === "production") {
     if (!process.env.MONGODB_URI) throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
     if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD) throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
+    if (
+      !validateAllParams([
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        process.env.SPOTIFY_CLIENT_ID,
+        process.env.SPOTIFY_CLIENT_SECRET,
+        process.env.PERSPECTIVE_API_KEY,
+      ])
+    )
+      console.error("WARNING: Not all application IDs/secrets were provided in env vars. Application will not function correctly.");
   }
 
   await downloader.initialize();
