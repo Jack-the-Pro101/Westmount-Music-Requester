@@ -86,7 +86,7 @@ export function PlayRange({
           return;
         }
       }
-      isPaused ? audioElemRef.current.pause() : isAwaiting ? manualPlay() : audioElemRef.current.play();
+      isPaused ? audioElemRef.current.pause() : audioElemRef.current.play().then(() => setIsAwaiting(false));
     }
   }, [isPaused]);
 
@@ -102,6 +102,7 @@ export function PlayRange({
         .catch(() => {
           setIsAwaiting(true);
           setIsPaused(true);
+          audioElemRef.current!.load();
         });
     }
   }, [songPreview]);
@@ -133,13 +134,6 @@ export function PlayRange({
       audioElemRef?.current?.removeEventListener("loadedmetadata", handler);
     };
   }, [songPreview, audioElemRef]);
-
-  function manualPlay() {
-    audioElemRef.current!.load();
-    audioElemRef.current!.play().then(() => {
-      setIsAwaiting(false);
-    });
-  }
 
   return (
     <div className={styles["requests__play-range"]}>
