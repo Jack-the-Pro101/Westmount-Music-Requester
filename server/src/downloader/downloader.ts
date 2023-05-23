@@ -1,4 +1,4 @@
-import { Innertube } from "youtubei.js";
+import { Innertube, UniversalCache } from "youtubei.js";
 import { exec } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
@@ -12,7 +12,9 @@ class Downloader {
   constructor() {}
 
   async initialize() {
-    const yt = await Innertube.create();
+    const yt = await Innertube.create({
+      cache: new UniversalCache(true, process.env.YT_CACHE_DIR),
+    });
     this.yt = yt;
     await this.verifyDependencies();
     this.ready = true;
