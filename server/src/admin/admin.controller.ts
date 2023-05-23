@@ -8,6 +8,7 @@ import { StoredUser } from "../types";
 import { validateAllParams } from "../utils";
 
 import * as bcrypt from "bcrypt";
+import { ulid } from "ulid";
 
 type CreateUser = {
   type: "INTERNAL";
@@ -53,6 +54,7 @@ export class AdminController {
     if (data.type === "GOOGLE") {
       if (!validateAllParams([data.email, data.permissions, data.type])) throw new BadRequestException();
       return await this.usersService.create({
+        _id: ulid(),
         email: data.email,
         permissions: data.permissions,
       });
@@ -60,6 +62,7 @@ export class AdminController {
       if (!validateAllParams([data.username, data.permissions, data.password])) throw new BadRequestException();
       const hash = await bcrypt.hash(data.password, 10);
       return await this.usersService.create({
+        _id: ulid(),
         username: data.username,
         password: hash,
         permissions: data.permissions,

@@ -133,6 +133,9 @@ export function Requests({
                 >
                   YouTube Music
                 </a>
+                <p className={styles.requests__subtitle}>
+                  Can't find your track from the search? See <a href="/help#search">why</a>.
+                </p>
               </>
             )}
           </p>
