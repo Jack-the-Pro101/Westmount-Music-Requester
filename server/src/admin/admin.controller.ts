@@ -8,6 +8,7 @@ import { StoredUser } from "../types";
 import { validateAllParams } from "../utils";
 
 import * as bcrypt from "bcrypt";
+import { ulid } from "ulid";
 
 type CreateUser = {
   type: "INTERNAL";
@@ -42,13 +43,14 @@ export class AdminController {
     return await this.usersService.getUsers(limit, page || 0);
   }
 
-  @Post("users")
+  @Post("users/create")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async createUser(@Body() data: CreateUser) {
     if (!validateAllParams([data.username, data.permissions, data.password])) throw new BadRequestException();
     const hash = await bcrypt.hash(data.password, 10);
     return await this.usersService.create({
+      _id: ulid(),
       username: data.username,
       password: hash,
       permissions: data.permissions,
