@@ -30,7 +30,8 @@ export function PlayRange({
   const [playbackPos, setPlaybackPos] = useState(0);
   const storedVolume = localStorage.getItem("volume") ? parseFloat(localStorage.getItem("volume") as string) : 1;
   const [volume, setVolume] = useState(Number.isNaN(storedVolume) ? 1 : storedVolume);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isAwaiting, setIsAwaiting] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [buffered, setBuffered] = useState(0);
   const [selectionDisplayRange, setDisplaySelectionRange] = useState(0);
@@ -50,7 +51,7 @@ export function PlayRange({
       return setPlaybackPos(min);
     }
     if (max != null && playbackPos >= max) {
-      setIsPlaying(true);
+      setIsPaused(true);
       updatePlaybackPosRange(max + 1);
       return setPlaybackPos(max);
     }
@@ -78,23 +79,31 @@ export function PlayRange({
     if (songPreview == null) return;
     if (audioElemRef.current) {
       if (min != null && max != null && playbackPos >= max) {
-        if (!isPlaying) {
+        if (!isPaused) {
           updatePlaybackPosRange(min + 1);
           setPlaybackPos(min);
           audioElemRef.current.play();
           return;
         }
       }
-      isPlaying ? audioElemRef.current.pause() : audioElemRef.current.play();
+      isPaused ? audioElemRef.current.pause() : isAwaiting ? manualPlay() : audioElemRef.current.play();
     }
-  }, [isPlaying]);
+  }, [isPaused]);
 
   useEffect(() => {
     if (songPreview == null) return;
     setBuffered(0);
     setPlaybackPos(0);
     setDuration(0);
-    if (audioElemRef.current) isPlaying ? audioElemRef.current.pause() : audioElemRef.current.play();
+    if (audioElemRef.current) {
+      audioElemRef.current
+        .play()
+        .then(() => setIsPaused(false))
+        .catch(() => {
+          setIsAwaiting(true);
+          setIsPaused(true);
+        });
+    }
   }, [songPreview]);
 
   useEffect(() => {
@@ -125,16 +134,23 @@ export function PlayRange({
     };
   }, [songPreview, audioElemRef]);
 
+  function manualPlay() {
+    audioElemRef.current!.load();
+    audioElemRef.current!.play().then(() => {
+      setIsAwaiting(false);
+    });
+  }
+
   return (
     <div className={styles["requests__play-range"]}>
       {songPreview && (
-        <div className={`${styles.requests__loading} ${buffered > 0 ? styles["requests__loading--done"] : ""}`}>
+        <div className={`${styles.requests__loading} ${buffered > 0 || !isAwaiting ? styles["requests__loading--done"] : ""}`}>
           <img src="/images/loading3.svg" alt="Loading" className={styles["requests__loading-image"]} />
         </div>
       )}
 
       {songPreview && (
-        <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPlaying(true)} ref={audioElemRef} volume={volume}>
+        <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPaused(true)} ref={audioElemRef} volume={volume}>
           <source src={songPreview.url} type={songPreview.mime_type} />
         </audio>
       )}
@@ -186,9 +202,9 @@ export function PlayRange({
             type="button"
             className={styles["requests__play-btn"]}
             title="Toggle playback"
-            onClick={() => setIsPlaying((isPlaying) => (isPlaying ? false : true))}
+            onClick={() => setIsPaused((isPlaying) => (isPlaying ? false : true))}
           >
-            <i class={"fa-regular fa-" + (isPlaying ? "play" : "pause")}></i>
+            <i class={"fa-regular fa-" + (isPaused ? "play" : "pause")}></i>
           </button>
         </div>
         <div className={styles["requests__play-btns-group"]}>
