@@ -16,6 +16,10 @@ type CreateUser = {
   password: string;
   permissions: number;
   name?: string;
+} | {
+  type: "GOOGLE";
+  email: string;
+  permissions: number;
 };
 
 @Controller("/api/admin")
@@ -43,18 +47,27 @@ export class AdminController {
     return await this.usersService.getUsers(limit, page || 0);
   }
 
-  @Post("users/create")
+  @Post("users")
   @Roles("MANAGE_USERS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async createUser(@Body() data: CreateUser) {
-    if (!validateAllParams([data.username, data.permissions, data.password])) throw new BadRequestException();
-    const hash = await bcrypt.hash(data.password, 10);
-    return await this.usersService.create({
-      _id: ulid(),
-      username: data.username,
-      password: hash,
-      permissions: data.permissions,
-    });
+    if (data.type === "GOOGLE") {
+      if (!validateAllParams([data.email, data.permissions, data.type])) throw new BadRequestException();
+      return await this.usersService.create({
+        _id: ulid(),
+        email: data.email,
+        permissions: data.permissions,
+      });
+    } else {
+      if (!validateAllParams([data.username, data.permissions, data.password])) throw new BadRequestException();
+      const hash = await bcrypt.hash(data.password, 10);
+      return await this.usersService.create({
+        _id: ulid(),
+        username: data.username,
+        password: hash,
+        permissions: data.permissions,
+      });
+    }
   }
 
   @Patch("users/:userId")

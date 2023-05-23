@@ -13,8 +13,7 @@ import * as bcrypt from "bcrypt";
 import fastifyCookie from "@fastify/cookie";
 
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
-import usersSchema from "./models/User";
-import { decodeTime, ulid } from "ulid";
+import { migrate } from "./migrator";
 import { validateAllParams } from "./utils";
 
 process.on("unhandledRejection", (reason, promise) => {
@@ -34,21 +33,7 @@ async function connectDatabase() {
   });
   connection.on("connection", () => console.log("Connection established"));
   await mongoose.connect(process.env.MONGODB_URI!, {});
-  try {
-    const users = await usersSchema.find({});
-    for (let i = 0; i < users.length; i++) {
-      try {
-        decodeTime(users[i]._id);
-      } catch {
-        let user = users[i].toObject();
-        await usersSchema.findOneAndDelete(user.email ? { email: user.email } : { username: user.username });
-        user._id = ulid(new mongoose.Types.ObjectId(user._id).getTimestamp().getTime());
-        await usersSchema.create(user);
-      }
-    }
-  } catch (e) {
-    console.error("failed to migrate object ID: ", e);
-  }
+  await migrate();
 }
 
 async function initTasks() {

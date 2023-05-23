@@ -55,7 +55,7 @@ export function Admin() {
     const permissionsCheckboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll(".new-user-permissions-checkbox");
     permissionsCheckboxes.forEach((checkbox) => (checkbox.checked ? (permissions += FLAGS[checkbox.dataset.flagName as keyof typeof FLAGS]) : 0));
 
-    const request = await fetch("/api/admin/users/create", {
+    const request = await fetch("/api/admin/users/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
