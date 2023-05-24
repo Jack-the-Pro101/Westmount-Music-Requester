@@ -75,7 +75,7 @@ export class RequestController {
   @Patch(":trackId")
   @Roles("ACCEPT_REQUESTS")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async acceptRequest(@Param("trackId") trackId: string, @Body() info: { evaluation: boolean }, @Res() res: FastifyReply) {
+  async acceptRequest(@Param("trackId") trackId: string, @Body() info: { evaluation: boolean }) {
     const { evaluation } = info;
     if (!validateAllParams([evaluation])) throw new BadRequestException();
 
@@ -83,10 +83,11 @@ export class RequestController {
 
     if (!evaluation) {
       await this.requestService.updateManyRequests({ track: trackId }, { status: "REJECTED" });
-      return;
+    } else {
+      this.requestService.finalizeRequest(trackId);
     }
-
-    this.requestService.finalizeRequest(trackId);
+    
+    return { evaluation };
   }
 
   @Throttle(1, 30)
