@@ -16,7 +16,8 @@ export function Help() {
 
         <p>
           Can't find the track you selected from the search bar in sources? This is because the search uses Spotify's search API to find tracks, whilst the
-          sources search YouTube Music to find its tracks. See more information on why this is <a href="#howitworks">below</a>.
+          sources search YouTube Music to find its tracks. Unfortunately, this means that there may be tracks on Spotify that are not on YouTube. See more
+          information on why this implementation is used <a href="#howitworks">below</a>.
         </p>
       </section>
       <section className={styles.help__section} id="howitworks">

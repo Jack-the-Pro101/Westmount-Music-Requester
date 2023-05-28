@@ -1,0 +1,23 @@
+.requests__item {
+  border-radius: 4px;
+}
+
+.requests__btn {
+  display: grid;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  grid-template-columns: 2fr 1fr 1fr;
+  padding: 1em;
+  background-color: hsl(var(--clr-neutral-200));
+  border: none;
+  text-align: left;
+  width: 100%;
+  font-size: inherit;
+  color: inherit;
+}
+
+.requests__btn:hover {
+  cursor: pointer;
+  background-color: hsl(var(--clr-neutral-300));
+}

@@ -1,5 +1,5 @@
 import { StateUpdater } from "preact/hooks";
-import styles from "../../routes/requests/Requests.module.css";
+import styles from "./Request.module.css";
 import { Request as RequestType } from "../../types";
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {

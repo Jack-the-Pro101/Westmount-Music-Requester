@@ -3,7 +3,7 @@ export interface CoreSong {
   artist: string;
   url: string;
   coverUrl: string;
-  id: number;
+  id: string;
 }
 
 export interface YouTubeSong {

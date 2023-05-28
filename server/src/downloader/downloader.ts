@@ -80,7 +80,7 @@ class Downloader {
     }
   }
 
-  async getSource(id: string) {
+  async getSource(id: string, excludeFormats: string[]) {
     await this.checkReady();
 
     try {
@@ -91,7 +91,9 @@ class Downloader {
       const adaptiveAudioFormats = trackInfo.streaming_data.adaptive_formats.filter((format) => format.has_audio && !format.has_video);
       const audioFormats = trackInfo.streaming_data.formats.filter((format) => format.has_audio && !format.has_video);
 
-      const bestAudioFormat = [...adaptiveAudioFormats, ...audioFormats].sort((a, b) => b.average_bitrate! - a.average_bitrate!)[0];
+      const bestAudioFormat = [...adaptiveAudioFormats, ...audioFormats]
+        .filter((format) => excludeFormats.every((formatName) => !format.mime_type.includes(formatName)))
+        .sort((a, b) => b.average_bitrate! - a.average_bitrate!)[0];
 
       return {
         url: bestAudioFormat.decipher(this.yt!.session.player),
@@ -116,6 +118,12 @@ class Downloader {
       quality: "best",
       type: "audio",
     });
+
+    if (!fs.existsSync(process.env.DOWNLOADS!)) {
+      fs.mkdirSync(process.env.DOWNLOADS!, {
+        recursive: true,
+      });
+    }
 
     const tempFilepath = path.join(
       process.env.DOWNLOADS!,

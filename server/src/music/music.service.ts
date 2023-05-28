@@ -82,8 +82,8 @@ export class MusicService {
     return (await request.json()) as SpotifyTrack;
   }
 
-  async getYtSource(id: string): Promise<TrackSourceInfo | false> {
-    return await downloader.getSource(id);
+  async getYtSource(id: string, excludeFormats: string[]): Promise<TrackSourceInfo | false> {
+    return await downloader.getSource(id, excludeFormats);
   }
 
   async searchYt(query: string): Promise<YouTubeSong[]> {
@@ -91,7 +91,7 @@ export class MusicService {
 
     if (info == null) return [];
 
-    info.splice(5);
+    info.splice(4);
 
     return (
       info

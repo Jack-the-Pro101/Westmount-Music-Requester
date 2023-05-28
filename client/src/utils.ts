@@ -19,3 +19,16 @@ export function anyStringIncludes(strings: string[], filter: string) {
   if (!filter) return true;
   return strings.some((string) => string.replace(/ /g, "").toLowerCase().includes(filter.toLowerCase().replace(/ /g, "")));
 }
+
+export function HttpStatusToString(status: number) {
+  switch (status) {
+    case 401:
+      return "Username or password invalid.";
+    case 403:
+      return "You do not have permissions to access this resource.";
+    case 429:
+      return "You are sending requests too quickly!";
+    case 500:
+      return "An unexpected error occurred on the server!";
+  }
+}

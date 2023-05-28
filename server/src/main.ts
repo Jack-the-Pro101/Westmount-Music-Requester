@@ -15,6 +15,7 @@ import fastifyCookie from "@fastify/cookie";
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
 import { migrate } from "./migrator";
 import { validateAllParams } from "./utils";
+import { ulid } from "ulid";
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Critical error encountered at:", promise, "Reason:", reason);
@@ -43,6 +44,7 @@ async function initTasks() {
 
   if (user == null) {
     await Users.create({
+      _id: ulid(),
       username: process.env.SYS_ADMIN_USERNAME,
       password: await bcrypt.hash(process.env.SYS_ADMIN_PASSWORD!, 10),
       type: "INTERNAL",

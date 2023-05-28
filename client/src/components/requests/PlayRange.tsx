@@ -1,10 +1,11 @@
 import { TargetedEvent } from "preact/compat";
 import { StateUpdater, useEffect, useRef, useState } from "preact/hooks";
 import { TrackSourceInfo } from "../../types";
-import styles from "./Requests.module.css";
 
 import * as config from "../../shared/config.json";
 import { secondsToHumanReadableString } from "../../utils";
+
+import styles from "./PlayRange.module.css";
 
 export function PlayRange({
   songPreview,
@@ -86,7 +87,7 @@ export function PlayRange({
           return;
         }
       }
-      isPaused ? audioElemRef.current.pause() : audioElemRef.current.play().then(() => setIsAwaiting(false));
+      isPaused ? audioElemRef.current.pause() : audioElemRef.current.play();
     }
   }, [isPaused]);
 
@@ -94,23 +95,22 @@ export function PlayRange({
     if (songPreview == null) return;
     setBuffered(0);
     setPlaybackPos(0);
+    setDisplaySelectionRange(0);
     setDuration(0);
-    if (audioElemRef.current) {
-      audioElemRef.current
-        .play()
-        .then(() => setIsPaused(false))
-        .catch(() => {
-          setIsAwaiting(true);
-          setIsPaused(true);
-          audioElemRef.current!.load();
-        });
-    }
   }, [songPreview]);
 
   useEffect(() => {
     const handler = () => {
       if (songPreview == null) return;
       setDuration(audioElemRef.current ? audioElemRef.current.duration * accuracyConstant : 0);
+
+      audioElemRef
+        .current!.play()
+        .then(() => setIsPaused(false))
+        .catch(() => {
+          setIsAwaiting(true);
+          setIsPaused(true);
+        });
     };
     if (audioElemRef.current) {
       audioElemRef.current.addEventListener("loadedmetadata", handler);
@@ -138,16 +138,14 @@ export function PlayRange({
   return (
     <div className={styles["requests__play-range"]}>
       {songPreview && (
-        <div className={`${styles.requests__loading} ${buffered > 0 || !isAwaiting ? styles["requests__loading--done"] : ""}`}>
+        <div className={`${styles.requests__loading} ${buffered > 0 || isAwaiting ? styles["requests__loading--done"] : ""}`}>
           <img src="/images/loading3.svg" alt="Loading" className={styles["requests__loading-image"]} />
         </div>
       )}
 
-      {songPreview && (
-        <audio src={songPreview.url} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPaused(true)} ref={audioElemRef} volume={volume}>
-          <source src={songPreview.url} type={songPreview.mime_type} />
-        </audio>
-      )}
+      <audio src={songPreview?.url || ""} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPaused(true)} ref={audioElemRef} volume={volume}>
+        <source src={songPreview?.url || ""} type={songPreview?.mime_type || ""} />
+      </audio>
 
       <label htmlFor="range" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
         Scrub playback
@@ -196,7 +194,7 @@ export function PlayRange({
             type="button"
             className={styles["requests__play-btn"]}
             title="Toggle playback"
-            onClick={() => setIsPaused((isPlaying) => (isPlaying ? false : true))}
+            onClick={() => setIsPaused((isPaused) => (isPaused ? false : true))}
           >
             <i class={"fa-regular fa-" + (isPaused ? "play" : "pause")}></i>
           </button>

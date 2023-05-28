@@ -4,7 +4,7 @@ import { BASE_URL } from "../../env";
 import styles from "./SignIn.module.css";
 
 export function SignIn() {
-  const { login } = useContext(AuthContext);
+  const { login, user } = useContext(AuthContext);
 
   const [adminSigninShown, setAdminSigninShown] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -12,6 +12,12 @@ export function SignIn() {
   const [errorCount, setErrorCount] = useState(0);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (user != null) {
+      window.location.href = "/";
+    }
+  }, [user]);
 
   async function handleSignin(e: Event) {
     e.preventDefault();

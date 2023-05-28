@@ -44,6 +44,9 @@ export class RequestController {
 
       if (!(await this.requestService.createRequest(info, req.user, trackId)))
         return console.error(`Failed to create request for ${req.user._id}, requesting song ${spotifyId} at ${youtubeId}`);
+
+      res.status(202).send();
+
       const scanResult = await this.requestService.scanLyrics(youtubeId, trackId);
 
       if (scanResult === false) {
@@ -51,7 +54,6 @@ export class RequestController {
       } else {
         await this.requestService.updateRequest({ track: trackId, status: "AWAITING" }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
       }
-      res.status(202).send();
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException();
@@ -86,7 +88,7 @@ export class RequestController {
     } else {
       this.requestService.finalizeRequest(trackId);
     }
-    
+
     return { evaluation };
   }
 

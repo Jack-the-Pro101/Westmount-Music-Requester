@@ -99,7 +99,7 @@ const routeMap = [
   },
 ];
 
-const exemptedRedirectPaths = ["sign-in", "credits", "error"];
+const exemptedRedirectPaths = ["sign-in", "credits", "error", "help"];
 
 export function App() {
   const [user, setUser] = useState<StoredUser | null>();

@@ -18,6 +18,12 @@ import { sanitizeFilename } from "../utils";
 
 import { Request } from "../models/Request";
 
+const profaneRegexs: RegExp[] = [];
+
+for (let i = 0, n = profaneWords.length; i < n; ++i) {
+  profaneRegexs.push(new RegExp(`^.*${profaneWords[i]}.*$`, "gim"));
+}
+
 class ScanBuffer {
   private texts: ((value?: unknown) => void)[] = [];
   private scanningYtTracks: {
@@ -96,9 +102,9 @@ export class RequestService {
 
       const possibleProfaneLines: string[] = [];
 
-      for (let i = 0, n = profaneWords.length; i < n; ++i) {
-        const word = profaneWords[i].toLowerCase();
-        const matches = lyrics.matchAll(new RegExp(`^.*${word}.*$`, "gim"));
+      for (let i = 0, n = profaneRegexs.length; i < n; ++i) {
+        const profaneRegex = profaneRegexs[i];
+        const matches = lyrics.matchAll(profaneRegex);
 
         for (const match of matches) {
           const line = match[0];
@@ -167,7 +173,7 @@ export class RequestService {
       // Test YouTube source
       new Promise((resolve, reject) => {
         downloader
-          .getSource(youtubeId)
+          .getSource(youtubeId, [])
           .then((song) => {
             if (!song) return reject();
             if (song.duration - config.songMaxPlayDurationSeconds < playRange) reject();
