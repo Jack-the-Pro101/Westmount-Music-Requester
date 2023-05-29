@@ -22,7 +22,7 @@ const requests = mongoose.model(
       },
 
       user: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "user",
         required: true,
       },
