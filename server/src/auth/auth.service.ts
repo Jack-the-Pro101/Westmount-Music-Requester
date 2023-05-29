@@ -37,7 +37,7 @@ export class AuthService {
       process.env.GOOGLE_CLIENT_ID!,
       process.env.GOOGLE_CLIENT_SECRET!,
       code,
-      process.env.NODE_ENV === "production" ? process.env.GOOGLE_REDIRECT_URI! : "http://localhost:3000/api/auth/google-redirect"
+      process.env.NODE_ENV === "production" ? process.env.GOOGLE_CALLBACK! : "http://localhost:3000/api/auth/google-redirect"
     );
     if (!token) throw new UnauthorizedException();
     const rawUser = await this.getUserProfile(token);
@@ -81,7 +81,7 @@ export class AuthService {
     const token = sign({ expires: Date.now() + 3600000 }, process.env.JWT_SECRET!);
     return this.getOauthUrl(
       process.env.GOOGLE_CLIENT_ID!,
-      process.env.NODE_ENV === "production" ? process.env.GOOGLE_REDIRECT_URI! : "http://localhost:3000/api/auth/google-redirect",
+      process.env.NODE_ENV === "production" ? process.env.GOOGLE_CALLBACK! : "http://localhost:3000/api/auth/google-redirect",
       ["email", "profile"],
       token
     );
