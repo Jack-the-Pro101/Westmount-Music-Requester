@@ -9,7 +9,7 @@ import downloader from "../downloader/downloader";
 
 import * as profaneWords from "./profanity_words.json";
 import { RequestData, Request as RequestType, StoredUser, WithId } from "../types";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import Perspective from "./perspective";
 import { MusicService } from "../music/music.service";
 
@@ -70,6 +70,16 @@ export class RequestService {
   scanBuffer: ScanBuffer;
   constructor(private readonly musicService: MusicService) {
     this.scanBuffer = new ScanBuffer();
+  }
+
+  async evalulateRequest(youtubeId: string, trackId: mongoose.Types.ObjectId) {
+    const scanResult = await this.scanLyrics(youtubeId, trackId);
+
+    if (scanResult === false) {
+      await this.updateRequest({ track: trackId, status: "AWAITING" }, { status: "AUTO_REJECTED" });
+    } else {
+      await this.updateRequest({ track: trackId, status: "AWAITING" }, { status: scanResult == null ? "PENDING_MANUAL" : "PENDING" });
+    }
   }
 
   async scanLyrics(youtubeId: string, trackId: mongoose.Types.ObjectId): Promise<boolean | undefined> {

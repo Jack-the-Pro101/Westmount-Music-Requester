@@ -14,6 +14,7 @@ import fastifyCookie from "@fastify/cookie";
 
 import { DomainEmailInvalidExceptionFilter } from "./auth/domain-email-invalid-exception.filter";
 import { validateAllParams } from "./utils";
+import Recover from "./request/recover";
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Critical error encountered at:", promise, "Reason:", reason);
@@ -48,6 +49,8 @@ async function initTasks() {
       name: "Administrator",
     });
   }
+
+  Recover.recoverScans();
 }
 
 async function bootstrap() {
