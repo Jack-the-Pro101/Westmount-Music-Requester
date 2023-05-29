@@ -1,6 +1,5 @@
 import { RequestService } from "./request.service";
 import { MusicService } from "../music/music.service";
-import tracksSchema from "../models/Track";
 import requestSchema from "../models/Request";
 
 class Recover {
@@ -20,7 +19,8 @@ class Recover {
     for (let i = 0, n = requests.length; i < n; ++i) {
       const request = requests[i];
 
-      await this.requestService.evalulateRequest(request.track.youtubeId, request.track.id);
+      // @ts-expect-error
+      await this.requestService.evaluateRequest(request.track.youtubeId, request.track._id);
     }
   }
 }

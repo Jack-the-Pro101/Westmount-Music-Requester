@@ -47,7 +47,7 @@ export class RequestController {
 
       res.status(202).send();
 
-      await this.requestService.evalulateRequest(youtubeId, trackId);
+      await this.requestService.evaluateRequest(youtubeId, trackId);
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException();

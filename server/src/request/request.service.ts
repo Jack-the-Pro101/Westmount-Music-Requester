@@ -72,7 +72,7 @@ export class RequestService {
     this.scanBuffer = new ScanBuffer();
   }
 
-  async evalulateRequest(youtubeId: string, trackId: mongoose.Types.ObjectId) {
+  async evaluateRequest(youtubeId: string, trackId: mongoose.Types.ObjectId) {
     const scanResult = await this.scanLyrics(youtubeId, trackId);
 
     if (scanResult === false) {
@@ -344,7 +344,6 @@ export class RequestService {
       console.log(filename, "already downloaded. Stopping re-download.");
       return;
     }
-    console.error("this already executed");
 
     const downloadResult = await downloader.download(requestTrack!.youtubeId, filename, {
       format: config.downloadExt,
