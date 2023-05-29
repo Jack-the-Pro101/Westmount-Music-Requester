@@ -17,6 +17,7 @@ export interface YouTubeSong {
 
 export type StoredUser =
   | {
+      [key: string]: string;
       type: "GOOGLE";
       email: string;
       avatar: string;
@@ -24,6 +25,7 @@ export type StoredUser =
       permissions: number;
     }
   | {
+      [key: string]: string;
       type: "INTERNAL";
       username: string;
       password: string;
