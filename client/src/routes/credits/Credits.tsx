@@ -42,7 +42,7 @@ export function Credits() {
             <hr />
           </header>
           <ul className={styles.credits__list}>
-            <li className={styles.credits__item}>Friend - [Vice President] George Zeng</li>
+            <li className={styles.credits__item}>Friend - [President] George Zeng</li>
             <li className={styles.credits__item}>Insider - [Teacher] Mr. Timofejew</li>
             <li className={styles.credits__item}>Hosting - [Teacher] Mr. Trink</li>
           </ul>
