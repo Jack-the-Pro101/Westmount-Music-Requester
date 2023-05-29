@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 import { CoreSong, SpotifyTrack } from "../../types";
 import { SearchDropdown } from "./SearchDropdown";
@@ -18,6 +18,7 @@ function statusCodeToMessage(code: number) {
 export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSong: (value: CoreSong) => void }) {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  // const [autoSearch, setAutoSearch] = useState<number | null>(null);
   const [songs, setSongs] = useState<SpotifyTrack[]>([]);
   const [isEmpty, setIsEmpty] = useState(false);
 
@@ -27,18 +28,26 @@ export default function HomeSearch({ setSelectedCoreSong }: { setSelectedCoreSon
     setIsEmpty(false);
   }
 
-  async function handleSubmit(e: Event) {
+  // Auto search code, disabled until further notice due to Spotify API rate limit concerns
+
+  // useEffect(() => {
+  //   if (!search.trim()) return;
+
+  //   const autoSearch = setTimeout(() => {
+  //     handleSubmit();
+  //   }, 1000);
+
+  //   return () => clearTimeout(autoSearch);
+  // }, [search]);
+
+  async function handleSubmit(e?: Event) {
     e?.preventDefault();
+
+    // if (isLoading) return;
 
     setIsLoading(true);
 
-    const request = await fetch(BASE_URL + "/api/music/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query: search }),
-    });
+    const request = await fetch(`${BASE_URL}/api/music/search?query=${search}`);
 
     if (request.ok) {
       const data = (await request.json()) as SpotifyTrack[];

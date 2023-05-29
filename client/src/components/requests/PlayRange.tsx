@@ -7,6 +7,9 @@ import { secondsToHumanReadableString } from "../../utils";
 
 import styles from "./PlayRange.module.css";
 
+const accuracyConstant = 2;
+const songMaxPlayDurationSeconds = config.songMaxPlayDurationSeconds * accuracyConstant;
+
 export function PlayRange({
   songPreview,
   selectionRange,
@@ -22,9 +25,6 @@ export function PlayRange({
   max?: number;
   editable: boolean;
 }) {
-  const accuracyConstant = 2;
-  const songMaxPlayDurationSeconds = config.songMaxPlayDurationSeconds * accuracyConstant;
-
   if (min) min *= accuracyConstant;
   if (max) max *= accuracyConstant;
 
@@ -32,6 +32,7 @@ export function PlayRange({
   const storedVolume = localStorage.getItem("volume") ? parseFloat(localStorage.getItem("volume") as string) : 1;
   const [volume, setVolume] = useState(Number.isNaN(storedVolume) ? 1 : storedVolume);
   const [isPaused, setIsPaused] = useState(false);
+  const [hasEnded, setHasEnded] = useState(false);
   const [isAwaiting, setIsAwaiting] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [buffered, setBuffered] = useState(0);
@@ -48,14 +49,17 @@ export function PlayRange({
 
   function updatePlaybackPos(event: Event) {
     if (min != null && playbackPos < min) {
-      updatePlaybackPosRange(min + 1);
+      updatePlaybackPosRange(min + 0.1);
       return setPlaybackPos(min);
     }
-    if (max != null && playbackPos >= max) {
+    if (max != null && playbackPos >= max && !hasEnded) {
       setIsPaused(true);
-      updatePlaybackPosRange(max + 1);
+      setHasEnded(true);
+      updatePlaybackPosRange(max);
       return setPlaybackPos(max);
     }
+    if (playbackPos >= 0 && max != null && !(playbackPos >= max)) setHasEnded(false);
+
     setPlaybackPos((event.target as HTMLAudioElement).currentTime * accuracyConstant);
   }
 
@@ -143,7 +147,16 @@ export function PlayRange({
         </div>
       )}
 
-      <audio src={songPreview?.url || ""} onTimeUpdate={updatePlaybackPos} onEnded={() => setIsPaused(true)} ref={audioElemRef} volume={volume}>
+      <audio
+        src={songPreview?.url || ""}
+        onTimeUpdate={updatePlaybackPos}
+        onEnded={() => {
+          setIsPaused(true);
+          setHasEnded(true);
+        }}
+        ref={audioElemRef}
+        volume={volume}
+      >
         <source src={songPreview?.url || ""} type={songPreview?.mime_type || ""} />
       </audio>
 
@@ -196,7 +209,7 @@ export function PlayRange({
             title="Toggle playback"
             onClick={() => setIsPaused((isPaused) => (isPaused ? false : true))}
           >
-            <i class={"fa-regular fa-" + (isPaused ? "play" : "pause")}></i>
+            <i class={"fa-regular fa-" + (isPaused ? (hasEnded ? "rotate-left" : "play") : "pause")}></i>
           </button>
         </div>
         <div className={styles["requests__play-btns-group"]}>

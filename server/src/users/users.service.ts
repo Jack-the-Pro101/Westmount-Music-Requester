@@ -5,7 +5,6 @@ import Users, { User } from "../models/User";
 
 import * as bcrypt from "bcrypt";
 import { StoredUser, WithId } from "../types";
-import { ulid } from "ulid";
 
 @Injectable()
 export class UsersService {
@@ -75,13 +74,13 @@ export class UsersService {
     try {
       if (user.type === "GOOGLE") {
         const dbUser: WithId<StoredUser> | undefined = (await Users.findOne({ email: user.email })) ?? undefined;
-        if (!dbUser) return (await Users.create({ ...user, _id: ulid() })).toObject() as WithId<StoredUser>;
+        if (!dbUser) return (await Users.create(user)).toObject() as WithId<StoredUser>;
         // TODO: What if Google user's email changes?
         // TODO: What if user's OAuth session is invalidated?
         return (await Users.findOneAndUpdate({ _id: dbUser._id }, { avatar: user.avatar, name: user.name }, { new: true }))?.toObject() ?? undefined;
       } else {
         const dbUser = await Users.findOne({ username: user.username });
-        if (!dbUser) return (await Users.create({ ...user, _id: ulid() })).toObject() as WithId<StoredUser>;
+        if (!dbUser) return (await Users.create(user)).toObject() as WithId<StoredUser>;
         return dbUser.toObject() as WithId<StoredUser>;
       }
     } catch (err) {

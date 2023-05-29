@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, InternalServerErrorException, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Header, InternalServerErrorException, Query, Req, UseGuards } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { AuthenticatedGuard } from "../auth/authenticated.guard";
 import { Roles } from "../auth/roles.decorator";
@@ -11,10 +11,10 @@ export class MusicController {
   constructor(private readonly musicService: MusicService) {}
 
   @Throttle(3, 10)
-  @Post("/search")
+  @Get("/search")
   @Roles("USE_REQUESTER")
   @UseGuards(AuthenticatedGuard, RolesGuard)
-  async search(@Body("query") query: string) {
+  async search(@Query("query") query: string) {
     return await this.musicService.searchSpotify(query);
   }
 
