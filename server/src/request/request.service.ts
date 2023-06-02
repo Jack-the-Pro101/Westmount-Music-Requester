@@ -17,6 +17,7 @@ import * as config from "../shared/config.json";
 import { sanitizeFilename } from "../utils";
 
 import { Request } from "../models/Request";
+import AcceptedTracks from "../models/AcceptedTracks";
 
 const profaneRegexs: RegExp[] = [];
 
@@ -73,7 +74,14 @@ export class RequestService {
   }
 
   async evaluateRequest(youtubeId: string, trackId: mongoose.Types.ObjectId) {
-    const scanResult = await this.scanLyrics(youtubeId, trackId);
+    const existingTrack = await trackSchema.findOne({ youtubeId });
+
+    if (existingTrack != null) {
+      const pastAccepted = await AcceptedTracks.findOne({ _id: existingTrack._id });
+      if (pastAccepted != null) return await this.updateRequest({ track: trackId, status: "AWAITING" }, { status: "ACCEPTED" });
+    }
+
+    const scanResult = await this.scanLyrics(youtubeId, existingTrack);
 
     if (scanResult === false) {
       await this.updateRequest({ track: trackId, status: "AWAITING" }, { status: "AUTO_REJECTED" });
@@ -82,15 +90,13 @@ export class RequestService {
     }
   }
 
-  async scanLyrics(youtubeId: string, trackId: mongoose.Types.ObjectId): Promise<boolean | undefined> {
+  async scanLyrics(youtubeId: string, track: any): Promise<boolean | undefined> {
     try {
       await this.scanBuffer.waitScanComplete(youtubeId);
 
-      const existingTrack = await trackSchema.findOne({ youtubeId });
-
-      if (existingTrack) {
-        if (existingTrack.uncertain) return;
-        if (existingTrack.explicit != null) return !existingTrack.explicit === true;
+      if (track) {
+        if (track.uncertain) return;
+        if (track.explicit != null) return !track.explicit === true;
       }
 
       const lyrics = await downloader.getLyrics(youtubeId);
@@ -98,7 +104,7 @@ export class RequestService {
       if (!lyrics) {
         await trackSchema
           .findOneAndUpdate(
-            { _id: trackId },
+            { _id: track._id },
             {
               explicit: null,
               uncertain: true,
@@ -155,7 +161,7 @@ export class RequestService {
 
       await trackSchema
         .findOneAndUpdate(
-          { _id: trackId },
+          { _id: track._id },
           {
             explicit: isProfane,
           }
@@ -331,9 +337,17 @@ export class RequestService {
     }
   }
 
+  async createAcceptedTrack(trackId: string) {
+    return await AcceptedTracks.create({
+      track: trackId,
+    });
+  }
+
   async finalizeRequest(trackId: string) {
     const requestRequest = await requestSchema.updateMany({ track: trackId }, { status: "ACCEPTED" }).populate("track");
     if (!requestRequest) return;
+
+    this.createAcceptedTrack(trackId);
 
     const request = await requestSchema.findOne({ track: trackId }); // This could use the average start time of all requests
     const requestTrack = await trackSchema.findOne({ _id: trackId });
