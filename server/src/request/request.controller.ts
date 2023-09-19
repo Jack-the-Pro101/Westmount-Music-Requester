@@ -1,4 +1,18 @@
-import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  InternalServerErrorException,
+  Param,
+  Patch,
+  Post,
+  Req,
+  Res,
+  StreamableFile,
+  UseGuards,
+} from "@nestjs/common";
 
 import { RequestData } from "../types";
 
@@ -100,5 +114,15 @@ export class RequestController {
   @UseGuards(AuthenticatedGuard, RolesGuard)
   async getPersonalRequests(@Req() req: FastifyRequest) {
     return await this.requestService.getPersonalRequests(req.user._id.toString());
+  }
+
+  @Throttle(2, 30)
+  @Get("/download")
+  async downloadTracks() {
+    const zip = await this.requestService.createTracksArchive();
+
+    if (zip == null) throw new InternalServerErrorException();
+
+    return new StreamableFile(zip);
   }
 }

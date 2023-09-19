@@ -18,6 +18,10 @@ import { sanitizeFilename } from "../utils";
 
 import { Request } from "../models/Request";
 import AcceptedTracks from "../models/AcceptedTracks";
+import JSZip from "jszip";
+import { readFile, readdir } from "fs/promises";
+import path from "path";
+import { createWriteStream, readFileSync } from "fs";
 
 const profaneRegexs: RegExp[] = [];
 
@@ -77,7 +81,7 @@ export class RequestService {
     const existingTrack = await trackSchema.findOne({ youtubeId });
 
     if (existingTrack != null) {
-      const pastAccepted = await AcceptedTracks.findOne({ _id: existingTrack._id });
+      const pastAccepted = await AcceptedTracks.findOne({ track: existingTrack._id });
       if (pastAccepted != null) return await this.updateRequest({ track: trackId, status: "AWAITING" }, { status: "ACCEPTED" });
     }
 
@@ -376,5 +380,29 @@ export class RequestService {
 
   async recycleRequests() {
     return await requestSchema.collection.drop();
+  }
+
+  async createTracksArchive() {
+    const zipName = "music.zip";
+    const zipFile = path.join(process.env.DOWNLOADS!, zipName);
+
+    const musicDir = await readdir(process.env.DOWNLOADS!);
+
+    const musicZip = new JSZip();
+
+    for (const filename of musicDir) {
+      musicZip.file(filename, await readFile(path.join(process.env.DOWNLOADS!, filename)));
+    }
+
+    try {
+      await new Promise((resolve, reject) => {
+        musicZip.generateNodeStream().pipe(createWriteStream(zipFile)).on("error", reject).on("finish", resolve);
+      });
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+
+    return readFileSync(zipFile);
   }
 }
