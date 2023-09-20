@@ -59,16 +59,17 @@ async function bootstrap() {
   if (process.env.NODE_ENV === "production") {
     if (!process.env.MONGODB_URI) throw new Error("NO DATABASE CONNECTION URI PROVIDED!");
     if (!process.env.SYS_ADMIN_USERNAME || !process.env.SYS_ADMIN_PASSWORD) throw new Error("NO DEFAULT INTERNAL ADMIN CREDENTIALS PROVIDED!");
-    if (
-      !validateAllParams([
-        process.env.GOOGLE_CLIENT_ID,
-        process.env.GOOGLE_CLIENT_SECRET,
-        process.env.SPOTIFY_CLIENT_ID,
-        process.env.SPOTIFY_CLIENT_SECRET,
-        process.env.PERSPECTIVE_API_KEY,
-      ])
-    )
-      throw new Error("WARNING: Not all application IDs/secrets were provided in env vars. Application will not function correctly.");
+
+    const failingEnvValues = [
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET",
+      "GOOGLE_CALLBACK",
+      "SPOTIFY_CLIENT_ID",
+      "SPOTIFY_CLIENT_SECRET",
+      "PERSPECTIVE_API_KEY",
+    ].filter((value) => process.env[value] == null);
+
+    if (failingEnvValues.length > 0) throw new Error(`WARNING: Not all application IDs/secrets were provided in env vars. Failing value: ${failingEnvValues.join(", ")}`);
   }
 
   await downloader.initialize();
