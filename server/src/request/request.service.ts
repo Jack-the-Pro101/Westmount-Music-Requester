@@ -18,10 +18,11 @@ import { sanitizeFilename } from "../utils";
 
 import { Request } from "../models/Request";
 import AcceptedTracks from "../models/AcceptedTracks";
-import JSZip from "jszip";
+import * as JSZip from "jszip";
 import { readFile, readdir } from "fs/promises";
-import path from "path";
-import { createWriteStream, readFileSync } from "fs";
+import { join } from "path";
+import { createWriteStream } from "fs";
+import { tmpdir } from "os";
 
 const profaneRegexs: RegExp[] = [];
 
@@ -384,14 +385,14 @@ export class RequestService {
 
   async createTracksArchive() {
     const zipName = "music.zip";
-    const zipFile = path.join(process.env.DOWNLOADS!, zipName);
+    const zipFile = join(tmpdir(), zipName);
 
     const musicDir = await readdir(process.env.DOWNLOADS!);
 
     const musicZip = new JSZip();
 
     for (const filename of musicDir) {
-      musicZip.file(filename, await readFile(path.join(process.env.DOWNLOADS!, filename)));
+      musicZip.file(filename, await readFile(join(process.env.DOWNLOADS!, filename)));
     }
 
     try {
@@ -403,6 +404,6 @@ export class RequestService {
       return null;
     }
 
-    return readFileSync(zipFile);
+    return zipFile;
   }
 }

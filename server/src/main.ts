@@ -68,7 +68,7 @@ async function bootstrap() {
         process.env.PERSPECTIVE_API_KEY,
       ])
     )
-      console.error("WARNING: Not all application IDs/secrets were provided in env vars. Application will not function correctly.");
+      throw new Error("WARNING: Not all application IDs/secrets were provided in env vars. Application will not function correctly.");
   }
 
   await downloader.initialize();
@@ -90,4 +90,5 @@ async function bootstrap() {
 
   await app.listen(process.env.BIND_PORT || 3000, process.env.BIND_INTERFACE!);
 }
+
 bootstrap();
