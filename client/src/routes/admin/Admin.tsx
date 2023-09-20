@@ -152,6 +152,25 @@ export function Admin() {
     }
   }
 
+  async function purgeDownloads() {
+    if (
+      !confirm(
+        "PURGE DOWNLOADS CONFIRMATION:\nYOU ARE ABOUT TO DELETE ALL CURRENTLY DOWNLOADED MUSIC. THIS ACTION IS IRREVERSIBLE. ARE YOU SURE YOU WANT TO CONTINUE?"
+      )
+    )
+      return;
+
+    const recycleRequest = await fetch("/api/requests/downloads", {
+      method: "DELETE",
+    });
+
+    if (recycleRequest.ok) {
+      alert("Purge successfully completed.");
+    } else {
+      alert("Failed to purge music.");
+    }
+  }
+
   return (
     <main className={styles.admin}>
       {user && (
@@ -369,19 +388,20 @@ export function Admin() {
               </div>
             </section>
           </div>
-          <div className={styles.admin__danger}>
+          <section className={styles.admin__danger}>
             <h2 className={styles.admin__heading}>Danger Zone</h2>
 
-            <section className={styles["admin__danger-section"]}>
-              <h3 className={styles["admin__danger-heading"]}>Re-cycle</h3>
-
-              <div className={styles["admin__danger-recycle"]}>
+            <div className={styles["admin__danger-section"]}>
+              <div className={styles["admin__danger-actions"]}>
                 <button className={styles["admin__danger-recycle-btn"]} onClick={dangerRecycle}>
                   RE-CYCLE
                 </button>
+                <button className={styles["admin__danger-recycle-btn"]} onClick={purgeDownloads}>
+                  PURGE DOWNLOADS
+                </button>
               </div>
-            </section>
-          </div>
+            </div>
+          </section>
         </>
       )}
     </main>

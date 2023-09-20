@@ -111,6 +111,14 @@ export class RequestController {
     return await this.requestService.recycleRequests();
   }
 
+  @Throttle(1, 30)
+  @Delete("/downloads")
+  @Roles("ADMINISTRATOR")
+  @UseGuards(AuthenticatedGuard, RolesGuard)
+  async purgeDownloads() {
+    return await this.requestService.purgeDownloads();
+  }
+
   @Throttle(3, 3)
   @Get("/me")
   @Roles("USE_REQUESTER")
@@ -120,7 +128,7 @@ export class RequestController {
   }
 
   @Throttle(2, 30)
-  @Get("/download")
+  @Get("/downloads")
   async downloadTracks(@Res() res: FastifyReply) {
     const zip = await this.requestService.createTracksArchive();
 

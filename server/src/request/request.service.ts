@@ -19,7 +19,7 @@ import { sanitizeFilename } from "../utils";
 import { Request } from "../models/Request";
 import AcceptedTracks from "../models/AcceptedTracks";
 import * as JSZip from "jszip";
-import { readFile, readdir } from "fs/promises";
+import { mkdir, readFile, readdir, rm, rmdir } from "fs/promises";
 import { join } from "path";
 import { createWriteStream } from "fs";
 import { tmpdir } from "os";
@@ -381,6 +381,23 @@ export class RequestService {
 
   async recycleRequests() {
     return await requestSchema.collection.drop();
+  }
+
+  async purgeDownloads() {
+    try {
+      await rm(process.env.DOWNLOADS!, {
+        recursive: true,
+      });
+      await mkdir(process.env.DOWNLOADS!, {
+        recursive: true,
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+
+      return false;
+    }
   }
 
   async createTracksArchive() {

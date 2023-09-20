@@ -186,10 +186,11 @@
   padding: 1em;
 }
 
-.admin__danger-recycle {
+.admin__danger-actions {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1em;
 }
 
 .admin__danger-heading {
@@ -205,6 +206,7 @@
   background-color: red;
   font-weight: 600;
   border-radius: 100vmax;
+  border-color: hsl(var(--clr-neutral-500));
 }
 
 .admin__danger-recycle-btn:hover {
