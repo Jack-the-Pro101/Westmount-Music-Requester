@@ -10,7 +10,7 @@ export class MusicService {
 
   private async refreshSpotifyToken() {
     this.spotifyTokenRefreshing = true;
-    const payload = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_SECRET}`, "utf-8").toString("base64");
+    const payload = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`, "utf-8").toString("base64");
 
     const request = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
