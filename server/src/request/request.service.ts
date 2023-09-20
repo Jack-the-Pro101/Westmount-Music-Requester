@@ -21,7 +21,7 @@ import AcceptedTracks from "../models/AcceptedTracks";
 import * as JSZip from "jszip";
 import { mkdir, readFile, readdir, rm, rmdir } from "fs/promises";
 import { join } from "path";
-import { createWriteStream } from "fs";
+import { createReadStream } from "fs";
 import { tmpdir } from "os";
 
 const profaneRegexs: RegExp[] = [];
@@ -401,26 +401,14 @@ export class RequestService {
   }
 
   async createTracksArchive() {
-    const zipName = "music.zip";
-    const zipFile = join(tmpdir(), zipName);
-
     const musicDir = await readdir(process.env.DOWNLOADS!);
 
     const musicZip = new JSZip();
 
     for (const filename of musicDir) {
-      musicZip.file(filename, await readFile(join(process.env.DOWNLOADS!, filename)));
+      musicZip.file(filename, createReadStream(join(process.env.DOWNLOADS!, filename)));
     }
 
-    try {
-      await new Promise((resolve, reject) => {
-        musicZip.generateNodeStream().pipe(createWriteStream(zipFile)).on("error", reject).on("finish", resolve);
-      });
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-
-    return zipFile;
+    return musicZip.generateNodeStream();
   }
 }

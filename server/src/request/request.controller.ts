@@ -26,9 +26,6 @@ import { RolesGuard } from "../auth/roles.guard";
 import mongoose from "mongoose";
 import { Throttle } from "@nestjs/throttler";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createReadStream, fstat, rmSync } from "fs";
-import { rm } from "fs/promises";
-import { basename } from "path";
 
 @Controller("/api/requests")
 export class RequestController {
@@ -132,13 +129,9 @@ export class RequestController {
   async downloadTracks(@Res() res: FastifyReply) {
     const zip = await this.requestService.createTracksArchive();
 
-    if (zip == null) throw new InternalServerErrorException();
-
     await res
       .type("application/zip")
-      .header("Content-Disposition", `attachment; filename="${basename(zip)}"`)
-      .send(createReadStream(zip));
-
-    await rm(zip);
+      .header("Content-Disposition", `attachment; filename="music.zip"`)
+      .send(zip);
   }
 }
