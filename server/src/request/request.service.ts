@@ -19,10 +19,9 @@ import { sanitizeFilename } from "../utils";
 import { Request } from "../models/Request";
 import AcceptedTracks from "../models/AcceptedTracks";
 import * as JSZip from "jszip";
-import { mkdir, readFile, readdir, rm, rmdir } from "fs/promises";
+import { mkdir, readdir, rm } from "fs/promises";
 import { join } from "path";
 import { createReadStream } from "fs";
-import { tmpdir } from "os";
 
 const profaneRegexs: RegExp[] = [];
 

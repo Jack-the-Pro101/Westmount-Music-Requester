@@ -24,7 +24,9 @@ export class AuthService {
   async googleLogin(req: FastifyRequest): Promise<WithId<StoredUser> | undefined> {
     const code = Object.getOwnPropertyDescriptor(req.query, "code")?.value;
     const stateToken = Object.getOwnPropertyDescriptor(req.query, "state")?.value;
+
     if (!code || !stateToken || typeof code !== "string" || typeof stateToken !== "string") throw new BadRequestException();
+
     try {
       const result = verify(stateToken, process.env.JWT_SECRET!) as {
         expires: number;
@@ -33,14 +35,18 @@ export class AuthService {
     } catch {
       throw new BadRequestException();
     }
+
     const token = await this.getAccessToken(
       process.env.GOOGLE_CLIENT_ID!,
       process.env.GOOGLE_CLIENT_SECRET!,
       code,
       process.env.NODE_ENV === "production" ? process.env.GOOGLE_CALLBACK! : "http://localhost:3000/api/auth/google-redirect"
     );
+
     if (!token) throw new UnauthorizedException();
+
     const rawUser = await this.getUserProfile(token);
+    
     if (!rawUser) return;
 
     const user: StoredUser = {
