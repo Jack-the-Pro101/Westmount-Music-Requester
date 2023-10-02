@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 
 import trackSchema from "../models/Track";
 import requestSchema from "../models/Request";
-import downloadedTracksSchema from "../models/DownloadedTracks";
 import userSchema from "../models/User";
 
 import downloader from "../downloader/downloader";
@@ -19,9 +18,9 @@ import { sanitizeFilename } from "../utils";
 import { Request } from "../models/Request";
 import AcceptedTracks from "../models/AcceptedTracks";
 import * as JSZip from "jszip";
-import { mkdir, readdir, rm } from "fs/promises";
+import { mkdir, opendir, readdir, rm } from "fs/promises";
 import { join } from "path";
-import { createReadStream } from "fs";
+import { createReadStream, existsSync } from "fs";
 
 const profaneRegexs: RegExp[] = [];
 
@@ -70,12 +69,31 @@ class ScanBuffer {
   }
 }
 
+class SynchronizedProcessor<R> {
+  private queue: Map<string, Promise<R>> = new Map();
+
+  constructor() {}
+
+  enqueue(key: string, func: () => Promise<R>) {
+    let promise = this.queue.get(key);
+
+    if (promise == null) {
+      promise = func();
+      this.queue.set(key, promise);
+
+      promise.finally(() => this.queue.delete(key));
+    }
+
+    return promise;
+  }
+}
+
 @Injectable()
 export class RequestService {
-  scanBuffer: ScanBuffer;
-  constructor(private readonly musicService: MusicService) {
-    this.scanBuffer = new ScanBuffer();
-  }
+  scanBuffer = new ScanBuffer();
+  downloadScheduler = new SynchronizedProcessor<string>();
+
+  constructor(private readonly musicService: MusicService) {}
 
   async evaluateRequest(youtubeId: string, trackId: mongoose.Types.ObjectId) {
     const existingTrack = await trackSchema.findOne({ youtubeId });
@@ -347,6 +365,10 @@ export class RequestService {
     });
   }
 
+  generateDownloadFilename(youtubeId: string, title: string, artist: string, downloadExt: string) {
+    return sanitizeFilename(`${youtubeId} ${title} - ${artist}`, "_") + `.${downloadExt}`;
+  }
+
   async finalizeRequest(trackId: string) {
     const requestRequest = await requestSchema.updateMany({ track: trackId }, { status: "ACCEPTED" }).populate("track");
     if (!requestRequest) return;
@@ -356,9 +378,9 @@ export class RequestService {
     const request = await requestSchema.findOne({ track: trackId }); // This could use the average start time of all requests
     const requestTrack = await trackSchema.findOne({ _id: trackId });
 
-    const filename = sanitizeFilename(`${requestTrack!.youtubeId} ${requestTrack!.title} - ${requestTrack!.artist}`, "_") + `.${config.downloadExt}`;
+    const filename = this.generateDownloadFilename(requestTrack!.youtubeId, requestTrack!.title, requestTrack!.artist, config.downloadExt);
 
-    if ((await downloadedTracksSchema.findOne({ filename })) != null) {
+    if (existsSync(join(process.env.DOWNLOADS!, filename))) {
       console.log(filename, "already downloaded. Stopping re-download.");
       return;
     }
@@ -371,10 +393,6 @@ export class RequestService {
     });
 
     if (downloadResult) {
-      await downloadedTracksSchema.create({
-        track: trackId,
-        filename: downloadResult,
-      });
     }
   }
 
@@ -400,7 +418,44 @@ export class RequestService {
   }
 
   async createTracksArchive() {
-    const musicDir = await readdir(process.env.DOWNLOADS!);
+    const musicDir = new Set(await readdir(process.env.DOWNLOADS!));
+
+    const acceptedRequests = await requestSchema.find({ status: "ACCEPTED" }).populate("track").lean();
+
+    const downloading: Promise<string>[] = [];
+
+    for (const request of acceptedRequests) {
+      const trackInfo = request.track as unknown as {
+        youtubeId: string;
+        title: string;
+        artist: string;
+      };
+
+      const filename = this.generateDownloadFilename(trackInfo.youtubeId, trackInfo.title, trackInfo.artist, config.downloadExt);
+
+      if (!musicDir.has(filename)) {
+        downloading.push(
+          this.downloadScheduler.enqueue(trackInfo.youtubeId, () => {
+            return downloader.download(trackInfo.youtubeId, filename, {
+              format: config.downloadExt,
+              codec: config.downloadFfmpegCodec,
+              start: request.start,
+              end: config.songMaxPlayDurationSeconds,
+            });
+          })
+        );
+      }
+    }
+
+    const downloaded = await Promise.allSettled(downloading);
+
+    for (const download of downloaded) {
+      if (download.status === "fulfilled") {
+        musicDir.add(download.value);
+      } else {
+        console.error(`Failed to download track: ${download.reason}`);
+      }
+    }
 
     const musicZip = new JSZip();
 

@@ -101,7 +101,9 @@ class Downloader {
         mime_type: bestAudioFormat.mime_type.split(";")[0],
         format: "audio",
       };
-    } catch {
+    } catch (error) {
+      console.error(error);
+
       return false;
     }
   }
@@ -127,7 +129,7 @@ class Downloader {
 
     const tempFilepath = path.join(
       process.env.DOWNLOADS!,
-      `${path.parse(filename).name} ${new mongoose.Types.ObjectId()} .${format.mime_type.split(";")[0].split("/")[1]}`
+      `${path.parse(filename).name} ${new mongoose.Types.ObjectId()}.${format.mime_type.split(";")[0].split("/")[1]}`
     );
 
     await new Promise(async (resolve) => {
