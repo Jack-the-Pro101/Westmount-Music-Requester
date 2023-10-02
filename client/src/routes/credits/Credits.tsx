@@ -32,8 +32,8 @@ export function Credits() {
             <li className={styles.credits__item}>UI Design - Tanushri Sendhil Kumar</li>
             <li className={styles.credits__item}>UI Ideas - Riley Jervis</li>
             <li className={styles.credits__item}>Logo - [Artist] Lee Mainprize</li>
+            <li className={styles.credits__item}>Math Analyst - Omar Saidahmed</li>
             <li className={styles.credits__item}>Problem Solving - [Developer] Dawson Katerberg</li>
-            <li className={styles.credits__item}>Math - Nathan Martin</li>
           </ul>
         </section>
         <section className={styles.credits__section}>

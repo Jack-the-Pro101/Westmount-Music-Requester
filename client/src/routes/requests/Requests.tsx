@@ -243,7 +243,7 @@ export function Requests() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <button>
+                    <button tabIndex={-1}>
                       Spotify <i class="fa-regular fa-arrow-up-right-from-square"></i>
                     </button>
                   </a>

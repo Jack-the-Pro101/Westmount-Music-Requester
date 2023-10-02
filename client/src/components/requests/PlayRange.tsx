@@ -73,11 +73,14 @@ export function PlayRange({
     }
   }
 
-  function updateSelctionRangePos(time: number) {
-    // if (rangeRef) rangeRef.current!.value = (time + (time / duration) * songMaxPlayDurationSeconds * (-0.0029 * duration + 2.3)).toString();
-    // C = AB - A
+  function updateSelectionRangePos(time: number) {
+    // playbackTime * duration / (-maxDuration + duration)
 
-    setSelectionRange?.(selectionRange * (songMaxPlayDurationSeconds / duration) - selectionRange);
+    const barTime = (time * duration / (-songMaxPlayDurationSeconds + duration)); // George Zeng was here - SPH3U1 10/2/2023
+
+    setSelectionRange?.(time / accuracyConstant);
+    setDisplaySelectionRange(Math.min(Math.max(0, time), duration - songMaxPlayDurationSeconds));
+    rangeRef.current!.valueAsNumber = barTime;
   }
 
   useEffect(() => {
@@ -192,7 +195,7 @@ export function PlayRange({
         ref={rangeRef}
         onChange={(e) => {
           if (!editable) return e.preventDefault();
-          const currentSel = Number((e.target as HTMLInputElement).value);
+          const currentSel = (e.target as HTMLInputElement).valueAsNumber;
 
           const displayRange = Math.round((currentSel - (currentSel / duration) * songMaxPlayDurationSeconds) * 100) / 100;
           setDisplaySelectionRange(displayRange);
@@ -219,7 +222,7 @@ export function PlayRange({
             onClick={() => updatePlaybackPosRange(selectionDisplayRange)}
             title="Jump to start of selected range"
           >
-            <i class="fa-light fa-arrow-left-long-to-line"></i>
+            <i class="fa-light fa-arrow-left-to-line"></i>
           </button>
           <button
             type="button"
@@ -227,24 +230,24 @@ export function PlayRange({
             onClick={() => updatePlaybackPosRange(selectionDisplayRange + songMaxPlayDurationSeconds)}
             title="Jump to end of selected range"
           >
-            <i class="fa-light fa-arrow-right-long-to-line"></i>
-          </button>
-          {/* <button
-            type="button"
-            className={styles["requests__play-btn"]}
-            onClick={() => updateSelctionRangePos(playbackPos)}
-            title="Set start of selected range to playhead"
-          >
-            {"{"}
+            <i class="fa-light fa-arrow-right-to-line"></i>
           </button>
           <button
             type="button"
             className={styles["requests__play-btn"]}
-            onClick={() => updateSelctionRangePos(playbackPos - songMaxPlayDurationSeconds)}
-            title="Set end of selected range to playhead"
+            onClick={() => updateSelectionRangePos(playbackPos)}
+            title="Set start of playhead to selected range"
           >
-            {"}"}
-          </button> */}
+            <i class="fa-light fa-arrow-left-from-line"></i>
+          </button>
+          <button
+            type="button"
+            className={styles["requests__play-btn"]}
+            onClick={() => updateSelectionRangePos(playbackPos - songMaxPlayDurationSeconds)}
+            title="Set end of playhead to selected range"
+          >
+            <i class="fa-light fa-arrow-right-from-line"></i>
+          </button>
         </div>
       </div>
       <div className={`${styles["requests__play-controller"]} ${styles["requests__play-volume"]}`}>
