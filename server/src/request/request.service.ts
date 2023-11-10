@@ -436,12 +436,17 @@ export class RequestService {
       if (!musicDir.has(filename)) {
         downloading.push(
           this.downloadScheduler.enqueue(trackInfo.youtubeId, () => {
-            return downloader.download(trackInfo.youtubeId, filename, {
-              format: config.downloadExt,
-              codec: config.downloadFfmpegCodec,
-              start: request.start,
-              end: config.songMaxPlayDurationSeconds,
-            });
+            return downloader
+              .download(trackInfo.youtubeId, filename, {
+                format: config.downloadExt,
+                codec: config.downloadFfmpegCodec,
+                start: request.start,
+                end: config.songMaxPlayDurationSeconds,
+              })
+              .catch((e) => {
+                console.error(`Failed to download ${trackInfo.youtubeId} to ${filename}: ${e}`);
+                throw e;
+              });
           })
         );
       }
