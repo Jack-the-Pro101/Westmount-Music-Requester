@@ -17,10 +17,10 @@ import { sanitizeFilename } from "../utils";
 
 import { Request } from "../models/Request";
 import AcceptedTracks from "../models/AcceptedTracks";
-import * as JSZip from "jszip";
-import { mkdir, opendir, readdir, rm } from "fs/promises";
+import { mkdir, readdir, rm } from "fs/promises";
 import { join } from "path";
-import { createReadStream, existsSync } from "fs";
+import { createReadStream, createWriteStream, existsSync, fstat, write } from "fs";
+import * as archiver from "archiver";
 
 const profaneRegexs: RegExp[] = [];
 
@@ -462,12 +462,32 @@ export class RequestService {
       }
     }
 
-    const musicZip = new JSZip();
+    const musicZip = archiver("zip");
+
+    musicZip.on("warning", (err) => {
+      if (err.code === "ENOENT") {
+        console.error(err);
+      } else {
+        throw err;
+      }
+    });
+
+    musicZip.on("error", (err) => {
+      throw err;
+    });
+
+    musicZip.on("finish", () => console.log("Music zip stream finished"));
 
     for (const filename of musicDir) {
-      musicZip.file(filename, createReadStream(join(process.env.DOWNLOADS!, filename)));
+      if (!filename.endsWith(`.${config.downloadExt}`)) continue;
+
+      musicZip.append(createReadStream(join(process.env.DOWNLOADS!, filename)), {
+        name: filename,
+      });
     }
 
-    return musicZip.generateNodeStream();
+    musicZip.finalize();
+
+    return musicZip;
   }
 }
