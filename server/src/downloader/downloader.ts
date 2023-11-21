@@ -1,6 +1,7 @@
 import { Innertube, UniversalCache } from "youtubei.js";
 import { exec } from "child_process";
 import * as fs from "fs";
+import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { FfmpegPostProcessOptions } from "../types";
 import mongoose from "mongoose";
@@ -28,17 +29,16 @@ class Downloader {
       new Promise<void>((resolve, reject) => {
         // Verify installation of FFMPEG
 
-        const ffmpegCheck = exec("ffmpeg -version");
-        ffmpegCheck.on("close", (code) => {
-          if (code === 0) {
+        exec("ffmpeg -version", (e) => {
+          if (e == null) {
             resolve();
           } else {
-            reject(new Error(`FFMPEG installation check failed with exit code ${code}! Process cannot continue without this core dependency.`));
+            reject(new Error(`FFMPEG installation check failed! Process cannot continue without this core dependency.\n${e}`));
           }
         });
       }),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("FFMPEG installation check timed out!")), 10000)),
-    ]) as Promise<void>;
+      new Promise<void>((_, reject) => setTimeout(() => reject(new Error("FFMPEG installation check timed out!")), 10000)),
+    ]);
   }
 
   async checkSession() {
@@ -122,7 +122,7 @@ class Downloader {
     });
 
     if (!fs.existsSync(process.env.DOWNLOADS!)) {
-      fs.mkdirSync(process.env.DOWNLOADS!, {
+      await fsPromises.mkdir(process.env.DOWNLOADS!, {
         recursive: true,
       });
     }
@@ -132,46 +132,37 @@ class Downloader {
       `${path.parse(filename).name} ${new mongoose.Types.ObjectId()}.${format.mime_type.split(";")[0].split("/")[1]}`
     );
 
-    await new Promise(async (resolve) => {
-      const writer = fs.createWriteStream(tempFilepath, {
-        encoding: "binary",
-      });
+    const writer = await fsPromises.open(tempFilepath, "w");
 
-      const reader = video.getReader();
+    const reader = video.getReader();
 
-      await new Promise((resolve) => {
-        reader.read().then(function parseChunks({ done, value }) {
-          if (done) {
-            return resolve(true);
-          }
-          writer.write(value);
+    while (true) {
+      const { done, value } = await reader.read();
+      if (value !== undefined) {
+        writer.write(value);
+      }
+      if (done) break;
+    }
 
-          reader.read().then(parseChunks);
-        });
-      });
-
-      writer.end();
-
-      writer.once("finish", () => {
-        resolve(true);
-      });
-    });
+    await writer.close();
 
     await new Promise((resolve, reject) => {
-      const worker = exec(`ffmpeg -i "${tempFilepath}" -c:a ${ffmpegArgs.codec} -ss ${ffmpegArgs.start} -t ${ffmpegArgs.end} "${filename}"`, {
-        cwd: process.env.DOWNLOADS!,
-      });
-
-      worker.on("close", (code) => {
-        if (code === 0) {
-          resolve(true);
-        } else {
-          reject();
+      exec(
+        `ffmpeg -i "${tempFilepath}" -c:a ${ffmpegArgs.codec} -ss ${ffmpegArgs.start} -t ${ffmpegArgs.end} "${filename}"`,
+        {
+          cwd: process.env.DOWNLOADS!,
+        },
+        (e) => {
+          if (e == null) {
+            resolve(true);
+          } else {
+            reject(e);
+          }
         }
-      });
-    }).catch((err) => console.error(err));
+      );
+    });
 
-    fs.rmSync(tempFilepath);
+    await fsPromises.rm(tempFilepath);
 
     return filename;
   }
