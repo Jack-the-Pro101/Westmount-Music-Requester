@@ -1,8 +1,9 @@
 import { Innertube, UniversalCache } from "youtubei.js";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
+import * as os from "os";
 import { FfmpegPostProcessOptions } from "../types";
 import mongoose from "mongoose";
 import { YTNodes } from "youtubei.js";
@@ -29,7 +30,7 @@ class Downloader {
       new Promise<void>((resolve, reject) => {
         // Verify installation of FFMPEG
 
-        exec("ffmpeg -version", (e) => {
+        execFile("ffmpeg", ["-version"], (e) => {
           if (e == null) {
             resolve();
           } else {
@@ -147,8 +148,9 @@ class Downloader {
     await writer.close();
 
     await new Promise((resolve, reject) => {
-      exec(
-        `ffmpeg -i "${tempFilepath}" -c:a ${ffmpegArgs.codec} -ss ${ffmpegArgs.start} -t ${ffmpegArgs.end} "${filename}"`,
+      execFile(
+        "ffmpeg",
+        ["-i", tempFilepath, "-c:a", ffmpegArgs.codec, "-ss", ffmpegArgs.start.toString(), "-t", ffmpegArgs.end.toString(), filename],
         {
           cwd: process.env.DOWNLOADS!,
         },
